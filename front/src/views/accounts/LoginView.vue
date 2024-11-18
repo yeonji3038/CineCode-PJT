@@ -17,10 +17,10 @@
       </div>
       <div class="social_login">
         <div class="google">
-          <img src="@/views/accounts/google.png" alt="구글 로그인" />
+          <img src="@/views/accounts/img/google.png" alt="구글 로그인" />
         </div>
         <div class="naver">
-          <img src="@/views/accounts/naver.png" alt="네이버 로그인" />
+          <img src="@/views/accounts/img/naver.png" alt="네이버 로그인" />
         </div>
       </div>
       
@@ -29,7 +29,7 @@
         <button id="password-button">비밀번호 찾기</button>
       </div>
 
-      
+
       <div class="signup">
         <router-link class="nav-item" :to="'/accounts/signup'">SIGNUP</router-link>
       </div>
