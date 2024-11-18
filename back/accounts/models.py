@@ -1,8 +1,9 @@
 from django.db import models
 from django.conf import settings
+from django.contrib.auth.models import AbstractUser
 
 # User 모델: 사용자의 기본 정보를 저장하는 모델입니다.
-class User(models.Model):
+class User(AbstractUser):
     username = models.CharField(max_length=150, unique=True)  # 사용자 이름
     email = models.EmailField(max_length=254, unique=True)  # 이메일 주소
     password = models.CharField(max_length=128)  # 비밀번호
