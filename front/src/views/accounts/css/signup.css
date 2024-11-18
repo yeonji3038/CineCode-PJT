@@ -1,0 +1,80 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+#Signup {
+  position: fixed; /* 화면에 고정 */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%; /* 화면 전체 크기 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: black; /* 배경 반투명 검정색 */
+
+}
+
+#Signup .signup {
+  max-width: 400px; /* 로그인 폼 최대 너비 */
+  width: 100%; /* 화면 크기에 맞게 너비 100% */
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px; /* 모서리 둥글게 처리 */
+  color: white;
+}
+
+
+
+.signup-info input {
+  border: 1px solid rgb(211, 211, 211);
+  width: 100%;
+  height: 40px;
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 12px;
+  background-color: rgb(250, 250, 250);
+  margin-bottom: 10px; /* 입력 필드 간의 공백 */
+}
+.signup-info input:last-child {
+  margin-bottom: 0; /* 마지막 입력 필드 아래쪽에 공백 제거 */
+}
+
+.signup-info input:first-child {
+  margin: 20px 0 10px;
+}
+
+#Signup button {
+  margin-top: 30px;
+  height: 50px;
+  width: 100%; /* 버튼을 화면 크기에 맞게 */
+  border: none;
+  background-color: rgb(211, 47, 39);
+  border-radius: 5px;
+  font-weight: 700;
+  color: #ffffff;
+  padding: 5px;
+}
+
+
+@media screen and (max-width: 375px) {
+  .signup {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+  }
+
+  .signup-info input {
+    width: 100%;
+  }
+
+  .signup button {
+    width: 100%;
+  }
+
+}
