@@ -4,14 +4,23 @@ import LoginView from '@/views/accounts/LoginView.vue'
 import ProfileView from '@/views/accounts/ProfileView.vue'
 import SignupView from '@/views/accounts/SignupView.vue'
 import FindidView from '@/views/accounts/FindidView.vue'
-
+import SearchView from '@/views/SearchView.vue'
+import MyCodeView from '@/views/MyCodeView.vue'
+import CodeShareView from '@/views/CodeShareView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
+      name: "Home",
       component: HomeView
+    },
+
+    {
+      path: '/search',
+      name: "Search",
+      component: SearchView
     },
 
     {
@@ -21,7 +30,8 @@ const router = createRouter({
     },
 
     {
-      path: '/accounts/signup',
+      path: '/accounts/signup', 
+      name: "Signup",
       component: SignupView
     },
 
@@ -31,11 +41,24 @@ const router = createRouter({
       component: FindidView
     },
 
+    
     {
       path: '/accounts/profile/:username',
       name:"profile",
       component: ProfileView
-    },    
+    },
+
+    {
+      path: '/mycode/:username',
+      name:"mycode",
+      component: MyCodeView
+    },
+
+    {
+      path: '/codeshare',
+      name:"codeshare",
+      component: CodeShareView
+    },
   ],
 })
 

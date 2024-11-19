@@ -1,11 +1,9 @@
 <script setup>
-// import AppNavbar from './components/Common/AppNavbar.vue'
-import LoginView from './views/accounts/LoginView.vue';
+import Navbar from './components/Common/Navbar.vue'
 </script>
 
 <template>
-
-  <!-- <AppNavbar/> -->
+  <Navbar />
   <RouterView />
 </template>
 

@@ -1,22 +1,14 @@
 <template>
   <nav class="sticky-nav">
-    <!-- 로그인 했을 때 -->
-    <div v-if="isLoggedIn" class="nav-container">
-      <router-link to="/" class="logo">cine_code</router-link>
-      <div class="nav-links">
-        <router-link to="/code-share" class="nav-item">코드 쉐어</router-link>
-        <router-link to="/my-code" class="nav-item">내 코드</router-link>
-        <button @click="handleLogout" class="logout-btn">로그아웃</button>
-      </div>
-    </div>
-
-    <!-- 로그인 하지 않았을 때 -->
-    <div v-else class="nav-container">
+    <div class="nav-container">
       <router-link to="/" class="logo">cine_code</router-link>
       <div class="nav-links">
         <router-link to="/codeshare" class="nav-item">코드 쉐어</router-link>
-        <router-link to="/accounts/login" class="nav-item">로그인</router-link>
+        <span v-if="isLogin" class="nav-divider">|</span>
+        <router-link v-if="isLogin" :to="'/mycode/' + username" class="nav-item">내 코드</router-link>
       </div>
+      <button v-if="!isLogin" @click="login" class="logout-btn">로그인</button>
+      <button v-else @click="logout" class="logout-btn">로그아웃</button>
     </div>
   </nav>
 </template>
@@ -25,12 +17,17 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
-const isLoggedIn = ref(false) // 실제 구현시에는 상태 관리 도구(Pinia/Vuex)를 사용하세요
+const isLogin = ref(false) // 실제 구현시에는 상태 관리 도구(Pinia/Vuex)를 사용하세요
+const username = ref('')   // 실제 구현시에는 서버 응답에서 받아야 함
 const router = useRouter()
 
-const handleLogout = () => {
-  isLoggedIn.value = false
-  router.push('/login')
+const logout = () => {
+  isLogin.value = false
+  router.push('/')
+}
+const login = () => {
+  isLogin.value = true
+  router.push('/accounts/login')
 }
 </script>
 
@@ -40,7 +37,7 @@ const handleLogout = () => {
   top: 0;
   background-color: #000000;
   z-index: 1000;
-  padding: 1rem 2rem;
+  padding: 1.5rem 2rem;
 }
 
 .nav-container {
@@ -56,12 +53,20 @@ const handleLogout = () => {
   text-decoration: none;
   font-size: 1.5rem;
   font-weight: bold;
+  margin-right: 3rem; /* 로고와 nav-item 간의 간격 */
 }
 
 .nav-links {
   display: flex;
   gap: 2rem;
   align-items: center;
+  font-weight: lighter;
+  gap: 1.5rem; /* nav-item 간의 간격 */
+  margin-right: auto; /* 로고 옆에 정렬 */
+}
+
+.nav-divider {
+  color: white;
 }
 
 .nav-item {
@@ -79,7 +84,7 @@ const handleLogout = () => {
   border: 1px solid white;
   color: white;
   padding: 0.5rem 1rem;
-  border-radius: 4px;
+  border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
 }

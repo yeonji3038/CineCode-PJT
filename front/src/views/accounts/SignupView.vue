@@ -1,5 +1,4 @@
 <template>
-  <Navbar />
   <div id="Signup">
     <div class="signup">
       <h2>SIGNUP</h2>
@@ -64,7 +63,6 @@
 </template>
 
 <script>
-import Navbar from '@/components/Common/Navbar.vue';
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
