@@ -1,4 +1,5 @@
 <template>
+  <Navbar />
   <div id="Login">
     <div class="login">
       <h2>LOGIN</h2>
@@ -80,6 +81,7 @@ if (localStorage.getItem("JWT")) {
 }
 </script> -->
 <script setup>
+import Navbar from '@/components/Common/Navbar.vue';
 import { useRouter } from 'vue-router';
 
 // Vue Router 사용을 위해 useRouter로 router 인스턴스를 가져옵니다.

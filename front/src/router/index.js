@@ -29,7 +29,13 @@ const router = createRouter({
       path: '/accounts/findid',
       name:"Findid",
       component: FindidView
-    }
+    },
+
+    {
+      path: '/accounts/profile/:username',
+      name:"profile",
+      component: ProfileView
+    },    
   ],
 })
 

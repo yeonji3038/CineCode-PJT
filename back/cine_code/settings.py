@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     # restframework
     'rest_framework',
     'rest_framework.authtoken',
+    
     'corsheaders',
 
      # REST_AUTH
@@ -48,14 +49,14 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
 
-# social login 필요 시 추가
- # 'django.contrib.sites',
- 'django.contrib.admin',
- 'django.contrib.auth',
- 'django.contrib.contenttypes',
- 'django.contrib.sessions',
- 'django.contrib.messages',
- 'django.contrib.staticfiles',
+    # social login 필요 시 추가
+    # 'django.contrib.sites',
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
 ]
 
 # social login 필요 시 추가
