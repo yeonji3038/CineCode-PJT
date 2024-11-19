@@ -3,6 +3,8 @@ import HomeView from '../views/HomeView.vue'
 import LoginView from '@/views/accounts/LoginView.vue'
 import ProfileView from '@/views/accounts/ProfileView.vue'
 import SignupView from '@/views/accounts/SignupView.vue'
+import FindidView from '@/views/accounts/FindidView.vue'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -21,6 +23,12 @@ const router = createRouter({
     {
       path: '/accounts/signup',
       component: SignupView
+    },
+
+    {
+      path: '/accounts/findid',
+      name:"Findid",
+      component: FindidView
     }
   ],
 })

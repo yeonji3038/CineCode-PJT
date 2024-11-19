@@ -25,7 +25,7 @@
       </div>
       
       <div class="find">
-        <button id="id-button">아이디 찾기</button>
+        <button @click="goToFindId" id="id-button">아이디 찾기</button>
         <button id="password-button">비밀번호 찾기</button>
       </div>
 
@@ -79,6 +79,21 @@ if (localStorage.getItem("JWT")) {
   router.push({ name: "Home" }); // 이미 JWT가 있으면 Home 페이지로 이동
 }
 </script> -->
+<script setup>
+import { useRouter } from 'vue-router';
+
+// Vue Router 사용을 위해 useRouter로 router 인스턴스를 가져옵니다.
+const router = useRouter();
+
+// 아이디 찾기 페이지로 이동하는 메소드
+const goToFindId = () => {
+  router.push('/accounts/findid');  // 아이디 찾기 경로로 이동
+};
+
+const login = () => {
+  // 로그인 로직을 여기에 작성하세요.
+};
+</script>
 
 <style scoped src='./css/login.css'>
 </style>
