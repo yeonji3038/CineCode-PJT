@@ -14,6 +14,7 @@ const router = createRouter({
 
     {
       path: '/accounts/login',
+      name : "Login",
       component: LoginView
     },
 
