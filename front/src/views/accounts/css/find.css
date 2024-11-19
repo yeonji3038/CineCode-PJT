@@ -17,7 +17,7 @@
 
 }
 
-#Find .login {
+#Find .find-id{
   max-width: 400px; /* 로그인 폼 최대 너비 */
   width: 100%; /* 화면 크기에 맞게 너비 100% */
   padding: 40px;
@@ -34,7 +34,7 @@
   justify-content: flex-start;
 }
 
-.login-info input {
+.find-id-info input {
   border: 1px solid rgb(211, 211, 211);
   width: 100%;
   height: 40px;
@@ -44,7 +44,7 @@
   background-color: rgb(250, 250, 250);
 }
 
-.login-info input:first-child {
+.find-id-info input:first-child {
   margin: 20px 0 10px;
 }
 
@@ -129,17 +129,17 @@
 }
 
 @media screen and (max-width: 375px) {
-  .login {
+  .find {
     width: 100%;
     max-width: 400px;
     padding: 20px;
   }
 
-  .login-info input {
+  .find-id-info input {
     width: 100%;
   }
 
-  .login button {
+  .find button {
     width: 100%;
   }
 

@@ -5,8 +5,8 @@
 
       <div class="find-id-info">
         <input
-          v-model="email"
-          placeholder="Email"
+          v-model="username"
+          placeholder="Username"
           type="text"
         />
         <input
@@ -29,8 +29,8 @@
       </div>
 
       <div class="find">
-        <button @click="goToLogin">아이디 찾기</button>
-        <button @click="goToFindPassword">비밀번호 찾기</button>
+        <button @click="goToLogin" id="id-button">아이디 찾기</button>
+        <button @click="goToFindPassword" id="password-button">비밀번호 찾기</button>
       </div>
 
       <div class="signup">
@@ -45,8 +45,8 @@ import { ref } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 
-// 이메일과 전화번호, 에러 메시지, 결과를 위한 상태 정의
-const email = ref('');
+// 사용자명과 전화번호, 에러 메시지, 결과를 위한 상태 정의
+const username = ref('');  // 이메일 대신 username으로 변경
 const phoneNumber = ref('');
 const foundId = ref('');
 const errorMessage = ref('');
@@ -56,16 +56,16 @@ const router = useRouter();
 
 // 아이디 찾기 메소드
 const findId = () => {
-  // 서버에 요청하기 전에 이메일과 전화번호가 입력되었는지 확인
-  if (!email.value || !phoneNumber.value) {
-    errorMessage.value = '이메일과 전화번호를 입력해주세요.';
+  // 서버에 요청하기 전에 사용자명과 전화번호가 입력되었는지 확인
+  if (!username.value || !phoneNumber.value) {
+    errorMessage.value = '사용자명과 전화번호를 입력해주세요.';
     return;
   }
 
   // 서버로 요청 (이 예시에서는 POST 방식으로 요청)
   axios.post('http://127.0.0.1:8000/accounts/find_id/', {
-    email: email.value,
-    phone_number: phoneNumber.value,
+    username: username.value,  // username을 전달
+    phone_number: phoneNumber.value,  // 전화번호도 전달
   })
     .then(response => {
       // 응답 데이터에서 아이디 받아오기
@@ -94,8 +94,5 @@ const goToFindPassword = () => {
 };
 </script>
 
-
-
 <style scoped src='./css/find.css'>
 </style>
-
