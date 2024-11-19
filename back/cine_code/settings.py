@@ -31,16 +31,43 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+
+    # 3rd partyapp
     'accounts',
     'movies',
     'communities',
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
+
+    # restframework
+    'rest_framework',
+    'rest_framework.authtoken',
+    'corsheaders',
+
+     # REST_AUTH
+    'dj_rest_auth',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+
+# social login 필요 시 추가
+ # 'django.contrib.sites',
+ 'django.contrib.admin',
+ 'django.contrib.auth',
+ 'django.contrib.contenttypes',
+ 'django.contrib.sessions',
+ 'django.contrib.messages',
+ 'django.contrib.staticfiles',
 ]
+
+# social login 필요 시 추가
+# SITE_ID = 1 
+
+REST_FRAMEWORK = {
+    # Authentication
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -50,7 +77,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+
 ]
+CORS_ALLOW_ALL_ORIGINS = True  # 또는 특정 도메인만 허용
 
 ROOT_URLCONF = 'cine_code.urls'
 
@@ -125,3 +156,14 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'accounts.User'
+
+# REST-AUTH 회원가입 기본 Serailizer 재정의
+REST_AUTH = {
+ 'REGISTER_SERIALIZER': 'accounts.serializers.UserSerializer',
+}
+
+ACCOUNT_ADAPTER  = 'accounts.models.CustomAccountAdapter'
+ACCOUNT_EMAIL_REQUIRED = False
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+
+
