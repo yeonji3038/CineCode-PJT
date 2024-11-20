@@ -4,29 +4,25 @@ import axios from 'axios'
 import { useRouter } from 'vue-router'
 
 export const useAuthStore = defineStore('auth', () => {
-  const API_URL = 'http://127.0.0.1:8000'
+  const API_URL = import.meta.env.VITE_APP_URL
   const router = useRouter()
-  
-  const token = ref(null)
 
+  // 사용자 인증 상태 관리 토큰
+  const token = ref(localStorage.getItem('token') || null)
+
+  // 로그인 상태 확인
   const isLogin = computed(() => {
-    if (token.value === null) {
-      return false
-    } else {
-      return true
-    }
+    return token.value !== null
   })
-
-  const setUser = function (payload) {
-    user.value = payload
-  }
 
   // 로그인
   const login = function (payload) {
+    console.log("로그인 실행")
     const { username, password } = payload
+    console.log(username, password)
     axios({
       method: 'post',
-      url: `${API_URL}/accounts/login/`,
+      url: `${API_URL}accounts/login/`,
       data: {
         username,
         password
@@ -34,6 +30,8 @@ export const useAuthStore = defineStore('auth', () => {
     })
     .then((res) => {
       token.value = res.data.key
+      console.log(res.data)
+      localStorage.setItem('token', res.data.key) // 토큰을 로컬스토리지에 저장
       router.push({ name: 'Home' })
     })
     .catch((err) => {
@@ -49,6 +47,7 @@ export const useAuthStore = defineStore('auth', () => {
     })
     .then((res) => {
       token.value = null
+      localStorage.removeItem('token') // 로컬스토리지에서 토큰 삭제
       router.push({ name: 'Home' })
     })
     .catch((err) => {
@@ -57,4 +56,4 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   return { API_URL, token, isLogin, login, logout }
-}, {persist : true})
+}, { persist: true })  // Pinia의 persist 플러그인을 사용해 상태 저장

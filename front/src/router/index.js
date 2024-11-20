@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 import HomeView from '../views/HomeView.vue'
 import LoginView from '@/views/accounts/LoginView.vue'
 import ProfileView from '@/views/accounts/ProfileView.vue'
@@ -6,6 +7,8 @@ import SignupView from '@/views/accounts/SignupView.vue'
 import SearchView from '@/views/movies/SearchView.vue'
 import CodeShareView from '@/views/communities/CodeShareView.vue'
 import MyCodeView from '@/views/communities/MyCodeView.vue'
+import UpdateView from '@/views/accounts/UpdateView.vue'
+
 
 
 const router = createRouter({
@@ -36,10 +39,14 @@ const router = createRouter({
       component: SignupView
     },
 
-
+    {
+      path: '/accounts/update', 
+      name: "Update",
+      component: UpdateView
+    },
     
     {
-      path: '/accounts/profile/:username',
+      path: '/accounts/profile',
       name:"profile",
       component: ProfileView
     },
@@ -58,5 +65,6 @@ const router = createRouter({
     },
   ],
 })
+
 
 export default router

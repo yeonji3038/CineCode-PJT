@@ -1,33 +1,34 @@
 <template>
   <nav class="sticky-nav">
     <div class="nav-container">
-      <router-link to="{name: home}" class="logo">cine_code</router-link>
+      <!-- cine_code 클릭 시 Home 경로로 이동하도록 설정 -->
+      <router-link :to="{ name: 'Home' }" class="logo">cine_code</router-link>
       <div class="nav-links">
-        <router-link to="{name: codeshare}" class="nav-item">코드 쉐어</router-link>
-        <span v-if="isLogin" class="nav-divider">|</span>
-        <router-link v-if="isLogin" to="{name: mycode}" class="nav-item">내 코드</router-link>
+        <router-link :to="{ name: 'codeshare' }" class="nav-item">코드 쉐어</router-link>
+        <span v-if="authStore.isLogin" class="nav-divider">|</span>
+        <!-- <router-link v-if="authStore.isLogin" :to="{ name: 'mycode' }" class="nav-item">내 코드</router-link> -->
       </div>
-      <button v-if="!isLogin" @click="login" class="logout-btn">로그인</button>
-      <button v-else @click="logout" class="logout-btn">로그아웃</button>
+      
+      <!-- 로그인한 사용자 아이디가 있다면 표시 -->
+      <!-- <span v-if="authStore.isLogin" class="user-id">{{ username }}</span> -->
+
+      <!-- 로그인 및 로그아웃 버튼 -->
+      <button v-if="!authStore.isLogin" @click="goToLogin" class="logout-btn">로그인</button>
+      <button v-else @click="authStore.logout" class="logout-btn">로그아웃</button>
     </div>
   </nav>
 </template>
 
 <script setup>
-import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 
-const isLogin = ref(false) // 실제 구현시에는 상태 관리 도구(Pinia/Vuex)를 사용하세요
-const username = ref('')   // 실제 구현시에는 서버 응답에서 받아야 함
+const authStore = useAuthStore()
 const router = useRouter()
 
-const logout = () => {
-  isLogin.value = false
-  router.push('/')
-}
-const login = () => {
-  isLogin.value = true
-  router.push('/accounts/login')
+// 로그인 페이지로 이동하는 함수
+const goToLogin = () => {
+  router.push({ name: 'Login' })
 }
 </script>
 

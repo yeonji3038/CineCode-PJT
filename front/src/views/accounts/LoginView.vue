@@ -7,11 +7,11 @@
         <input v-model="credentials.username" placeholder="ID" type="text" id="username" />
         <input v-model="credentials.password" type="password" id="password" placeholder="Password" />
       </div>
-      <button @click="login" class="login-button">LOGIN</button>
-
+      <button @click="authStore.login(credentials)" class="login-button">LOGIN</button>
+ 
       <div class="social">
         <hr />
-        <p>소셜로그인</p>
+        <p>소셜로그인2</p>
         <hr />
       </div>
       <div class="social_login">
@@ -36,7 +36,9 @@
 import { ref } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/stores/auth';
 
+const authStore = useAuthStore()
 const SERVER_URL = import.meta.env.VITE_APP_URL; 
 
 
@@ -51,21 +53,21 @@ const credentials = ref({
 const errMsg = ref('');
 
 // 로그인 메서드
-const login = () => {
-  axios({
-    method: 'post',
-    url: `${SERVER_URL}accounts/login/`,
-    data: credentials.value,
-  })
-    .then((res) => {
-      localStorage.setItem('JWT', res.data.access);
-      router.push({ name: 'Home' });
-    })
-    .catch((err) => {
-      console.error(err.response.data);
-      errMsg.value = err.response.data.detail;
-    });
-};
+// const login = () => {
+//   axios({
+//     method: 'post',
+//     url: `${SERVER_URL}accounts/login/`,
+//     data: credentials.value,
+//   })
+//     .then((res) => {
+//       localStorage.setItem('JWT', res.data.access);
+//       router.push({ name: 'Home' });
+//     })
+//     .catch((err) => {
+//       console.error(err.response.data);
+//       errMsg.value = err.response.data.detail;
+//     });
+// };
 
 </script>
 

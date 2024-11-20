@@ -1,0 +1,106 @@
+.profile-container {
+  font-family: Arial, sans-serif;
+  background-color: #f7f9fc;
+  padding: 20px;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.profile-img-container {
+  margin-right: 20px;
+}
+
+.profile-img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-info h3 {
+  font-size: 24px;
+  margin: 0;
+}
+
+.profile-info p {
+  font-size: 14px;
+  color: #777;
+}
+
+.contact-btn {
+  background-color: #6fbaf8;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.contact-btn:hover {
+  background-color: #5ca1d4;
+}
+
+/* 프로필 세부 정보 */
+.profile-details {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+.profile-column {
+  width: 48%;
+}
+
+.profile-column h4 {
+  font-size: 18px;
+  color: #333;
+  margin-top: 0;
+}
+
+.profile-column p {
+  font-size: 14px;
+  color: #777;
+}
+
+.skills {
+  margin-top: 10px;
+}
+
+.skill {
+  background-color: #6fbaf8;
+  color: white;
+  border-radius: 20px;
+  padding: 5px 10px;
+  margin-right: 10px;
+  margin-top: 5px;
+  display: inline-block;
+}
+
+.activity-section {
+  display: flex;
+  justify-content: space-between;
+}
+
+.activity-item {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  width: 30%;
+  text-align: center;
+}
+
+.activity-item h5 {
+  font-size: 16px;
+  color: #333;
+}
+
+.activity-item p {
+  font-size: 20px;
+  font-weight: bold;
+  color: #6fbaf8;
+}

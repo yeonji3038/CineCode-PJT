@@ -1,12 +1,13 @@
 <template>
   <div id="Signup">
     <div class="signup">
-      <h2>SIGNUP</h2>
+      <h2>Update Information</h2>
       <div class="signup-info">
         <input
           placeholder="ID"
           type="text"
           v-model="credentials.username"
+          :readonly="true"
         />
         <input
           placeholder="Email"
@@ -40,26 +41,26 @@
         </div>
 
         <input
-          placeholder="Phone Number (ex : 010-1234-5678) "
+          placeholder="Phone Number (ex : 010-1234-5678)"
           type="text"
           v-model="credentials.phone_number"
         />
       </div>
-      <button @click="signup" class="signup-button">SIGNUP2</button>
+      <button @click="updateUserInfo" class="signup-button">UPDATE</button>
       <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
     </div>
   </div>
 </template>
 
 <script>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 
 const SERVER_URL = import.meta.env.VITE_APP_URL;  // 환경 변수로 서버 URL 가져오기
 
 export default {
-  name: 'Signup',
+  name: 'UpdateInfo',
   setup() {
     const router = useRouter();
     const credentials = ref({
@@ -71,7 +72,7 @@ export default {
     });
 
     const errorMessage = ref('');
-
+    
     // 이메일 형식 유효성 검사
     const emailErrorMessage = computed(() => {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -95,44 +96,73 @@ export default {
       return '';
     });
 
-    const signup = () => {
-      console.log(SERVER_URL)
+    // 로그인한 사용자의 정보를 가져오기
+    const fetchUserInfo = () => {
+      axios({
+        method: 'get',
+        url: `${SERVER_URL}accounts/me/`,  // 로그인한 사용자의 정보 가져오기 API
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`, // 로그인 토큰을 Authorization 헤더에 추가
+        },
+      })
+        .then((res) => {
+          // 받아온 사용자 정보를 form에 미리 채우기
+          credentials.value.username = res.data.username;
+          credentials.value.email = res.data.email;
+          credentials.value.phone_number = res.data.phone_number;
+        })
+        .catch((err) => {
+          console.error(err);
+          errorMessage.value = '사용자 정보를 불러오는데 실패했습니다.';
+        });
+    };
+
+    // 사용자 정보 업데이트
+    const updateUserInfo = () => {
       if (passwordErrorMessage.value || confirmPasswordErrorMessage.value || emailErrorMessage.value) {
         errorMessage.value = 'Please fix the errors above before submitting.';
         return;
       }
 
       axios({
-        method: 'post',
-        url: `${SERVER_URL}accounts/signup/`,  // 환경 변수를 사용한 API 요청
+        method: 'put',
+        url: `${SERVER_URL}accounts/update/`,  // 사용자 정보 업데이트 API
         data: credentials.value,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`, // 로그인 토큰을 Authorization 헤더에 추가
+        },
       })
         .then((res) => {
           console.log(res);
-          alert('Welcome to CineCode');
-          router.push({ name: 'Login' });
+          alert('정보가 업데이트 되었습니다.');
+          router.push({ name: 'Profile' }); // 업데이트 후 프로필 페이지로 리다이렉트
         })
         .catch((err) => {
           console.error(err);
           if (err.response && err.response.data) {
-            errorMessage.value = err.response.data.detail || 'Signup failed.';
+            errorMessage.value = err.response.data.detail || '정보 수정에 실패했습니다.';
           } else {
-            errorMessage.value = 'An unexpected error occurred.';
+            errorMessage.value = '예상치 못한 오류가 발생했습니다.';
           }
         });
     };
 
+    // 컴포넌트가 마운트될 때 사용자 정보를 불러오기
+    onMounted(() => {
+      fetchUserInfo();
+    });
+
     return {
       credentials,
-      signup,
+      updateUserInfo,
       errorMessage,
-      emailErrorMessage, // 이메일 오류 메시지
-      passwordErrorMessage, // 비밀번호 조건 메시지
-      confirmPasswordErrorMessage, // 비밀번호 확인 메시지
+      emailErrorMessage,
+      passwordErrorMessage,
+      confirmPasswordErrorMessage,
     };
   },
 };
 </script>
 
-<style scoped src="./css/signup.css">
+<style scoped src="./css/update.css">
 </style>
