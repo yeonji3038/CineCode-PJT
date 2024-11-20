@@ -1,0 +1,44 @@
+[
+    {
+        "model": "movies.tagcategory",
+        "pk": 1,
+        "fields": {
+            "name": "내용별"
+        }
+    },
+    {
+        "model": "movies.tagcategory",
+        "pk": 2,
+        "fields": {
+            "name": "같이 보고 싶은 사람"
+        }
+    },
+    {
+        "model": "movies.tagcategory",
+        "pk": 3,
+        "fields": {
+            "name": "수록곡 기반"
+        }
+    },
+    {
+        "model": "movies.tagcategory",
+        "pk": 4,
+        "fields": {
+            "name": "상황별"
+        }
+    },
+    {
+        "model": "movies.tagcategory",
+        "pk": 5,
+        "fields": {
+            "name": "월별"
+        }
+    },
+    {
+        "model": "movies.tagcategory",
+        "pk": 6,
+        "fields": {
+            "name": "계절별"
+        }
+    }
+]

@@ -8,5 +8,4 @@ urlpatterns = [
     # path('find_id/', views.find_id, name='find_id'),
     # path('google/', views.google, name='google'),
     # path('naver/', views.get_naver_info, name='naver'),
-    path()
 ] 

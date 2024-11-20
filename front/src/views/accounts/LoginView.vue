@@ -4,8 +4,8 @@
       <h2>LOGIN</h2>
 
       <div class="login-info">
-        <input v-model="credentials.username" placeholder="ID" type="text" id="username" />
-        <input v-model="credentials.password" type="password" id="password" placeholder="Password" />
+        <input v-model="credentials.login_username" placeholder="ID" type="text" id="username" />
+        <input v-model="credentials.login_password" type="password" id="password" placeholder="Password" />
       </div>
       <button @click="authStore.login(credentials)" class="login-button">LOGIN</button>
  
@@ -39,8 +39,8 @@ import { useAuthStore } from '@/stores/auth';
 const authStore = useAuthStore()
 // 로그인 입력값을 관리하는 상태 변수
 const credentials = ref({
-  username: '',
-  password: '',
+  login_username: '',
+  login_password: '',
 });
 
 

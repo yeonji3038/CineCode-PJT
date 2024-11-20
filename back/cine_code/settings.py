@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     # 3rd partyapp
     'accounts',
     'movies',
-    'communities',
+    'community',
 
     # restframework
     'rest_framework',

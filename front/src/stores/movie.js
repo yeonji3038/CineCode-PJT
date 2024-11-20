@@ -1,30 +1,25 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import axios from 'axios'
 import { useRouter } from 'vue-router'
+import axios from 'axios'
 
-export const useCounterStore = defineStore('counter', () => {
-  const API_URL = 'http://127.0.0.1:8000'
-  const router = useRouter()
-  const defaultMovies = ref([])
+export const useMovieStore = defineStore('movie', () => {
+  const SERVER_URL = import.meta.env.VITE_APP_URL;  // 환경 변수로 서버 URL 가져오기
+  const movies = ref([])
 
-  // 초기 영화 데이터 요청
-  const getDefaultMovies = function () {
+  // 영화 데이터 가져오기
+  const fetchMovies = () => {
     axios({
       method: 'get',
-      url: `${API_URL}/movies/`,
-      headers: {
-        Authorization: `Token ${token.value}`
-      }
+      url: `${SERVER_URL}movies/`
     })
-    .then((res) => {
-      console.log(res)
-      defaultMovies.value = res.data
-    })
-    .catch((err) => {
-      console.log(err)
-    })
+      .then((response) => {
+        movies.value = response.data.movies
+      })
+      .catch((error) => {
+        console.error('영화 데이터 로딩 실패:', error)
+      })
   }
 
-  return { API_URL, token, isLogin, defaultMovies, getDefaultMovies }
-}, {persist : true})
+  return { movies,fetchMovies}
+}, { persist: true })
