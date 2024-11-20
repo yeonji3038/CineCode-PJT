@@ -1,5 +1,5 @@
 <template>
-  <nav class="sticky-nav">
+  <nav class="navbar">
     <div class="nav-container">
       <div class="nav-left">
         <router-link :to="{ name: 'Home' }" class="logo">cine_code</router-link>
@@ -34,12 +34,15 @@ const goToLogin = () => {
 </script>
 
 <style scoped>
-.sticky-nav {
-  position: sticky;
-  background-color: #000000;
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.5);  /* 수정: 반투명 검정 배경 */
+  backdrop-filter: blur(10px);
   z-index: 1000;
   width: 100%;
-  padding: 1.5rem 0;
+  padding: 0.1rem 0;
 }
 
 .nav-container {

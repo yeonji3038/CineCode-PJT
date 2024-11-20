@@ -12,10 +12,15 @@
   const router = useRouter()
   const props = defineProps({
     movie: {
-      type: Object,
-      required: true
+        type: Object,
+        required: true,
+        validator(movie) {
+        return movie.id && 
+                movie.title && 
+                movie.poster_path !== undefined
+        }
     }
-  })
+  })  
   
   const goToDetail = () => {
     router.push(`/movies/${props.movie.id}`)

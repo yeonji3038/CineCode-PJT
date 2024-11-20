@@ -22,6 +22,16 @@ class Movie(models.Model):
     )
     genres = models.ManyToManyField('Genre', through='MovieGenre')
     tags = models.ManyToManyField('Tag', through='MovieTag')
+    watched_by = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        through='WatchedMovie',
+        related_name='watched_movies'
+    )
+    liked_by = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        through='LikedMovie',
+        related_name='liked_movies'
+    )
 
     def __str__(self):
         return self.title
