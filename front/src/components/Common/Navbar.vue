@@ -9,10 +9,8 @@
       </div>
     
       <div class="nav-right">
-          <!-- 로그인한 사용자 아이디가 있다면 표시 -->
-        <span v-if="authStore.isLogin && authStore.username" class="user-id">
-          {{ authStore.username }}
-        </span>
+        <!-- 로그인한 사용자 아이디 표시 -->
+        <router-link v-if="authStore.isLogin && authStore.username" :to="{ name: 'Profile' }" class="user-id">{{ authStore.username }}</router-link>
         <!-- 로그인 및 로그아웃 버튼 -->
         <button v-if="!authStore.isLogin" @click="goToLogin" class="logout-btn">로그인</button>
         <button v-else @click="authStore.logout" class="logout-btn">로그아웃</button>
@@ -93,8 +91,14 @@ const goToLogin = () => {
 .user-id {
   display: flex;
   align-items: center;
-  gap: 0.5rem;  /* 프로필 이미지와 username 사이 간격 */
   color: white;
+  text-decoration: none;
+  cursor: pointer; 
+  transition: font-weight 0.3s ease;
+}
+
+.user-id:hover {
+  font-weight: bold;
 }
 
 .logout-btn {
