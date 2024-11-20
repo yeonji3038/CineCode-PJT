@@ -37,11 +37,7 @@ const router = createRouter({
       component: SignupView
     },
 
-    {
-      path: '/accounts/findid',
-      name:"Findid",
-      component: FindidView
-    },
+
 
     
     {
