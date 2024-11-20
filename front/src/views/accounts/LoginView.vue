@@ -11,7 +11,7 @@
  
       <div class="social">
         <hr />
-        <p>소셜로그인2</p>
+        <p>소셜로그인</p>
         <hr />
       </div>
       <div class="social_login">

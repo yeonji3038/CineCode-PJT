@@ -45,7 +45,7 @@
           v-model="credentials.phone_number"
         />
       </div>
-      <button @click="signup" class="signup-button">SIGNUP2</button>
+      <button @click="signup" class="signup-button">SIGNUP</button>
       <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
     </div>
   </div>

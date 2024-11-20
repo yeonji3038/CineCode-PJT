@@ -137,6 +137,16 @@
   cursor: pointer;
 }
 
+.naver button {
+  background-color: black;
+  border: none;
+  color: white;
+  font-size: 16px;
+  width: 100%;
+  padding: 10px;
+  cursor: pointer;
+}
+
 /* #naver_id_login {
   display: none;
 }
