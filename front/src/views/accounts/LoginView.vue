@@ -16,7 +16,9 @@
       </div>
       <div class="social_login">
         <div class="google">
-          <img src="@/views/accounts/img/google.png" alt="구글 로그인" />
+          <button @click="GoogleLoginBtn">
+            <img src="@/views/accounts/img/google.png" alt="구글 로그인" />
+          </button>
         </div>
         <div class="naver">
           <img src="@/views/accounts/img/naver.png" alt="네이버 로그인" />

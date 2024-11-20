@@ -3,10 +3,9 @@ import HomeView from '../views/HomeView.vue'
 import LoginView from '@/views/accounts/LoginView.vue'
 import ProfileView from '@/views/accounts/ProfileView.vue'
 import SignupView from '@/views/accounts/SignupView.vue'
-import FindidView from '@/views/accounts/FindidView.vue'
-import SearchView from '@/views/SearchView.vue'
-import MyCodeView from '@/views/MyCodeView.vue'
-import CodeShareView from '@/views/CodeShareView.vue'
+import SearchView from '@/views/movies/SearchView.vue'
+import CodeShareView from '@/views/communities/CodeShareView.vue'
+import MyCodeView from '@/views/communities/MyCodeView.vue'
 
 
 const router = createRouter({
@@ -36,7 +35,6 @@ const router = createRouter({
       name: "Signup",
       component: SignupView
     },
-
 
 
     

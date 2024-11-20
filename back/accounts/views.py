@@ -34,3 +34,26 @@ def signup(request):
 def login(request):
     pass
 
+@api_view(['POST'])
+def google(request):
+    id = request.data['id']
+    
+    if get_user_model().objects.filter(username=id).exists():
+        user = get_user_model().objects.get(username = id)
+        data = {
+            "username" : user.username
+        }
+        return Response(data, status.HTTP_200_OK)
+    else:
+        get_user_model()(
+            username = id,
+            nickname = id,
+        ).save()
+        user = get_user_model().objects.get(username = id)
+        user.set_password(PASSWORD)
+        user.save()
+        data = {
+            "username" : user.username
+        }
+        
+        return Response(data, status.HTTP_200_OK)
