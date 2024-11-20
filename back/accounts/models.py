@@ -6,7 +6,6 @@ from rest_framework.exceptions import ValidationError
 
 # User 모델: 사용자의 기본 정보를 저장하는 모델입니다.
 class User(AbstractUser):
-    nickname = models.CharField(max_length=150)  # 닉네임
     profile_image = models.ImageField(upload_to='profile_images/', null=True, blank=True)  # 프로필 이미지
     phone_number = models.CharField(max_length=15, blank=True, null=True)
     points = models.PositiveIntegerField(default=0)  # 기본 포인트 (0으로 초기화)
@@ -37,19 +36,14 @@ class CustomAccountAdapter(DefaultAccountAdapter):
         username = data.get("username")
         if User.objects.filter(username=username).exists():
             raise ValidationError({"username": "A user with that username already exists."})
-
-        # 중복 nickname 확인 (필요 시)
-        nickname = data.get("nickname")
-        if User.objects.filter(nickname=nickname).exists():
-            raise ValidationError({"nickname": "A user with that nickname already exists."})
+  
         # email
         email = data.get("email")
         # phone number
         phone_number = data.get('phone_number')
         user_email(user, email)
         user_username(user, username)
-        if nickname:
-            user_field(user, "nickname", nickname)
+
         if phone_number:
             user_field(user, 'phone_number', phone_number)
         if "password1" in data:

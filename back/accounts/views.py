@@ -34,18 +34,3 @@ def signup(request):
 def login(request):
     pass
 
-
-def find_id(request):
-    if request.method == 'POST':
-        username = request.data.get('username')
-        phone_number = request.data.get('phone_number')
-
-        # 이메일과 전화번호로 유저를 조회
-        user = User.objects.filter(username=username, profile__phone_number=phone_number).first()
-
-        if user:
-            # 유저가 존재하면 아이디 반환
-            return JsonResponse({'id': user.username})
-        else:
-            # 유저가 없으면 에러 메시지 반환
-            return JsonResponse({'error': '해당하는 아이디를 찾을 수 없습니다.'}, status=404)

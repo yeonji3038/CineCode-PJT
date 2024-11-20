@@ -27,7 +27,7 @@ def get_movie_datas():
             release_date_data = get_release_dates(movie_id)
 
             # 한국 기준 18세 미만인 영화만 추가
-            if release_date_data and release_date_data['certification'] and int(release_date_data['certification']) >= 18:
+            if release_date_data and release_date_data['certification'] and int(release_date_data['certification']) < 18:
                 fields = {
                     'title': movie['title'],
                     'released_date': movie['release_date'],
@@ -46,7 +46,7 @@ def get_movie_datas():
 
                 total_data.append(data)
 
-    with open("movies/fixtures/adult_movie_data.json", "w", encoding="utf-8") as w:
+    with open("movies/fixtures/secure_movie_data.json", "w", encoding="utf-8") as w:
         json.dump(total_data, w, indent=4, ensure_ascii=False)
 
 
@@ -67,7 +67,7 @@ def get_release_dates(movie_id):
     for result in release_data.get('results', []):
         if result['iso_3166_1'] == 'KR':
             for release in result.get('release_dates', []):
-                if release['certification'] and release['certification'].isdigit() and int(release['certification']) >= 18:
+                if release['certification'] and release['certification'].isdigit() and int(release['certification']) < 18:
                     return release
     return None
 
