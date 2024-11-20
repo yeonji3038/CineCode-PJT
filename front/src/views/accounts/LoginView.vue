@@ -34,40 +34,15 @@
 
 <script setup>
 import { ref } from 'vue';
-import axios from 'axios';
-import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 
 const authStore = useAuthStore()
-const SERVER_URL = import.meta.env.VITE_APP_URL; 
-
-
-const router = useRouter();
-
 // 로그인 입력값을 관리하는 상태 변수
 const credentials = ref({
   username: '',
   password: '',
 });
 
-const errMsg = ref('');
-
-// 로그인 메서드
-// const login = () => {
-//   axios({
-//     method: 'post',
-//     url: `${SERVER_URL}accounts/login/`,
-//     data: credentials.value,
-//   })
-//     .then((res) => {
-//       localStorage.setItem('JWT', res.data.access);
-//       router.push({ name: 'Home' });
-//     })
-//     .catch((err) => {
-//       console.error(err.response.data);
-//       errMsg.value = err.response.data.detail;
-//     });
-// };
 
 </script>
 

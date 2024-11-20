@@ -17,9 +17,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   // 로그인
   const login = function (payload) {
-    console.log("로그인 실행")
     const { username, password } = payload
-    console.log(username, password)
     axios({
       method: 'post',
       url: `${API_URL}accounts/login/`,
@@ -43,7 +41,7 @@ export const useAuthStore = defineStore('auth', () => {
   const logout = function () {
     axios({
       method: 'post',
-      url: `${API_URL}/accounts/logout/`,
+      url: `${API_URL}accounts/logout/`,
     })
     .then((res) => {
       token.value = null

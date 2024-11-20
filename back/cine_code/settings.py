@@ -11,11 +11,11 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
-from decouple import config
 
 # Google API 키를 환경 변수로부터 불러옵니다.
-GOOGLE_CLIENT_ID = config('GOOGLE_CLIENT_ID')
-GOOGLE_CLIENT_SECRET = config('GOOGLE_CLIENT_SECRET')
+# from decouple import config
+# GOOGLE_CLIENT_ID = config('GOOGLE_CLIENT_ID')
+# GOOGLE_CLIENT_SECRET = config('GOOGLE_CLIENT_SECRET')
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -54,7 +54,7 @@ INSTALLED_APPS = [
     'dj_rest_auth.registration',
 
     # social login 필요 시 추가
-    'django.contrib.sites',
+    # 'django.contrib.sites',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -66,12 +66,12 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'allauth.socialaccount.providers.naver',
-    'allauth.socialaccount.providers.google',
+    # 'allauth.socialaccount.providers.naver',
+    # 'allauth.socialaccount.providers.google',
 ]
 
 # social login 필요 시 추가
-SITE_ID = 1 
+# SITE_ID = 1 
 
 REST_FRAMEWORK = {
     # Authentication
@@ -175,33 +175,31 @@ REST_AUTH = {
 }
 
 ACCOUNT_ADAPTER  = 'accounts.models.CustomAccountAdapter'
-ACCOUNT_USERNAME_REQUIRED = True
-ACCOUNT_AUTHENTICATION_METHOD = 'username'
 ACCOUNT_EMAIL_REQUIRED = False
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 
 
-# 소셜 로그인
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
-]
-REST_USE_JWT = True
+# # 소셜 로그인
+# AUTHENTICATION_BACKENDS = [
+#     'django.contrib.auth.backends.ModelBackend',
+#     'allauth.account.auth_backends.AuthenticationBackend',
+# ]
+# REST_USE_JWT = True
 
-# 구글 로그인
-SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        'APP': {
-        'client_id': GOOGLE_CLIENT_ID,
-        'secret': GOOGLE_CLIENT_SECRET,
-        'key': ''
-        },
-        'SCOPE': [
-            'profile',
-            'email',
-        ],
-        'AUTH_PARAMS': {
-            'access_type': 'online',
-        }
-    }
-}
+# # 구글 로그인
+# SOCIALACCOUNT_PROVIDERS = {
+#     'google': {
+#         'APP': {
+#         'client_id': GOOGLE_CLIENT_ID,
+#         'secret': GOOGLE_CLIENT_SECRET,
+#         'key': ''
+#         },
+#         'SCOPE': [
+#             'profile',
+#             'email',
+#         ],
+#         'AUTH_PARAMS': {
+#             'access_type': 'online',
+#         }
+#     }
+# }
