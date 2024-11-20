@@ -8,6 +8,7 @@ import SearchView from '@/views/SearchView.vue'
 import MyCodeView from '@/views/MyCodeView.vue'
 import CodeShareView from '@/views/CodeShareView.vue'
 
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -23,6 +24,7 @@ const router = createRouter({
       component: SearchView
     },
 
+    // 회원가입, 로그인
     {
       path: '/accounts/login',
       name : "Login",
@@ -48,6 +50,7 @@ const router = createRouter({
       component: ProfileView
     },
 
+    // 영화
     {
       path: '/mycode/:username',
       name:"mycode",

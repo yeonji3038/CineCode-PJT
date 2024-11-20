@@ -4,7 +4,7 @@
       <h2>SIGNUP</h2>
       <div class="signup-info">
         <input
-          placeholder="UserName"
+          placeholder="ID"
           type="text"
           v-model="credentials.username"
         />
@@ -19,17 +19,6 @@
           {{ emailErrorMessage }}
         </div>
 
-        <input
-          placeholder="Nickname"
-            type="text"
-            v-model="credentials.nickname"
-            @blur="checkNicknameAvailability" 
-            :class="{ 'input-error': nicknameErrorMessage }"
-          />
-          <div v-if="nicknameErrorMessage" class="error-message">
-            {{ nicknameErrorMessage }}
-          </div>
-        
         <input
           placeholder="Password"
           type="password"
@@ -67,7 +56,7 @@ import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 
-const SERVER_URL = "http://127.0.0.1:8000/";
+const SERVER_URL = import.meta.env.VITE_APP_URL;  // 환경 변수로 서버 URL 가져오기
 
 export default {
   name: 'Signup',
@@ -76,14 +65,12 @@ export default {
     const credentials = ref({
       username: '',
       email: '',
-      nickname: '',
       password1: '',
       password2: '',
       phone_number: '',
     });
 
     const errorMessage = ref('');
-    
 
     // 이메일 형식 유효성 검사
     const emailErrorMessage = computed(() => {
@@ -109,6 +96,7 @@ export default {
     });
 
     const signup = () => {
+      console.log(SERVER_URL)
       if (passwordErrorMessage.value || confirmPasswordErrorMessage.value || emailErrorMessage.value) {
         errorMessage.value = 'Please fix the errors above before submitting.';
         return;
@@ -116,7 +104,7 @@ export default {
 
       axios({
         method: 'post',
-        url: `${SERVER_URL}accounts/signup/`,
+        url: `${SERVER_URL}accounts/signup/`,  // 환경 변수를 사용한 API 요청
         data: credentials.value,
       })
         .then((res) => {
