@@ -7,7 +7,7 @@
         <input v-model="credentials.username" placeholder="ID" type="text" id="username" />
         <input v-model="credentials.password" type="password" id="password" placeholder="Password" />
       </div>
-      <button @click="login">LOGIN</button>
+      <button @click="login" class="login-button">LOGIN</button>
 
       <div class="social">
         <hr />

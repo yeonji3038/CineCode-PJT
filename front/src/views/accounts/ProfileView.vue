@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <h1>로그인</h1>
+  <h1>프로필</h1>
 
 </template>
 

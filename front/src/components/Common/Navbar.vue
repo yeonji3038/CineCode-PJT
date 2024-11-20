@@ -1,11 +1,11 @@
 <template>
   <nav class="sticky-nav">
     <div class="nav-container">
-      <router-link to="/" class="logo">cine_code</router-link>
+      <router-link to="{name: home}" class="logo">cine_code</router-link>
       <div class="nav-links">
-        <router-link to="/codeshare" class="nav-item">코드 쉐어</router-link>
+        <router-link to="{name: codeshare}" class="nav-item">코드 쉐어</router-link>
         <span v-if="isLogin" class="nav-divider">|</span>
-        <router-link v-if="isLogin" :to="'/mycode/' + username" class="nav-item">내 코드</router-link>
+        <router-link v-if="isLogin" to="{name: mycode}" class="nav-item">내 코드</router-link>
       </div>
       <button v-if="!isLogin" @click="login" class="logout-btn">로그인</button>
       <button v-else @click="logout" class="logout-btn">로그아웃</button>
