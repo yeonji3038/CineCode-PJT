@@ -14,7 +14,7 @@
       <div class="content">
         <!-- 영화 포스터 -->
         <div class="poster">
-          <img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" :alt="movie.title">
+          <img :src="movie.poster_path" :alt="movie.title">
         </div>
   
         <!-- 영화 정보 -->

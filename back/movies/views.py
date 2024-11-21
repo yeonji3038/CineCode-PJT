@@ -83,6 +83,7 @@ def movie_detail(request, movie_pk):
     
     # 응답 데이터 구성
     response_data = MovieSerializer(movie).data
+    response_data['genres'] = [genre.name for genre in movie.genres.all()]
     if youtube_data.get('items'):
         response_data['trailer_id'] = youtube_data['items'][0]['id']['videoId']
     

@@ -13,8 +13,8 @@ class MovieSerializer(serializers.ModelSerializer):
             return f"https://image.tmdb.org/t/p/w500{obj.poster_path}"
         return None
     
-    def get_genres(self, obj):
-        return [genre.name for genre in obj.genres.all()]
+    # def get_genres(self, obj):
+    #     return [genre.name for genre in obj.genres.all()]
 
 
 class WatchedMovieSerializer(serializers.ModelSerializer):
