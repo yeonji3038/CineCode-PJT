@@ -20,3 +20,26 @@ class UserSerializer(RegisterSerializer):
         user.phone_number = self.validated_data.get('phone_number')
         user.save()
         return user
+
+class UserUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = get_user_model()
+        fields = ('email', 'password', 'profile_image')
+        extra_kwargs = {
+            'password': {'write_only': True},
+            'email': {'required': False},
+            'profile_image': {'required': False}
+        }
+
+    def update(self, instance, validated_data):
+        if 'password' in validated_data:
+            instance.set_password(validated_data.pop('password'))
+        return super().update(instance, validated_data)
+
+
+# 기존 UserUpdateSerializer는 그대로 두고 아래 클래스를 추가합니다class UserProfileSerializer(serializers.ModelSerializer):
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = get_user_model()
+        fields = ('username', 'email', 'profile_image')
+        read_only_fields = ('username',)

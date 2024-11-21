@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Google API 키를 환경 변수로부터 불러옵니다.
 # from decouple import config
@@ -172,6 +173,7 @@ AUTH_USER_MODEL = 'accounts.User'
 # REST-AUTH 회원가입 기본 Serailizer 재정의
 REST_AUTH = {
  'REGISTER_SERIALIZER': 'accounts.serializers.UserSerializer',
+ 'TOKEN_SERIALIZER': 'dj_rest_auth.serializers.TokenSerializer',
 }
 
 ACCOUNT_ADAPTER  = 'accounts.models.CustomAccountAdapter'
@@ -203,3 +205,6 @@ ACCOUNT_EMAIL_VERIFICATION = 'none'
 #         }
 #     }
 # }
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

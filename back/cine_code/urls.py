@@ -16,6 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from accounts import views  # accounts 앱의 views를 import 해야 합니다
+from django.conf.urls.static import static
+from . import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,4 +27,6 @@ urlpatterns = [
     # path('accounts/social/', include('allauth.urls')), 
     path('movies/', include('movies.urls')),
     path('community/', include('community.urls')),
-]
+    path('accounts/update/', views.UserUpdateView.as_view(), name='user-update'),
+    path('accounts/profile/', views.UserProfileView.as_view(), name='user-profile'),
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,4 +1,4 @@
-from django.urls import path, include
+from django.urls import path
 from . import views
 
 app_name = "accounts"
@@ -8,4 +8,5 @@ urlpatterns = [
     # path('find_id/', views.find_id, name='find_id'),
     # path('google/', views.google, name='google'),
     # path('naver/', views.get_naver_info, name='naver'),
+
 ] 
