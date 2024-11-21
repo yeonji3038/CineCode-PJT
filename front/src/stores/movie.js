@@ -77,7 +77,7 @@ const getMovieDetail = (movieId) => {
       return res.data
     })
     .catch((err) => {
-      console.error('영화 상세 정보 로딩 실패:', error)
+      console.error('영화 상세 정보 로딩 실패:', err)
       throw err
     })
 }

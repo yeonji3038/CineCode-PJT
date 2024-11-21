@@ -41,6 +41,7 @@
 >[민주]
 >- [ ] MovieDetail 프론트
 >- [ ] MovieDetail 백엔드
+>- [X] fixtures 데이터 수정
 >[연지]
 >- [ ] 프로필 프론트
 >- [ ] 프로필 백엔드

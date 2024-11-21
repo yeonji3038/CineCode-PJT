@@ -10,6 +10,7 @@ class Movie(models.Model):
 
     title = models.CharField(max_length=200)
     poster_path = models.TextField(null=True, blank=True)
+    backdrop_path = models.TextField(null=True, blank=True)
     released_date = models.DateField()
     runtime = models.IntegerField(null=True, blank=True)
     popularity = models.FloatField(null=True, blank=True)
@@ -42,7 +43,7 @@ class Genre(models.Model):
     def __str__(self):
         return self.name
 
-class TagCategory(models.Model):
+class Category(models.Model):
     name = models.CharField(max_length=100)
 
     def __str__(self):
@@ -50,7 +51,7 @@ class TagCategory(models.Model):
 
 class Tag(models.Model):
     name = models.CharField(max_length=100)
-    category = models.ForeignKey(TagCategory, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
