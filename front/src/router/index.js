@@ -80,6 +80,12 @@ const router = createRouter({
 // 네비게이션 가드
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
+
+  // 페이지 진입 전에 로그인 상태 초기화
+  if (to.path === '/') {
+    localStorage.removeItem('token');  // 또는 관련 인증 키
+    next();
+  }
   
   // 인증이 필요한 페이지에 대한 처리
   if (to.meta.requiresAuth && !authStore.isLogin) {

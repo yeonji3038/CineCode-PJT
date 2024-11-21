@@ -64,5 +64,23 @@ export const useMovieStore = defineStore('movie', () => {
     })
   }
 
-  return { movies, watchedMovies, likedMovies, fetchMovies, fetchWatchedMovies, fetchLikedMovies }
+  // movie store에 추가
+const getMovieDetail = (movieId) => {
+  return axios({
+    method: 'get',
+    url: `${SERVER_URL}movies/${movieId}/detail/`,
+    headers: authStore.token ? {
+      Authorization: `Token ${authStore.token}`
+    } : {}
+  })
+    .then((res) => {
+      return res.data
+    })
+    .catch((err) => {
+      console.error('영화 상세 정보 로딩 실패:', error)
+      throw err
+    })
+}
+
+  return { movies, watchedMovies, likedMovies, fetchMovies, fetchWatchedMovies, fetchLikedMovies, getMovieDetail }
 }, { persist: true })

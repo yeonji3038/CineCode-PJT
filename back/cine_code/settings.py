@@ -12,6 +12,14 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
+import environ
+
+# 환경변수 설정
+env = environ.Env(DEBUG=(bool, True))
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+environ.Env.read_env(env_file=os.path.join(BASE_DIR, '.env'))
+TMDB_API_KEY = env('TMDB_API_KEY')
+YOUTUBE_API_KEY = env('YOUTUBE_API_KEY')
 
 # Google API 키를 환경 변수로부터 불러옵니다.
 # from decouple import config

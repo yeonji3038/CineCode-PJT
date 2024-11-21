@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar">
+  <nav class="navbar" :class="{ 'scrolled': isScrolled }">
     <div class="nav-container">
       <div class="nav-left">
         <router-link :to="{ name: 'Home' }" class="logo">cine_code</router-link>
@@ -22,15 +22,33 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { computed } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 
 const authStore = useAuthStore()
 const router = useRouter()
+const isScrolled = ref(false)
+
+// 스크롤 이벤트 핸들러
+const handleScroll = () => {
+  isScrolled.value = window.scrollY > 50  // 50px 이상 스크롤되면 배경 변경
+}
+
+// 컴포넌트가 마운트될 때 스크롤 이벤트 리스너 추가
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll)
+})
+
+// 컴포넌트가 언마운트될 때 이벤트 리스너 제거
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
+})
 
 // 로그인 페이지로 이동하는 함수
 const goToLogin = () => {
   router.push({ name: 'Login' })
 }
+
+
 </script>
 
 <style scoped>
@@ -38,11 +56,16 @@ const goToLogin = () => {
   position: fixed;
   top: 0;
   left: 0;
-  background-color: rgba(0, 0, 0, 0.5);  /* 수정: 반투명 검정 배경 */
-  backdrop-filter: blur(10px);
+  background-color: transparent;  /* 초기 상태는 완전 투명 */
   z-index: 1000;
   width: 100%;
   padding: 0.1rem 0;
+  transition: all 0.3s ease;  /* 부드러운 전환 효과 추가 */
+}
+
+.navbar.scrolled {
+  background-color: rgba(0, 0, 0, 0.95);  /* 거의 불투명한 검정색으로 변경 */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);  /* 선택사항: 그림자 효과 추가 */
 }
 
 .nav-container {

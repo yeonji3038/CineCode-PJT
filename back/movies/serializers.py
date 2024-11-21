@@ -6,12 +6,15 @@ class MovieSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Movie
-        fields = ('id', 'title', 'poster_path',)
+        fields = '__all__'
     
     def get_poster_path(self, obj):
         if obj.poster_path:
             return f"https://image.tmdb.org/t/p/w500{obj.poster_path}"
         return None
+    
+    def get_genres(self, obj):
+        return [genre.name for genre in obj.genres.all()]
 
 
 class WatchedMovieSerializer(serializers.ModelSerializer):
