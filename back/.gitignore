@@ -317,6 +317,10 @@ fabric.properties
 # https://plugins.jetbrains.com/plugin/8053-azure-toolkit-for-intellij
 .idea/**/azureSettings.xml
 
+# Google Cloud credentials
+*.json
+!package.json
+
 ### Python ###
 # Byte-compiled / optimized / DLL files
 

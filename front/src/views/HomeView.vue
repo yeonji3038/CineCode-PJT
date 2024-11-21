@@ -6,19 +6,25 @@
                 <h1 v-if="authStore.isLogin" class="username-title">
                     {{ authStore.username }}님,
                 </h1>
-    
+                
+                <!--음성인식-->
                 <div class="search-container">
                   <h2>오늘 하루의 기분이나 현재 감정을 알려주시면 영화를 추천해드릴게요!</h2>
                   <div class="search-box">
                     <div class="search-wrapper">
-                      <img src="@/assets/search-icon.svg" class="search-icon" alt="search">
                       <input 
                         type="text" 
                         v-model="searchQuery" 
                         placeholder="ex. 오늘 힘든 하루를 보내서 조금 지쳐 있어"
                         class="search-input"
                       >
-                      <img src="@/assets/mic-icon.svg" class="mic-icon" alt="voice">
+                      <img 
+                        src="@/assets/mic-icon.svg" 
+                        class="mic-icon" 
+                        alt="voice"
+                        @click="startVoiceRecognition"
+                        :class="{ 'recording': isRecording }"
+                      >
                     </div>
                   </div>
                 </div>
@@ -72,7 +78,10 @@
   import { useAuthStore } from '@/stores/auth'
   import { storeToRefs } from 'pinia'
   import MovieCard from '@/components/MovieCard.vue'
-  
+  import axios from 'axios'
+  import { useRouter } from 'vue-router'
+
+  const API_URL = import.meta.env.VITE_APP_URL
   const movieStore = useMovieStore()
   
   const { movies } = storeToRefs(movieStore)
@@ -80,7 +89,83 @@
   const { watchedMovies, likedMovies } = storeToRefs(movieStore)
   const searchQuery = ref('')
   const movieScroll = ref(null)
-  
+  const router = useRouter()
+  const isRecording = ref(false)
+  const mediaRecorder = ref(null)
+  const audioChunks = ref([])
+
+  const startVoiceRecognition = () => {
+    if (isRecording.value) {
+      alert('이미 녹음 중입니다.')
+      return
+    }
+
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(stream => {
+        isRecording.value = true
+        mediaRecorder.value = new MediaRecorder(stream)
+        audioChunks.value = []
+
+        mediaRecorder.value.ondataavailable = (event) => {
+          audioChunks.value.push(event.data)
+        }
+
+        mediaRecorder.value.onstop = () => {
+          const audioBlob = new Blob(audioChunks.value)
+          const formData = new FormData()
+          formData.append('audio', audioBlob)
+
+          axios.post(
+            `${API_URL}movies/analyze-voice/`,
+            formData,
+            {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            }
+          )
+          .then(response => {
+            router.push({
+              name: 'Search',
+              params: {
+                searchResults: response.data
+              }
+            })
+          })
+          .catch(error => {
+            console.error('음성 분석 실패:', error)
+            alert('음성 인식에 실패했습니다. 다시 시도해주세요.')
+          })
+          .finally(() => {
+            isRecording.value = false
+            if (mediaRecorder.value && mediaRecorder.value.stream) {
+              mediaRecorder.value.stream.getTracks().forEach(track => track.stop())
+            }
+          })
+        }
+
+        mediaRecorder.value.start()
+        setTimeout(() => {
+          if (mediaRecorder.value && mediaRecorder.value.state === 'recording') {
+            stopRecording()
+          }
+        }, 5000)
+      })
+      .catch(error => {
+        console.error('마이크 접근 실패:', error)
+        alert('마이크 접근에 실패했습니다. 마이크 권한을 확인해주세요.')
+        isRecording.value = false
+      })
+  }
+
+  const stopRecording = () => {
+    if (mediaRecorder.value && mediaRecorder.value.state !== 'inactive') {
+      mediaRecorder.value.stop()
+      isRecording.value = false
+      mediaRecorder.value.stream.getTracks().forEach(track => track.stop())
+    }
+  }
+
   onMounted(() => {
     movieStore.fetchMovies()
     if (authStore.isLogin) {
@@ -90,117 +175,18 @@
   })
   </script>
   
-<style scoped>
-.home {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 80px 6rem 2rem; /* 좌우 패딩만 유지 */
-}
-
-
-.search-container {
-    text-align: center;
-    margin: 0 auto; /* 상단 마진 제거 */
-    margin-bottom: 6rem; /* 하단 마진만 유지 */
-    max-width: 800px;
-}
-
-.username-title {
-  font-size: 2rem;
-  color: white;
-  margin-bottom: 1rem;
-  font-weight: lighter;
-}
-
-.search-container h2 {
-  margin-bottom: 2rem;
-  color: #ffffff;
-  font-size: 1.5rem;
-  font-weight: lighter;
-}
-
-.search-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-  background: white;
-  border-radius: 30px;
-  padding: 0.5rem 1rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.search-icon {
-  width: 24px;
-  height: 24px;
-  margin-right: 10px;
-}
-
+<style scoped src="./home.css">
 .mic-icon {
-  width: 24px;
-  height: 24px;
-  margin-left: 10px;
   cursor: pointer;
 }
 
-.search-input {
-  flex: 1;
-  border: none;
-  padding: 0.8rem;
-  font-size: 1rem;
-  background: transparent;
-  outline: none;
+.mic-icon.recording {
+  animation: pulse 1s infinite;
 }
 
-.movie-section {
-  margin: 2rem 0;
-}
-
-.movie-scroll {
-  display: flex;
-  overflow-x: auto;
-  gap: 1rem;
-  padding: 1rem 0;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.5) transparent;
-}
-
-.movie-scroll::-webkit-scrollbar {
-  height: 8px;
-}
-
-.movie-scroll::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.movie-scroll::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.5);
-  border-radius: 4px;
-}
-
-.empty-message {
-  color: #666;
-  text-align: center;
-  padding: 2rem;
-  font-size: 1.1rem;
-}
-
-.section-title {
-  color: #ffffff;
-  font-size: 1.5rem;
-  margin: 0.5rem 0;
-  font-weight: normal;
-}
-
-.movie-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1.5rem;
-  padding: 1rem 0;
-}
-
-.content-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 2rem 6rem;  /* navbar와 동일한 좌우 패딩 적용 */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
 }
 </style>

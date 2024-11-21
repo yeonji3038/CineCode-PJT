@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 import environ
+from google.oauth2 import service_account
 
 # 환경변수 설정
 env = environ.Env(DEBUG=(bool, True))
@@ -216,3 +217,10 @@ ACCOUNT_EMAIL_VERIFICATION = 'none'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+GOOGLE_APPLICATION_CREDENTIALS = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'cindcode-8912336dcf26.json')  # JSON 파일명이 정확한지 확인하세요
+
+# Google Cloud 클라이언트 설정
+GOOGLE_CLOUD_CREDENTIALS = service_account.Credentials.from_service_account_file(
+    GOOGLE_APPLICATION_CREDENTIALS  
+)

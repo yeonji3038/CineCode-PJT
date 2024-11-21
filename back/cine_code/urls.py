@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from accounts import views  # accounts 앱의 views를 import 해야 합니다
+from movies import views as movies_views  # movies 앱의 views 추가
 from django.conf.urls.static import static
 from . import settings
 
@@ -24,9 +25,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/signup/', include('dj_rest_auth.registration.urls')),
     path('accounts/', include('dj_rest_auth.urls')), 
-    # path('accounts/social/', include('allauth.urls')), 
     path('movies/', include('movies.urls')),
     path('community/', include('community.urls')),
     path('accounts/update/', views.UserUpdateView.as_view(), name='user-update'),
     path('accounts/profile/', views.UserProfileView.as_view(), name='user-profile'),
+    path('movies/analyze-voice/', movies_views.analyze_voice, name='analyze-voice'),  # movies.views의 analyze_voice 사용
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
