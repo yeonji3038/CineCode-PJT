@@ -29,5 +29,5 @@ urlpatterns = [
     path('community/', include('community.urls')),
     path('accounts/update/', views.UserUpdateView.as_view(), name='user-update'),
     path('accounts/profile/', views.UserProfileView.as_view(), name='user-profile'),
-    path('movies/analyze-voice/', movies_views.analyze_voice, name='analyze-voice'),  # movies.views의 analyze_voice 사용
+    path('movies/analyze_voice/', movies_views.analyze_voice, name='analyze-voice'),  # movies.views의 analyze_voice 사용
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

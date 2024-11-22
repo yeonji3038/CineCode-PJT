@@ -6,11 +6,11 @@ from django.conf import settings
 from .models import Movie, WatchedMovie, LikedMovie
 from .serializers import MovieSerializer, WatchedMovieSerializer, LikedMovieSerializer
 import requests
-# from google.cloud import language_v1
-# import os
-# from django.http import JsonResponse
-# from django.views.decorators.csrf import csrf_exempt
-# import json
+import requests
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from google.cloud import speech, language_v2
+import os
 from google.cloud import speech_v1
 from google.cloud import language_v1
 import json
@@ -92,101 +92,89 @@ def movie_detail(request, movie_pk):
 
 #음성인식
 
+# 음성 파일을 텍스트로 변환하는 함수
+def transcribe_file(audio_file: str) -> str:
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = settings.GOOGLE_APPLICATION_CREDENTIALS
+    
+    client = speech.SpeechClient()
 
-# os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "path_to_your_service_account_key.json"
+    with open(audio_file, "rb") as f:
+        audio_content = f.read()
 
-# def analyze_sentiment(text):
-#     client = language_v1.LanguageServiceClient()
-#     document = language_v1.Document(content=text, type_=language_v1.Document.Type.PLAIN_TEXT)
-#     sentiment = client.analyze_sentiment(request={'document': document}).document_sentiment
-#     return sentiment.score  # 감정 점수 반환
+    audio = speech.RecognitionAudio(content=audio_content)
+    config = speech.RecognitionConfig(
+        encoding=speech.RecognitionConfig.AudioEncoding.WEBM_OPUS,  # WebM OPUS 형식으로 변경
+        sample_rate_hertz=48000,  # 48000Hz로 변경
+        language_code="ko",
+        enable_automatic_punctuation=True,  # 자동 문장부호 추가
+    )
 
-# #TMDB API 호출을 통한 영화 추천
-# def get_movie_recommendations(genre_id):
-#     url = f'https://api.themoviedb.org/3/discover/movie?api_key={TMDB_API_KEY}&with_genres={genre_id}'
-#     response = requests.get(url)
-#     return response.json()
+    response = client.recognize(config=config, audio=audio)
+    transcript = ""
+    for result in response.results:
+        transcript += result.alternatives[0].transcript
+    return transcript
 
-# def recommend_movies_based_on_sentiment(score):
-#     if score > 0:
-#         genre_id = 10749  # 로맨스
-#     else:
-#         genre_id = 28  # 액션
-#     return get_movie_recommendations(genre_id)
+# 감정 분석 함수
+def sample_analyze_sentiment(text_content: str):
+    client = language_v2.LanguageServiceClient()
+    document_type_in_plain_text = language_v2.Document.Type.PLAIN_TEXT
+    language_code = "ko"
 
-# #전체흐름
-# @csrf_exempt
-# def analyze_sentiment_view(request):
-#     if request.method == "POST":
-#         data = json.loads(request.body)
-#         text = data.get('text')
+    document = {
+        "content": text_content,
+        "type_": document_type_in_plain_text,
+        "language_code": language_code,
+    }
 
-#         # 감정 분석
-#         score = analyze_sentiment(text)
+    encoding_type = language_v2.EncodingType.UTF8
+    response = client.analyze_sentiment(
+        request={"document": document, "encoding_type": encoding_type}
+    )
 
-#         # 감정 분석 결과에 따라 영화 추천
-#         recommended_movies = recommend_movies_based_on_sentiment(score)
+    sentiment_score = response.document_sentiment.score
+    sentiment_magnitude = response.document_sentiment.magnitude
+    return sentiment_score, sentiment_magnitude
 
-#         return JsonResponse({
-#             "emotion_score": score,
-#             "recommended_movies": recommended_movies
-#         })
+# TMDB API 호출 함수
+def search_movies(query: str):
+    url = f"https://api.themoviedb.org/3/search/movie?api_key={settings.TMDB_API_KEY}&query={query}"
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.json().get("results", [])
+    return []
 
-
-@api_view(['POST'])
+@csrf_exempt
 def analyze_voice(request):
-    try:
-        client = speech_v1.SpeechClient(credentials=settings.GOOGLE_CLOUD_CREDENTIALS)
-        
-        audio = speech_v1.RecognitionAudio(content=request.FILES['audio'].read())
-        config = speech_v1.RecognitionConfig(
-            encoding=speech_v1.RecognitionConfig.AudioEncoding.LINEAR16,
-            language_code="ko-KR",
-        )
-        
-        response = client.recognize(config=config, audio=audio)
-        
-        # 음성 인식 결과가 있는지 확인
-        if not response.results:
-            return Response({'error': '음성을 인식할 수 없습니다.'}, status=400)
-            
-        text = response.results[0].alternatives[0].transcript
-        
-        # Natural Language API로 감정 분석
-        language_client = language_v1.LanguageServiceClient(credentials=settings.GOOGLE_CLOUD_CREDENTIALS)
-        document = language_v1.Document(content=text, type_=language_v1.Document.Type.PLAIN_TEXT)
-        sentiment = language_client.analyze_sentiment(request={'document': document})
-        
-        score = sentiment.document_sentiment.score
-        
-        # 감정 점수에 따른 장르 선택
-        if score > 0.3:
-            genres = [35, 10749]  # 코미디, 로맨스
-        elif score < -0.3:
-            genres = [28, 12]  # 액션, 어드벤처
-        else:
-            genres = [18, 99]  # 드라마, 다큐멘터리
+    # 환경 변수 명시적 설정
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = settings.GOOGLE_APPLICATION_CREDENTIALS
+    
+    if request.method == "POST" and request.FILES.get("audio_file"):
+        audio_file = request.FILES["audio_file"]
+        # 오디오 파일을 임시로 저장
+        audio_path = "audio.wav"
+        with open(audio_path, "wb") as f:
+            for chunk in audio_file.chunks():
+                f.write(chunk)
 
-        # TMDB API로 영화 추천
-        tmdb_api_key = settings.TMDB_API_KEY
-        movies = []
-        for genre in genres:
-            url = f'https://api.themoviedb.org/3/discover/movie'
-            params = {
-                'api_key': tmdb_api_key,
-                'with_genres': genre,
-                'language': 'ko-KR'
-            }
-            response = requests.get(url, params=params)
-            movies.extend(response.json()['results'])
-        
-        return Response({
-            'text': text,
-            'sentiment': score,
-            'movies': movies[:10] if movies else []  # movies가 비어있을 경우 처리
+        # 음성을 텍스트로 변환
+        transcript = transcribe_file(audio_path)
+        print(transcript)
+
+        # 텍스트에 대해 감정 분석 수행
+        sentiment_score, sentiment_magnitude = sample_analyze_sentiment(transcript)
+
+        # 감정 분석 점수에 따라 TMDB에서 영화 검색 (예: 긍정적일 때 로맨스 장르, 부정적일 때 액션 영화)
+        if sentiment_score > 0:
+            movies = search_movies("romance")
+        else:
+            movies = search_movies("action")
+        return JsonResponse({
+            "transcript": transcript,
+            "sentiment_score": sentiment_score,
+            "sentiment_magnitude": sentiment_magnitude,
+            "movies": movies,
         })
-        
-    except IndexError as e:
-        return Response({'error': '음성 인식 결과를 처리할 수 없습니다.'}, status=400)
-    except Exception as e:
-        return Response({'error': str(e)}, status=400)
+    
+
+    return JsonResponse({"error": "No audio file provided"}, status=400)

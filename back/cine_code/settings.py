@@ -218,7 +218,7 @@ ACCOUNT_EMAIL_VERIFICATION = 'none'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-GOOGLE_APPLICATION_CREDENTIALS = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'cindcode-8912336dcf26.json')  # JSON 파일명이 정확한지 확인하세요
+GOOGLE_APPLICATION_CREDENTIALS = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'cindcode-93e04ba2fbc3.json')  # JSON 파일명이 정확한지 확인하세요
 
 # Google Cloud 클라이언트 설정
 GOOGLE_CLOUD_CREDENTIALS = service_account.Credentials.from_service_account_file(
