@@ -73,7 +73,7 @@
 </template>
   
 <script setup>
-  import { ref,onMounted } from 'vue'
+  import { ref,onMounted, onUnmounted } from 'vue'
   import { useMovieStore } from '@/stores/movie'
   import { useAuthStore } from '@/stores/auth'
   import { storeToRefs } from 'pinia'
@@ -82,6 +82,8 @@
   import { useRouter } from 'vue-router'
 
   const API_URL = import.meta.env.VITE_APP_URL
+  const CST_API_KEY = import.meta.env.VITE_CST_API_KEY
+  const CNL_API_KEY = import.meta.env.VITE_CNL_API_KEY
   const movieStore = useMovieStore()
   
   const { movies } = storeToRefs(movieStore)
@@ -90,80 +92,139 @@
   const searchQuery = ref('')
   const movieScroll = ref(null)
   const router = useRouter()
-  const isRecording = ref(false)
-  const mediaRecorder = ref(null)
-  const audioChunks = ref([])
 
+
+  // 음성 녹음 관련 상태 변수들
+  const isRecording = ref(false)  // 현재 녹음 중인지 상태
+  const mediaStream = ref(null)   // 오디오 스트림을 저장
+  const mediaRecorder = ref(null) // 미디어 녹음기 인스턴스
+  const audioChunks = ref([])     // 녹음된 오디오 데이터 청크를 저장하는 배열
+
+  // 음성 녹음 시작 함수
   const startVoiceRecognition = () => {
     if (isRecording.value) {
-      alert('이미 녹음 중입니다.')
-      return
+      return;
     }
 
-    navigator.mediaDevices.getUserMedia({ audio: true })
+    // 기본 오디오 설정
+    const audioConstraints = {
+      audio: {
+        echoCancellation: { ideal: true },
+        noiseSuppression: { ideal: true },
+        autoGainControl: { ideal: true },
+        // 모든 종류의 오디오 입력 장치 허용
+        deviceId: 'default'  // 시스템 기본 오디오 입력 장치 사용
+      }
+    };
+
+    // 직접 getUserMedia 호출
+    navigator.mediaDevices.getUserMedia(audioConstraints)
       .then(stream => {
-        isRecording.value = true
-        mediaRecorder.value = new MediaRecorder(stream)
-        audioChunks.value = []
+        console.log('오디오 스트림 획득 성공:', stream);
+        isRecording.value = true;
+        
+        try {
+          // 다양한 오디오 형식 지원
+          const mimeType = MediaRecorder.isTypeSupported('audio/webm')
+            ? 'audio/webm'
+            : 'audio/mp4';
+
+          mediaRecorder.value = new MediaRecorder(stream, {
+            mimeType: mimeType,
+            audioBitsPerSecond: 128000
+          });
+        } catch (e) {
+          console.log('기본 설정으로 MediaRecorder 생성');
+          mediaRecorder.value = new MediaRecorder(stream);
+        }
+        
+        audioChunks.value = [];
 
         mediaRecorder.value.ondataavailable = (event) => {
-          audioChunks.value.push(event.data)
-        }
+          if (event.data.size > 0) {
+            audioChunks.value.push(event.data);
+          }
+        };
 
         mediaRecorder.value.onstop = () => {
-          const audioBlob = new Blob(audioChunks.value)
-          const formData = new FormData()
-          formData.append('audio', audioBlob)
+          const audioBlob = new Blob(audioChunks.value);
+          const formData = new FormData();
+          formData.append('audio_file', audioBlob, 'voice.wav');
 
-          axios.post(
-            `${API_URL}movies/analyze-voice/`,
-            formData,
-            {
-              headers: {
-                'Content-Type': 'multipart/form-data'
-              }
+          // 서버로 전송
+          fetch(`${API_URL}movies/analyze_voice/`, {
+            method: 'POST',
+            body: formData,
+            headers: {
+              'Authorization': `Token ${authStore.token}`
             }
-          )
-          .then(response => {
-            router.push({
-              name: 'Search',
-              params: {
-                searchResults: response.data
+          })
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('서버 응답 오류');
               }
+              return response.json();
             })
-          })
-          .catch(error => {
-            console.error('음성 분석 실패:', error)
-            alert('음성 인식에 실패했습니다. 다시 시도해주세요.')
-          })
-          .finally(() => {
-            isRecording.value = false
-            if (mediaRecorder.value && mediaRecorder.value.stream) {
-              mediaRecorder.value.stream.getTracks().forEach(track => track.stop())
-            }
-          })
-        }
+            .then(data => {
+              console.log('분석 결과:', data);
+              router.push({
+                name: 'Search',
+                query: {
+                  transcript: data.transcript,
+                  sentiment: data.sentiment_score,
+                  movies: JSON.stringify(data.movies)
+                }
+              });
+            })
+            .catch(error => {
+              console.error('음성 분석 오류:', error);
+              alert('음성 분석 중 오류가 발생했습니다.');
+            })
+            .finally(() => {
+              stream.getTracks().forEach(track => track.stop());
+              isRecording.value = false;
+            });
+        };
 
-        mediaRecorder.value.start()
+        // 녹음 시작
+        mediaRecorder.value.start();
+        console.log('녹음 시작');
+
+        // 녹음 상태 표시
+        const recordingIndicator = document.createElement('div');
+        recordingIndicator.textContent = '녹음 중...';
+        recordingIndicator.style.color = 'red';
+        document.querySelector('.search-wrapper').appendChild(recordingIndicator);
+
+        // 5초 후 자동 종료
         setTimeout(() => {
           if (mediaRecorder.value && mediaRecorder.value.state === 'recording') {
-            stopRecording()
+            mediaRecorder.value.stop();
+            recordingIndicator.remove();
           }
-        }, 5000)
+        }, 5000);
       })
       .catch(error => {
-        console.error('마이크 접근 실패:', error)
-        alert('마이크 접근에 실패했습니다. 마이크 권한을 확인해주세요.')
-        isRecording.value = false
-      })
-  }
+        console.error('오디오 입력 장치 오류:', error);
+        let errorMessage = '';
 
-  const stopRecording = () => {
-    if (mediaRecorder.value && mediaRecorder.value.state !== 'inactive') {
-      mediaRecorder.value.stop()
-      isRecording.value = false
-      mediaRecorder.value.stream.getTracks().forEach(track => track.stop())
-    }
+        switch (error.name) {
+          case 'NotAllowedError':
+            errorMessage = '마이크 사용 권한이 거부되었습니다. 브라우저 설정에서 마이크 권한을 허용해주세요.';
+            break;
+          case 'NotFoundError':
+            errorMessage = '마이크나 이어폰이 연결되어 있지 않습니다. 오디오 입력 장치를 연결해주세요.';
+            break;
+          case 'NotReadableError':
+            errorMessage = '오디오 입력 장치에 접근할 수 없습니다. 다른 앱이 사용 중인지 확인해주세요.';
+            break;
+          default:
+            errorMessage = '오디오 입력 장치 오류가 발생했습니다. 장치 연결을 확인해주세요.';
+        }
+
+        alert(errorMessage);
+        isRecording.value = false;
+      });
   }
 
   onMounted(() => {
@@ -171,6 +232,12 @@
     if (authStore.isLogin) {
         movieStore.fetchWatchedMovies()
         movieStore.fetchLikedMovies()
+    }
+  })
+
+  onUnmounted(() => {
+    if (mediaRecorder.value && mediaRecorder.value.state === 'recording') {
+      mediaRecorder.value.stop()
     }
   })
   </script>
