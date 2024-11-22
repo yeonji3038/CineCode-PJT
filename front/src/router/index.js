@@ -24,7 +24,8 @@ const router = createRouter({
     {
       path: '/search',
       name: "Search",
-      component: SearchView
+      component: SearchView,
+      props: true
     },
 
     // 회원가입, 로그인

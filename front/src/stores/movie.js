@@ -53,5 +53,40 @@ export const useMovieStore = defineStore('movie', () => {
     })
   }
 
-  return { movies, watchedMovies, likedMovies, fetchAllMovies, fetchWatchedMovies, fetchLikedMovies }
+  // WatchButton : 영화 시청 상태 업데이트
+  const toggleWatchStatus = (movie) => {
+    if (!authStore.token) return
+
+    axios.post(`${SERVER_URL}movies/${movie.id}/watch/`, null, {
+      headers: { Authorization: `Token ${authStore.token}` }
+    })
+    .then((response) => {
+      console.log(response.data.message)
+      // 상태 업데이트 후 시청 목록 다시 불러오기
+      fetchWatchedMovies()
+    })
+    .catch((error) => {
+      console.error('시청 상태 변경 실패:', error)
+    })
+  }
+
+  // LikeButton : 영화 찜 상태 업데이트
+  // 찜하기 상태 토글
+  const toggleLikeStatus = (movie) => {
+    if (!authStore.token) return
+
+    axios.post(`${SERVER_URL}movies/${movie.id}/like/`, null, {
+      headers: { Authorization: `Token ${authStore.token}` }
+    })
+    .then((response) => {
+      console.log(response.data.message)
+      // 상태 업데이트 후 찜 목록 다시 불러오기
+      fetchLikedMovies()
+    })
+    .catch((error) => {
+      console.error('찜하기 상태 변경 실패:', error)
+    })
+  }
+
+  return { movies, watchedMovies, likedMovies, fetchAllMovies, fetchWatchedMovies, fetchLikedMovies, toggleWatchStatus, toggleLikeStatus }
 }, { persist: true })

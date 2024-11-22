@@ -18,6 +18,20 @@ import json
 
 TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500'
 
+# 전체 영화 조회
+@api_view(['GET'])
+def get_all_movies(request):
+    movies = Movie.objects.all()
+    serializer = MovieSerializer(movies, many=True)
+    return Response(serializer.data)   
+
+
+# 인기순 영화 40개 조회
+@api_view(['GET'])
+def get_popular_movies(request):
+    movies = Movie.objects.all().order_by('-popularity')[:40]
+    serializer = MovieSerializer(movies, many=True)
+    return Response(serializer.data)
 
 
 # 시청중인 영화 목록 조회
@@ -79,6 +93,7 @@ def update_movie_status(request, movie_pk):
         return Response({'message': '상태가 업데이트되었습니다.'})
     return Response({'error': '잘못된 상태 값입니다.'}, status=400)
 
+
 # 영화 상세 정보 조회
 @api_view(['GET'])
 def movie_detail(request, movie_pk):
@@ -115,11 +130,9 @@ def movie_detail(request, movie_pk):
         response_data['trailer_id'] = youtube_data['items'][0]['id']['videoId']
     
     return Response(response_data)
-    return Response(response_data)
 
 
 #음성인식
-
 # 음성 파일을 텍스트로 변환하는 함수
 def transcribe_file(audio_file: str) -> str:
     os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = settings.GOOGLE_APPLICATION_CREDENTIALS
@@ -197,6 +210,7 @@ def analyze_voice(request):
             movies = search_movies("romance")
         else:
             movies = search_movies("action")
+
         return JsonResponse({
             "transcript": transcript,
             "sentiment_score": sentiment_score,
