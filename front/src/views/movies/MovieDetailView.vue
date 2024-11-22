@@ -1,14 +1,14 @@
 <template>
   <div class="movie-detail" v-if="movie">
     <!-- 배경 이미지 -->
-     <div class="backdrop-section">
-       <div 
-         class="background-image" 
-         :style="{ backgroundImage: `url(https://image.tmdb.org/t/p/original${movie.backdrop_path})` }"
-       >
-         <div class="overlay"></div>
-       </div>
-     </div>
+    <div class="backdrop-section">
+      <div 
+        class="background-image" 
+        :style="{ backgroundImage: `url(https://image.tmdb.org/t/p/original${movie.backdrop_path})` }"
+      >
+        <div class="overlay"></div>
+      </div>
+    </div>
 
     <div class="content-wrapper">
       <div class="content">
@@ -21,14 +21,29 @@
         <div class="info">
           <h1>{{ movie.title }}</h1>
           <div class="meta">
-            <span>{{ formatReleaseDate }}</span>
+            <span>{{ movie.released_date }}</span>
             <span v-if="movie.runtime">{{ movie.runtime }}분</span>
             <span v-if="movie.genres">{{ movie.genres?.join(', ') }}</span>
           </div>
           <p class="overview">{{ movie.overview }}</p>
         </div>
       </div>
+      
+      <!-- 버튼 섹션 -->
+    <div class="content-wrapper">
+      <div class="button-section" v-if="movie">
+        <WatchButton 
+          :movie="movie" 
+          class="action-button"
+        />
+        <LikeButton 
+          :movie="movie" 
+          class="action-button"
+        />
+      </div>
     </div>
+    </div>
+
 
     <!-- 예고편 섹션 -->
     <div class="content-wrapper" v-if="movie.trailer_id">
@@ -46,29 +61,29 @@
 </template>
 
 <script setup>
+import WatchButton from '@/components/WatchButton.vue'
+import LikeButton from '@/components/LikeButton.vue'
 import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { useMovieStore } from '@/stores/movie'
+import axios from 'axios'
 
 const route = useRoute()
-const movieStore = useMovieStore()
 const movie = ref(null)
+const SERVER_URL = import.meta.env.VITE_APP_URL;
 
-// 날짜 형식을 computed로 변경
-const formatReleaseDate = computed(() => {
-  if (!movie.value?.released_date) return ''
-  const date = new Date(movie.value.released_date)
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
-})
-
-onMounted(() => {
-  movieStore.getMovieDetail(route.params.id)
-    .then((data) => {
-      movie.value = data
-    })
-    .catch((error) => {
-      console.error('영화 상세 정보를 불러오는데 실패했습니다:', error)
-    })
+onMounted(async () => {
+  try {
+    // 데이터 로딩 상태 확인을 위한 콘솔 로그
+    console.log('영화 상세 정보 로딩 시작')
+    
+    const response = await axios.get(`${SERVER_URL}movies/${route.params.id}/detail/`)
+    movie.value = response.data
+    
+    // 받아온 데이터 확인을 위한 콘솔 로그
+    console.log('받아온 영화 데이터:', movie.value)
+  } catch (error) {
+    console.error('영화 상세 정보를 불러오는데 실패했습니다:', error)
+  }
 })
 </script>
 
@@ -86,7 +101,7 @@ onMounted(() => {
   top: 0;
   left: 0;
   width: 100%;
-  height: 100vh;  /* 화면 높이만큼만 배경 이미지 표시 */
+  height: 80vh;  /* 화면 높이만큼만 배경 이미지 표시 */
   overflow: hidden;
 }
 
@@ -212,16 +227,30 @@ onMounted(() => {
   margin-bottom: 2rem;
 }
 
-.trailer-section {
-  padding: 2rem 6rem 4rem;
+.button-section {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  padding: 2rem 0;
+  z-index: 2;
   position: relative;
-  z-index: 1;
+}
+
+.action-button {
+  min-width: 120px;
+}
+
+.trailer-section {
+  padding: 2rem 6rem;
+  position: relative;
+  z-index: 2;
 }
 
 .trailer-section h2 {
   font-size: 1.8rem;
   font-weight: bold;
   margin-bottom: 1.5rem;
+  color: white;
 }
 
 .trailer-section iframe {
