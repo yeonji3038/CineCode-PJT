@@ -19,12 +19,8 @@ import json
 TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500'
 
 
-@api_view(['GET'])
-def get_movies(request):
-    movies = Movie.objects.order_by('-popularity')[:50]  # 인기 순으로 50개만 가져오기
-    serializer = MovieSerializer(movies, many=True)
-    return Response(serializer.data)
 
+# 시청중인 영화 목록 조회
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def watched_movies(request):
@@ -32,6 +28,8 @@ def watched_movies(request):
     serializer = WatchedMovieSerializer(watched, many=True)
     return Response(serializer.data)
 
+
+# 찜한 영화 목록 조회
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def liked_movies(request):
@@ -39,6 +37,8 @@ def liked_movies(request):
     serializer = LikedMovieSerializer(liked, many=True)
     return Response(serializer.data)
 
+
+# 시청중인 영화 목록에서 제거
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def toggle_watch(request, movie_pk):
@@ -52,6 +52,8 @@ def toggle_watch(request, movie_pk):
         WatchedMovie.objects.create(user=request.user, movie=movie)
         return Response({'message': '시청 목록에 추가됨'})
 
+
+# 영화 찜하기 취소
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def toggle_like(request, movie_pk):
@@ -65,12 +67,41 @@ def toggle_like(request, movie_pk):
         LikedMovie.objects.create(user=request.user, movie=movie)
         return Response({'message': '찜 목록에 추가됨'})
 
+# 영화 시청 상태 업데이트
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def update_movie_status(request, movie_pk):
+    movie = get_object_or_404(Movie, pk=movie_pk)
+    status = request.data.get('status')
+    if status in ['미시청', '시청 중', '시청 완료']:
+        movie.status = status
+        movie.save()
+        return Response({'message': '상태가 업데이트되었습니다.'})
+    return Response({'error': '잘못된 상태 값입니다.'}, status=400)
+
+# 영화 상세 정보 조회
 @api_view(['GET'])
 def movie_detail(request, movie_pk):
     movie = get_object_or_404(Movie, pk=movie_pk)
-    youtube_api_key = settings.YOUTUBE_API_KEY
+
+    # 현재 사용자의 재생/찜 상태 확인
+    response_data = MovieSerializer(movie).data
+    if request.user.is_authenticated:
+        response_data['is_liked'] = LikedMovie.objects.filter(
+            user=request.user, 
+            movie=movie
+        ).exists()
+        watched_movie = WatchedMovie.objects.filter(
+            user=request.user, 
+            movie=movie
+        ).first()
+        response_data['status'] = '시청 중' if watched_movie else '미시청'
+    # 장르 한글명 추가
+    response_data['genres'] = [genre.name for genre in movie.genres.all()]
+
     
     # YouTube에서 예고편 검색
+    youtube_api_key = settings.YOUTUBE_API_KEY
     youtube_url = 'https://www.googleapis.com/youtube/v3/search'
     youtube_response = requests.get(youtube_url, params={
         'key': youtube_api_key,
@@ -80,13 +111,10 @@ def movie_detail(request, movie_pk):
         'type': 'video'
     })
     youtube_data = youtube_response.json()
-    
-    # 응답 데이터 구성
-    response_data = MovieSerializer(movie).data
-    response_data['genres'] = [genre.name for genre in movie.genres.all()]
     if youtube_data.get('items'):
         response_data['trailer_id'] = youtube_data['items'][0]['id']['videoId']
     
+    return Response(response_data)
     return Response(response_data)
 
 
