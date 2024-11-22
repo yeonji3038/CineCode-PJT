@@ -59,36 +59,61 @@
 }
 
 .movie-section {
-  margin: 2rem 0;
+  margin: 20px 0;
+  overflow: hidden;  /* 섹션 밖으로 넘치지 않도록 설정 */
+  width: 100%;      /* 전체 너비 사용 */
 }
 
+/* MovieCard 공통 스타일 */
+:deep(.movie-card) {
+  min-width: 300px;  /* 이전 크기로 변경 */
+  width: 300px;      /* 이전 크기로 변경 */
+  flex-shrink: 0;    /* 크기 고정 */
+}
+
+/* 스크롤 섹션 스타일 */
 .movie-scroll {
   display: flex;
-  overflow-x: auto;
-  gap: 1rem;
-  padding: 1rem 0;
+  overflow-x: scroll;  /* 가로 스크롤 활성화 */
+  gap: 20px;
+  padding: 20px;
+  width: 100%;        /* 전체 너비 사용 */
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.5) transparent;
+  -ms-overflow-style: none;
 }
 
+/* 그리드 섹션 스타일 */
+.movie-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 200px); /* 카드 너비와 동일하게 설정 */
+  gap: 20px;
+  justify-content: center; /* 그리드를 중앙 정렬 */
+  padding: 20px 0;
+}
+
+/* Chrome, Safari용 스크롤바 스타일링 */
 .movie-scroll::-webkit-scrollbar {
   height: 8px;
 }
 
 .movie-scroll::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.movie-scroll::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.5);
+  background: #f1f1f1;
   border-radius: 4px;
 }
 
+.movie-scroll::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.movie-scroll::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
 .empty-message {
-  color: #666;
+  padding: 20px;
   text-align: center;
-  padding: 2rem;
-  font-size: 1.1rem;
+  color: #666;
 }
 
 .section-title {
