@@ -7,7 +7,7 @@
       <div class="profile-img-container">
         <div class="profile-img-wrapper" @click="$refs.fileInput.click()">
           <img 
-            src="@/views/accounts/img/profile.png"
+            :src="previewImage || authStore.profileImage || require('@/views/accounts/img/profile.png')"
             alt="Profile Image" 
             class="profile-img" 
           />
@@ -81,6 +81,7 @@ const errorMessage = ref('')
 const emailErrorMessage = ref('')
 const passwordErrorMessage = ref('')
 const confirmPasswordErrorMessage = ref('')
+const previewImage = ref(null)
 
 const credentials = ref({
   username: authStore.username || '',
@@ -101,11 +102,14 @@ const updateUserInfo = () => {
     email: credentials.value.email,
     password1: credentials.value.password1 || null,
     password2: credentials.value.password2 || null,
-    profile_image: credentials.value.profile_image || null
+    profile_image: credentials.value.profile_image
   }
 
-  // updateUserInfo를 updateUser로 수정
-  authStore.updateUser(payload)  // 여기를 수정
+  authStore.updateUser(payload)
+    .then(() => {
+      // 성공 후 프로필 정보 새로고침
+      return authStore.fetchUserInfo()
+    })
     .then(() => {
       alert('회원 정보가 성공적으로 업데이트되었습니다.')
       router.push({ name: 'Profile' })
@@ -120,10 +124,13 @@ const updateUserInfo = () => {
 const handleImageChange = (event) => {
   const file = event.target.files[0]
   if (file) {
+    // 파일을 credentials에 저장
+    credentials.value.profile_image = file
+    
+    // 이미지 미리보기 생성
     const reader = new FileReader()
     reader.onload = (e) => {
-      event.target.previousElementSibling.querySelector('img').src = e.target.result
-      credentials.value.profile_image = file
+      previewImage.value = e.target.result
     }
     reader.readAsDataURL(file)
   }

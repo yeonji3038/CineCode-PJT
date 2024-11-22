@@ -20,32 +20,25 @@ export const useAuthStore = defineStore('auth', () => {
   })
 
   // 사용자 정보 가져오기
-  const fetchUserInfo = function () {
-    axios({
+  const fetchUserInfo = () => {
+    return axios({
       method: 'get',
       url: `${API_URL}accounts/profile/`,
-      headers: { Authorization: `Token ${token.value}` }
-    })
-    .then((res) => {
-      // 상태 업데이트
-      username.value = res.data.username
-      email.value = res.data.email
-      profileImage.value = res.data.profile_image
-      
-      // localStorage에 저장
-      localStorage.setItem('username', res.data.username)
-      localStorage.setItem('email', res.data.email)
-      if (userData.profile_image) {
-        localStorage.setItem('profileImage', userData.profile_image)
+      headers: {
+        'Authorization': `Token ${token.value}`
       }
     })
-    .catch((err) => {
-      console.error('사용자 정보 가져오기 실패:', err)
-      // 토큰이 유효하지 않은 경우 로그아웃 처리
-      if (err.response?.status === 401) {
-        logout()
-      }
-    })
+      .then((response) => {
+        // response.data를 직접 사용
+        username.value = response.data.username
+        email.value = response.data.email
+        profileImage.value = response.data.profile_image
+        return response.data  // 필요한 경우 응답 데이터 반환
+      })
+      .catch((error) => {
+        console.error('사용자 정보 가져오기 실패:', error)
+        throw error
+      })
   }
 
   // 로그인 함수
@@ -87,35 +80,62 @@ export const useAuthStore = defineStore('auth', () => {
     router.push({ name: 'Login' })
   }
 
-  // 회원정보 업데이트 함수만 추가
-  const updateUser = async (payload) => {
-    try {
-      const formData = new FormData()
-      
-      if (payload.email) formData.append('email', payload.email)
-      if (payload.password1) formData.append('password', payload.password1)
-      if (payload.profile_image) formData.append('profile_image', payload.profile_image)
+  // 회원정보 업데트 함수
+  const updateUser = (payload) => {
+    // FormData 객체 생성
+    const formData = new FormData()
+    
+    // payload에서 데이터가 있는 경우에만 FormData에 추가
+    if (payload.email) formData.append('email', payload.email)
+    if (payload.password1) formData.append('password', payload.password1)
+    if (payload.profile_image) formData.append('profile_image', payload.profile_image)
 
-      const response = await axios({
-        method: 'put',
-        url: `${API_URL}accounts/update/`,
-        data: formData,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `Token ${token.value}`
-        }
-      })
-
-      if (response.data.email) {
-        email.value = response.data.email
+    // axios를 사용하여 서버에 PUT 요청
+    return axios({
+      method: 'put',
+      url: `${API_URL}accounts/update/`,
+      data: formData,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'Authorization': `Token ${token.value}`
       }
-
-      return response.data
-    } catch (error) {
-      throw error.response?.data || '회원정보 업데이트에 실패했습니다.'
-    }
+    })
+      .then((response) => {
+        // 응답에서 이메일이 있으면 store의 email 업데이트
+        if (response.data.email) {
+          email.value = response.data.email
+        }
+        // 응답에서 프로필 이미지가 있으면 store의 profileImage 업데이트
+        if (response.data.profile_image) {
+          profileImage.value = response.data.profile_image
+        }
+        return response.data
+      })
+      .catch((error) => {
+        // 에러 발생 시 에러 메시지 throw
+        throw error.response?.data || '회원정보 업데이트에 실패했습니다.'
+      })
   }
 
-  return { API_URL, token, isLogin, username, profileImage, email, login, logout, fetchUserInfo, updateUser }
-}, { persist: {key: 'auth', storage: localStorage, paths: ['token', 'username', 'email', 'profileImage']}
-})  // Pinia의 persist 플러그인을 사용해 상태 저장
+  // store에서 사용할 상태와 메서드들을 반환
+  return { 
+    API_URL, 
+    token, 
+    isLogin, 
+    username, 
+    profileImage, 
+    email, 
+    login, 
+    logout, 
+    fetchUserInfo, 
+    updateUser 
+  }
+}, { 
+  // Pinia persist 플러그인 설정
+  // localStorage에 token, username, email, profileImage 상태를 저장
+  persist: {
+    key: 'auth', 
+    storage: localStorage, 
+    paths: ['token', 'username', 'email', 'profileImage']
+  }
+})

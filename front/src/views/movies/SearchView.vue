@@ -49,6 +49,7 @@ onMounted(() => {
   color: red;
 }
 </style> -->
+
 <template>
   <div class="search">
     <h1>음성 감정 분석 결과</h1>

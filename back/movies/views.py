@@ -18,7 +18,12 @@ import json
 
 TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500'
 
-
+# 인기순 영화 40개 조회
+@api_view(['GET'])
+def get_popular_movies(request):
+    movies = Movie.objects.all().order_by('-popularity')[:40]
+    serializer = MovieSerializer(movies, many=True)
+    return Response(serializer.data)
 
 # 시청중인 영화 목록 조회
 @api_view(['GET'])

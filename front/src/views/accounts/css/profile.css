@@ -4,124 +4,6 @@
   padding: 20px;
 }
 
-.profile-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 30px;
-}
-
-.profile-img-container {
-  margin-right: 20px;
-}
-
-.profile-img {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.profile-info h3 {
-  font-size: 24px;
-  margin: 0;
-}
-
-.profile-info p {
-  font-size: 14px;
-  color: #777;
-}
-
-.contact-btn {
-  background-color: #6fbaf8;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.contact-btn:hover {
-  background-color: #5ca1d4;
-}
-
-/* 프로필 세부 정보 */
-.profile-details {
-  background-color: #1e1e1e;
-  padding: 20px;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.profile-column {
-  width: 100%;
-}
-
-.profile-column h4 {
-  font-size: 18px;
-  color: #333;
-  margin-top: 0;
-}
-
-.profile-column p {
-  font-size: 14px;
-  color: #777;
-}
-
-.skills {
-  margin-top: 10px;
-}
-
-.skill {
-  background-color: #6fbaf8;
-  color: white;
-  border-radius: 20px;
-  padding: 5px 10px;
-  margin-right: 10px;
-  margin-top: 5px;
-  display: inline-block;
-}
-
-.activity-section {
-  display: flex;
-  justify-content: center;
-  gap: 0;
-}
-
-.activity-item {
-  background-color: black;
-  padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-  width: 33.33%;
-  text-align: center;
-  margin: 0;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
-
-.activity-item:hover {
-  transform: translateY(-3px);
-}
-
-.activity-item.active {
-  color: #dc3545;
-}
-
-.activity-item h5 {
-  font-size: 16px;
-  color: white;
-  margin: 0;
-}
-
-.activity-item p {
-  font-size: 20px;
-  font-weight: bold;
-  color: white;
-  margin: 0;
-}
-
 /* 기본 프로필 스타일 */
 .dark-mode {
   background-color: #121212;
@@ -157,6 +39,17 @@
   flex: 1;
 }
 
+.profile-info h3 {
+  font-size: 24px;
+  margin: 0;
+  color: #ffffff;
+}
+
+.profile-info p {
+  font-size: 14px;
+  color: #777;
+}
+
 .contact-btn {
   background-color: #dc3545;
   color: #ffffff;
@@ -175,174 +68,46 @@
 
 /* 활동 섹션 스타일 */
 .activity-section {
-  background-color: #121212;
+  background-color: #1e1e1e;
   padding: 20px;
   border-radius: 8px;
-  display: flex;
-  justify-content: space-around;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
   margin-bottom: 20px;
 }
 
 .activity-item {
+  background-color: black;
+  padding: 20px;
+  border-radius: 5px;
   text-align: center;
-}
-
-/* 리뷰 섹션 스타일 */
-.profile-details {
-  background-color: #1e1e1e;
-  padding: 20px;
-  border-radius: 8px;
-  display: flex;
-  gap: 20px;
-}
-
-.profile-column {
-  flex: 1;
-}
-
-.review-list {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.review-card {
-  background-color: #2c2c2c;
-  border-radius: 8px;
-  padding: 15px;
-}
-
-.review-header {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  margin-bottom: 10px;
-}
-
-.movie-thumbnail {
-  width: 60px;
-  height: 90px;
-  border-radius: 4px;
-  object-fit: cover;
-}
-
-.review-info {
-  flex: 1;
-}
-
-.rating {
-  color: #ffd700;
-  margin-top: 5px;
-}
-
-.review-actions {
-  display: flex;
-  gap: 8px;
-}
-
-.edit-btn, .delete-btn {
-  padding: 6px 12px;
-  border: none;
-  border-radius: 4px;
   cursor: pointer;
-  font-size: 0.9em;
-}
-
-.edit-btn {
-  background-color: #2196f3;
-  color: white;
-}
-
-.delete-btn {
-  background-color: #dc3545;
-  color: #ffffff;
-}
-
-h3, h4, h5, p {
-  color: #ffffff;
-  margin: 5px 0;
-}
-
-/* Reviews 섹션 */
-.reviews-section {
-  background-color: #1e1e1e;
-  padding: 20px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  animation: slideDown 0.3s ease;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* MyMovie 섹션 */
-.mymovie-section {
-  background-color: #1e1e1e;
-  padding: 20px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-}
-
-.reviews-section h4,
-.mymovie-section h4 {
-  color: #ffffff;
-  margin-bottom: 15px;
-}
-
-.reviews-list {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin-top: 15px;
-}
-
-.review-card {
-  background-color: #1e1e1e;
-  border-radius: 8px;
-  padding: 15px;
   transition: transform 0.2s ease;
 }
 
-.review-card:hover {
-  transform: translateY(-2px);
+.activity-item:hover {
+  transform: translateY(-3px);
 }
 
-.review-header {
-  display: flex;
-  gap: 15px;
-  margin-bottom: 10px;
+.activity-item.active {
+  color: #dc3545;
 }
 
-.movie-thumbnail {
-  width: 60px;
-  height: 90px;
-  border-radius: 4px;
-  object-fit: cover;
+.activity-item h5 {
+  font-size: 16px;
+  color: white;
+  margin: 0;
 }
 
-.review-info {
-  flex: 1;
+.activity-item p {
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+  margin: 10px 0 0 0;
 }
 
-.rating {
-  color: #ffd700;
-  margin: 5px 0;
-}
-
-.review-date {
-  color: #888;
-  font-size: 0.9em;
-}
-
-.review-content {
+h3, h4, h5 {
   color: #ffffff;
-  line-height: 1.5;
+  margin: 5px 0;
 }

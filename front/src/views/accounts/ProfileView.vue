@@ -3,7 +3,12 @@
     <!-- 상단 프로필 영역 -->
     <div class="profile-header">
       <div class="profile-img-container">
-        <img src="@/views/accounts/img/profile.png" alt="Profile Image" class="profile-img" />
+        <img 
+          :src="authStore.profileImage || require('@/views/accounts/img/profile.png')" 
+          alt="Profile Image" 
+          class="profile-img"
+          @error="handleImageError"
+        />
       </div>
       <div class="profile-info">
         <h3>{{ authStore.username }}</h3>
@@ -22,10 +27,6 @@
         <h5>Likes</h5>
         <p>{{ userInfo.likes_count || 0 }}</p>
       </div>
-      <div class="activity-item">
-        <h5>Followers</h5>
-        <p>{{ userInfo.followers_count || 0 }}</p>
-      </div>
     </div>
   </div>
 </template>
@@ -40,22 +41,10 @@ const userInfo = ref({})
 const showReviews = ref(false)
 const reviews = ref([])
 
-// const fetchUserInfo = () => {
-//   axios({
-//     method: 'get',
-//     url: `${import.meta.env.VITE_APP_URL}accounts/profile/`,
-//     headers: {
-//        'Authorization': `Token ${authStore.token}`
-//     }
-//   })
-//     .then((res) => {
-//       console.log('사용자 정보:', res.data)
-//       userInfo.value = res.data
-//     })
-//     .catch((err) => {
-//       console.error('사용자 정보 가져오기 실패:', err)
-//     })
-// }
+// 이미지 로드 실패시 기본 이미지로 대체
+const handleImageError = (e) => {
+  e.target.src = require('@/views/accounts/img/profile.png')
+}
 
 onMounted(() => {
   if (authStore.isLogin) {
