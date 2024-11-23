@@ -64,50 +64,35 @@
   width: 100%;      /* 전체 너비 사용 */
 }
 
-/* MovieCard 공통 스타일 */
-:deep(.movie-card) {
-  min-width: 300px;  /* 이전 크기로 변경 */
-  width: 300px;      /* 이전 크기로 변경 */
-  flex-shrink: 0;    /* 크기 고정 */
-}
-
-/* 스크롤 섹션 스타일 */
 .movie-scroll {
   display: flex;
-  overflow-x: scroll;  /* 가로 스크롤 활성화 */
+  overflow-x: auto;
   gap: 20px;
   padding: 20px;
-  width: 100%;        /* 전체 너비 사용 */
-  scrollbar-width: thin;
-  -ms-overflow-style: none;
+  width: 100%;
+  cursor: grab;
+  user-select: none; /* 드래그 중 텍스트 선택 방지 */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
 }
 
-/* 그리드 섹션 스타일 */
+/* 그리드 섹션 스타일 수정 */
 .movie-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, 200px); /* 카드 너비와 동일하게 설정 */
-  gap: 20px;
-  justify-content: center; /* 그리드를 중앙 정렬 */
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); /* 간격 포함한 너비 */
+  gap: 40px;
+  justify-content: center;
   padding: 20px 0;
 }
 
-/* Chrome, Safari용 스크롤바 스타일링 */
+/* Chrome, Safari용 스크롤바 숨기기 */
 .movie-scroll::-webkit-scrollbar {
-  height: 8px;
+  display: none;
 }
 
-.movie-scroll::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 4px;
-}
-
-.movie-scroll::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 4px;
-}
-
-.movie-scroll::-webkit-scrollbar-thumb:hover {
-  background: #555;
+/* 드래그 중일 때 커서 변경 */
+.movie-scroll:active {
+  cursor: grabbing;
 }
 
 .empty-message {

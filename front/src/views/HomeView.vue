@@ -32,7 +32,11 @@
         <!-- 시청 중인 영화 섹션 -->
         <div v-if="authStore.isLogin" class="movie-section">
             <h3 class="section-title">{{ authStore.username }}님이 시청중인 영화</h3>
-            <div v-if="watchedMovies.length" class="movie-scroll">
+            <div v-if="watchedMovies.length" class="movie-scroll"
+              @mousedown="startDragging"
+              @mousemove="drag"
+              @mouseup="stopDragging"
+              @mouseleave="stopDragging">
             <MovieCard 
                 v-for="watchedMovie in watchedMovies" 
                 :key="{...watchedMovie.movie.id}"
@@ -51,7 +55,7 @@
         <!-- 찜한 영화 섹션 -->
         <div v-if="authStore.isLogin" class="movie-section">
             <h3 class="section-title">{{ authStore.username }}님이 찜한 영화</h3>
-            <div v-if="likedMovies.length">
+            <div v-if="likedMovies.length" class="movie-scroll">
             <MovieCard 
                 v-for="likedMovie in likedMovies" 
                 :key="{...likedMovie.movie.id}"
@@ -102,6 +106,11 @@
   const searchQuery = ref('')
   const router = useRouter()
 
+  // 드래그 스크롤 관련 상태 변수들
+  const isDragging = ref(false)
+  const startX = ref(0)
+  const scrollLeft = ref(0)
+
   // 음성 녹음 관련 상태 변수들
   const isRecording = ref(false)  // 현재 녹음 중인지 상태
   const mediaStream = ref(null)   // 오디오 스트림을 저장
@@ -110,7 +119,7 @@
   
 
 
-    // 인기 영화 가져오기
+  // 인기 영화 가져오기
   const fetchPopularMovies = () => {
     loading.value = true
     error.value = null
@@ -127,6 +136,33 @@
         loading.value = false
       })
   }
+
+
+  // 드래그 시작
+  const startDragging = (e) => {
+    isDragging.value = true
+    const slider = e.currentTarget
+    startX.value = e.pageX
+    scrollLeft.value = slider.scrollLeft
+  }
+
+  // 드래그 중
+  const drag = (e) => {
+    if (!isDragging.value) return
+    e.preventDefault()
+    const slider = e.currentTarget
+    const x = e.pageX - slider.offsetLeft
+    const walk = (x - startX.value) * 2 // 스크롤 속도 조절
+    slider.scrollLeft = scrollLeft.value - walk
+  }
+
+  // 드래그 종료
+  const stopDragging = () => {
+    isDragging.value = false
+  }
+
+
+
 
   // 음성 녹음 시작 함수
   const startVoiceRecognition = () => {
