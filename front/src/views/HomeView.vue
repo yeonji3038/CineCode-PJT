@@ -117,7 +117,12 @@
   const mediaRecorder = ref(null) // 미디어 녹음기 인스턴스
   const audioChunks = ref([])     // 녹음된 오디오 데이터 청크를 저장하는 배열
   
-
+  // Web Speech API 설정 추가
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const recognition = new SpeechRecognition();
+  recognition.lang = 'ko-KR';
+  recognition.interimResults = true;  // 중간 결과 반환
+  recognition.continuous = true;      // 연속 인식 모드
 
   // 인기 영화 가져오기
   const fetchPopularMovies = () => {
@@ -170,18 +175,27 @@
       return;
     }
 
-    // 기본 오디오 설정
     const audioConstraints = {
       audio: {
         echoCancellation: { ideal: true },
         noiseSuppression: { ideal: true },
         autoGainControl: { ideal: true },
-        // 모든 종류의 오디오 입력 장치 허용
-        deviceId: 'default'  // 시스템 기본 오디오 입력 장치 사용
+        deviceId: 'default'
       }
     };
 
-    // 직접 getUserMedia 호출
+    // 실시간 음성 인식 시작
+    recognition.start();
+    
+    // 실시간 결과 처리
+    recognition.onresult = (event) => {
+      const transcript = Array.from(event.results)
+        .map(result => result[0].transcript)
+        .join('');
+      searchQuery.value = transcript;  // 실시간으로 검색창에 표시
+    };
+
+    // 기존 녹음 로직 유지
     navigator.mediaDevices.getUserMedia(audioConstraints)
       .then(stream => {
         console.log('오디오 스트림 획득 성공:', stream);
@@ -291,6 +305,17 @@
       });
   }
 
+  // 음성 인식 에러 처리
+  recognition.onerror = (event) => {
+    console.error('음성 인식 오류:', event.error);
+    isRecording.value = false;
+  };
+
+  // 음성 인식 종료 처리
+  recognition.onend = () => {
+    isRecording.value = false;
+  };
+
   onMounted(() => {
     fetchPopularMovies()
     movieStore.fetchAllMovies()
@@ -303,6 +328,9 @@
   onUnmounted(() => {
     if (mediaRecorder.value && mediaRecorder.value.state === 'recording') {
       mediaRecorder.value.stop()
+    }
+    if (isRecording.value) {
+      recognition.stop();
     }
   })
 </script>

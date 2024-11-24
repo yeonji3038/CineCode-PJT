@@ -57,9 +57,89 @@
 ---
 
 ## TIL
-### 1122(금)
+### 1123(토)
 >[민주]
-#### router의 state에서 데이터 가져오기
+> #### router를 사용하면서 URL에 query를 표시하지 않는 방법
+> HomeView.vue에서 SearchView.vue로 데이터를 전달할 때 2가지 방법이 존재
+> 1. router의 params를 사용 <br>
+> >1-1. 먼저 라우터 설정을 수정합니다:
+> >```
+> > {
+> >  path: '/search/:searchData?',  // optional parameter
+> >  name: 'Search',
+> >  component: SearchView
+> > }
+> > ```
+>
+> > 1-2. HomeView.vue를 수정합니다:
+> > ```
+> > router.push({
+> >     name: 'Search',
+> >     params: {
+> >       searchData: btoa(JSON.stringify(searchData)) // base64로 인코딩
+>>     },
+> >     replace: true // URL 히스토리를 남기지 않음
+>>   });
+>> ```
+>
+> > 1-3. SearchView.vue에서 params를 받아서 처리합니다:
+> >```
+> > onMounted(() => {
+> >   if (route.params.searchData) {
+> >     const searchData = JSON.parse(atob(route.params.searchData)); // base64 디코딩
+> >     transcript.value = searchData.transcript;
+> >     sentiment.value = searchData.sentiment;
+> >     movies.value = searchData.movies;
+> >   }
+> > });
+> > ```
+>
+> 2. router.push 시에 replace: true와 함께 query를 사용한 후, 즉시 query를 제거 <br>
+> > 2-1. router 설정에 props: true 추가
+> > ```
+> > router.push({
+> >    name: 'Search',
+> >    query: {
+> >      transcript: data.transcript,
+> >      sentiment: data.sentiment_score,
+> >      movies: JSON.stringify(data.movies)
+> >    },
+> >    replace: true
+> >  }).then(() => {
+> >     // query 제거
+> >     router.replace({ name: 'Search' });
+> >   });
+> > ```
+>
+> 위의 방법을 사용하였던 데이터가 완전히 로드되기 전에 query가 제거되어 데이터가 사라지는 문제가 있었음.
+> > 1. HomeView.vue는 기존 그대로 유지
+> > 2. SearchView.vue에서 데이터를 로드한 후 URL을 정리합니다:
+> > ```
+> > onMounted(() => {
+> >   // URL의 query params에서 데이터 가져오기
+> >   const queryTranscript = route.query.transcript;
+> >   const querySentiment = route.query.sentiment;
+> >   const queryMovies = route.query.movies;
+> >
+> >   if (queryTranscript && querySentiment && queryMovies) {
+> >     // 데이터 설정
+> >     transcript.value = queryTranscript;
+> >     sentiment.value = Number(querySentiment);
+> >     movies.value = JSON.parse(queryMovies);
+> >
+> >     // 데이터 설정 후 URL 정리
+> >     router.replace({ path: '/search' });
+> >   }
+> > });
+> > ```
+> 이렇게 하면:
+> - SearchView가 마운트될 때 먼저 query 파라미터에서 데이터를 가져옵니다
+> - 데이터를 컴포넌트의 상태로 설정합니다
+> - 그 후에 URL을 깔끔하게 정리합니다
+> - 이후 새로운 검색도 정상적으로 동작합니다
+>
+> 위의 방법대로 했는데 JSON 파싱 에러가 발생하여 claude-3.5-sonnet 모델을 활용한 cursor가 알려준 코드로 수정
+> **SearchView.vue의 onMounted 함수 참고**
 
 ---
 

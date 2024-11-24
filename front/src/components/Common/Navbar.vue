@@ -59,7 +59,7 @@ const goToLogin = () => {
   background-color: transparent;  /* 초기 상태는 완전 투명 */
   z-index: 1000;
   width: 100%;
-  padding: 0.1rem 0;
+  padding: 1.1rem 0;
   transition: all 0.3s ease;  /* 부드러운 전환 효과 추가 */
 }
 
@@ -69,12 +69,14 @@ const goToLogin = () => {
 }
 
 .nav-container {
+  width: 100%;
+  max-width: 1200px;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 1400px;
-  padding: 1rem 6rem;
-  margin: 0 auto;
 }
 
 .logo {

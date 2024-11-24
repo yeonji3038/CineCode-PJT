@@ -14,6 +14,8 @@ import os
 from google.cloud import speech_v1
 from google.cloud import language_v1
 import json
+import random
+from pathlib import Path
 
 
 TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500'
@@ -186,16 +188,17 @@ def search_movies(query: str):
     return []
 
 @csrf_exempt
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def analyze_voice(request):
-    # 환경 변수 명시적 설정
-    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = settings.GOOGLE_APPLICATION_CREDENTIALS
-    
-    if request.method == "POST" and request.FILES.get("audio_file"):
-        audio_file = request.FILES["audio_file"]
+    try:
+        if 'audio_file' not in request.FILES:
+            return JsonResponse({"error": "오디오 파일이 없습니다."}, status=400)
+
         # 오디오 파일을 임시로 저장
         audio_path = "audio.wav"
         with open(audio_path, "wb") as f:
-            for chunk in audio_file.chunks():
+            for chunk in request.FILES["audio_file"].chunks():
                 f.write(chunk)
 
         # 음성을 텍스트로 변환
@@ -205,18 +208,44 @@ def analyze_voice(request):
         # 텍스트에 대해 감정 분석 수행
         sentiment_score, sentiment_magnitude = sample_analyze_sentiment(transcript)
 
-        # 감정 분석 점수에 따라 TMDB에서 영화 검색 (예: 긍정적일 때 로맨스 장르, 부정적일 때 액션 영화2)
-        if sentiment_score > 0:
-            movies = search_movies("romance")
-        else:
-            movies = search_movies("action")
+        # 감정 점수에 따른 장르 ID 매핑
+        if sentiment_score >= 0.3:  # 긍정적인 감정
+            target_genres = [35, 12, 10751]  # 코미디(35), 모험(12), 가족(10751)
+        elif sentiment_score <= -0.3:  # 부정적인 감정
+            target_genres = [27, 53, 80]  # 공포(27), 스릴러(53), 범죄(80)
+        else:  # 중립적인 감정
+            target_genres = [18, 10749, 878]  # 드라마(18), 로맨스(10749), SF(878)
+
+        # JSON 파일 경로
+        json_path = Path(__file__).parent / 'fixtures' / 'genre_secure_movie_data.json'
+        
+        # JSON 파일 읽기
+        with open(json_path, 'r', encoding='utf-8') as f:
+            movies_data = json.load(f)
+
+        # 장르에 맞는 영화 필터링
+        filtered_movies = []
+        for movie in movies_data:
+            movie_genres = movie['fields']['genres']
+            if any(genre in movie_genres for genre in target_genres):
+                filtered_movies.append({
+                    'id': movie['pk'],
+                    'title': movie['fields']['title'],
+                    'overview': movie['fields']['overview'],
+                    'poster_path': movie['fields']['poster_path'],
+                    'vote_avg': movie['fields']['vote_avg'],
+                })
+
+        # 중복 제거 및 랜덤 선택 (최대 5개)
+        selected_movies = random.sample(filtered_movies, min(10, len(filtered_movies)))
 
         return JsonResponse({
             "transcript": transcript,
             "sentiment_score": sentiment_score,
             "sentiment_magnitude": sentiment_magnitude,
-            "movies": movies,
+            "movies": selected_movies,
         })
-    
 
-    return JsonResponse({"error": "No audio file provided"}, status=400)
+    except Exception as e:
+        print(f"오류 발생: {str(e)}")
+        return JsonResponse({"error": str(e)}, status=500)

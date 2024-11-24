@@ -10,4 +10,5 @@ urlpatterns = [
     path('<int:movie_pk>/like/', views.toggle_like, name='toggle_like'),
     path('<int:movie_pk>/detail/', views.movie_detail, name='movie_detail'),
     path('analyze_voice/', views.analyze_voice, name='analyze-voice'),
+
 ]
