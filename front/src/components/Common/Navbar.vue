@@ -2,7 +2,7 @@
   <nav class="navbar" :class="{ 'scrolled': isScrolled }">
     <div class="nav-container">
       <div class="nav-left">
-        <router-link :to="{ name: 'Home' }" class="logo">cine_code</router-link>
+        <router-link :to="{ name: 'Home' }" class="logo">CINECODE</router-link>
         <router-link :to="{ name: 'CodeShare' }" class="nav-item">코드 쉐어</router-link>
         <span class="nav-divider">|</span>
         <router-link :to="{ name: 'MyCode' }" class="nav-item">내 코드</router-link>
@@ -80,11 +80,23 @@ const goToLogin = () => {
 }
 
 .logo {
-  color: white;
   text-decoration: none;
   font-size: 1.5rem;
   font-weight: bold;
-  margin-right: 3rem; /* 로고와 nav-item 간의 간격 */
+  margin-right: 3rem;
+  color: #ffffff;
+  font-family: 'Quicksand', sans-serif;
+  text-shadow: 0 0 10px rgba(255,255,255,0.3),
+               0 0 20px rgba(255,255,255,0.2);
+  letter-spacing: 1px;
+}
+
+/* 호버 효과 */
+.logo:hover {
+  transform: scale(1.03);
+  transition: all 0.3s ease;
+  text-shadow: 0 0 15px rgba(255,255,255,0.5),
+               0 0 25px rgba(255,255,255,0.3);
 }
 
 .nav-left {

@@ -49,6 +49,13 @@
     border: none;
     border-radius: 25px;
     font-size: 1rem;
+    outline: none;
+  }
+  
+  .search-input:focus {
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.5);
+    transition: all 0.3s ease;
   }
   
   .mic-icon {

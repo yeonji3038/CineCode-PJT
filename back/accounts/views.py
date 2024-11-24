@@ -86,26 +86,38 @@ PASSWORD = getattr(settings, "DEFAULT_USER_PASSWORD", "default_password")
 
 @api_view(['POST'])
 def google(request):
-    id = request.data['id']
-    
-    if get_user_model().objects.filter(username=id).exists():
-        user = get_user_model().objects.get(username = id)
+    try:
+        # username 필드 확인
+        username = request.data.get('username')
+        
+        if not username:
+            return Response(
+                {"error": "구글 사용자 정보가 제공되지 않았습니다."}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # 기존 사용자 확인 또는 새로운 사용자 생성
+        user, created = get_user_model().objects.get_or_create(
+            username=username,
+            defaults={'password': PASSWORD}
+        )
+        
+        if created:
+            user.set_password(PASSWORD)
+            user.save()
+            
         data = {
-            "username" : user.username
-        }
-        return Response(data, status.HTTP_200_OK)
-    else:
-        get_user_model()(
-            username = id,
-        ).save()
-        user = get_user_model().objects.get(username = id)
-        user.set_password(PASSWORD)
-        user.save()
-        data = {
-            "username" : user.username
+            "username": user.username,
+            "isNewUser": created
         }
         
-        return Response(data, status.HTTP_200_OK)
+        return Response(data, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        return Response(
+            {"error": f"로그인 처리 중 오류가 발생했습니다: {str(e)}"}, 
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
     
 # @api_view(['GET', 'POST'])
 # def get_naver_info(request):
