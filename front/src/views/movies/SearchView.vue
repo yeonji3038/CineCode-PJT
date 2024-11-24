@@ -1,15 +1,14 @@
 <template>
   <div class="search">
-      <!-- 검색창 추가 -->
-      <div class="search-container">
-
+    <div class="search-container">
       <div class="search-box">
-        <div class="search-wrapper">
+        <div class="input-wrapper">
           <input 
             type="text" 
             v-model="searchQuery" 
-            placeholder="다른 감정으로도 영화를 추천받아보세요!"
+            placeholder="영화 제목을 입력하거나 음성으로 감정을 표현해보세요!"
             class="search-input"
+            @keyup.enter="handleSearch"
           >
           <img 
             src="@/assets/mic-icon.svg" 
@@ -19,6 +18,12 @@
             :class="{ 'recording': isRecording }"
           >
         </div>
+        <button 
+          class="search-button" 
+          @click="handleSearch"
+        >
+          검색
+        </button>
       </div>
     </div>
 
@@ -215,7 +220,7 @@ const startVoiceRecognition = () => {
       const recordingIndicator = document.createElement('div');
       recordingIndicator.textContent = '녹음 중...';
       recordingIndicator.style.color = 'red';
-      document.querySelector('.search-wrapper').appendChild(recordingIndicator);
+      document.querySelector('.input-wrapper').appendChild(recordingIndicator);
 
       // 녹음 시작
       mediaRecorder.value.start();
@@ -232,11 +237,11 @@ const startVoiceRecognition = () => {
       // 오류 처리
       console.error('오디오 입력 장치 오류:', error);
       const errorMessages = {
-        NotAllowedError: '마이크 사용 권한이 거부되었습니다.',
+        NotAllowedError: '마이크 사용 권한 거부되었습니다.',
         NotFoundError: '마이크를 찾을 수 없습니다.',
         NotReadableError: '마이크에 접근할 수 없습니다.',
       };
-      alert(errorMessages[error.name] || '오디오 입력 장치 오류가 발생했습니다.');
+      alert(errorMessages[error.name] || '오디오 입력 장치 오류 발생했습니다.');
       isRecording.value = false;
       isLoading.value = false;
     });
@@ -270,52 +275,51 @@ watch(movies, (newMovies) => {
 // 컴포넌트 마운트 시 초기화 수정
 onMounted(() => {
   // URL의 query params에서 데이터 가져오기
+  const querySearchQuery = route.query.searchQuery
+  const queryMovies = route.query.movies
   const queryTranscript = route.query.transcript
   const querySentiment = route.query.sentiment
-  const queryMovies = route.query.movies
 
-  if (queryTranscript && querySentiment && queryMovies) {
-    // 기본 데이터 설정
+  // 검색어로 넘어온 경우
+  if (querySearchQuery && queryMovies) {
+    searchQuery.value = querySearchQuery;
+    try {
+      const parsedMovies = JSON.parse(queryMovies);
+      movies.value = parsedMovies.map(movie => ({
+        id: movie.id,
+        title: movie.title,
+        overview: movie.overview,
+        poster_path: movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : null,
+        vote_average: movie.vote_average,
+        release_date: movie.release_date,
+        popularity: movie.popularity
+      }));
+    } catch (error) {
+      console.error('Movies parsing error:', error);
+      movies.value = [];
+    }
+  }
+  // 음성 인식으로 넘어온 경우
+  else if (queryTranscript && querySentiment && queryMovies) {
     transcript.value = queryTranscript;
     sentiment.value = Number(querySentiment);
     searchQuery.value = queryTranscript;
     
-    // movies 데이터 파싱 및 설정
     try {
-      let parsedMovies;
-      
-      // queryMovies가 이미 객체인 경우
-      if (typeof queryMovies === 'object') {
-        parsedMovies = queryMovies;
-      } else {
-        // 문자열인 경우 파싱 시도
-        try {
-          parsedMovies = JSON.parse(queryMovies);
-        } catch (e) {
-          // 첫 번째 파싱 시도가 실패하면 이스케이프된 문자열 처리 시도
-          parsedMovies = JSON.parse(decodeURIComponent(queryMovies));
-        }
-      }
-
-      if (Array.isArray(parsedMovies)) {
-        movies.value = parsedMovies.map(movie => ({
-          id: movie.id,
-          title: movie.title,
-          overview: movie.overview,
-          poster_path: movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : null,
-          vote_average: movie.vote_avg,
-          release_date: movie.released_date,
-          popularity: movie.popularity
-        }));
-      }
+      const parsedMovies = JSON.parse(queryMovies);
+      movies.value = parsedMovies.map(movie => ({
+        id: movie.id,
+        title: movie.title,
+        overview: movie.overview,
+        poster_path: movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : null,
+        vote_average: movie.vote_avg,
+        release_date: movie.released_date,
+        popularity: movie.popularity
+      }));
     } catch (error) {
       console.error('Movies parsing error:', error);
-      console.log('Failed to parse movies data:', queryMovies);
       movies.value = [];
     }
-
-    // 데이터 설정이 완료된 후 URL 정리
-    router.replace({ path: '/search' });
   } else {
     // URL에 쿼리 파라미터가 없으면 localStorage에서 데이터 불러오기
     loadFromLocalStorage()
@@ -335,6 +339,46 @@ const prevSlide = () => {
     startIndex.value -= 4
   }
 }
+
+// 검색 함수 추가
+const handleSearch = async () => {
+  if (!searchQuery.value.trim()) {
+    alert('검색어를 입력해주세요.');
+    return;
+  }
+
+  isLoading.value = true;
+  try {
+    const response = await fetch(`${SERVER_URL}movies/search/?query=${encodeURIComponent(searchQuery.value)}`, {
+      headers: {
+        'Authorization': `Token ${authStore.token}`
+      }
+    });
+
+    if (!response.ok) throw new Error('검색 중 오류가 발생했습니다.');
+    
+    const data = await response.json();
+    movies.value = data.map(movie => ({
+      id: movie.id,
+      title: movie.title,
+      overview: movie.overview,
+      poster_path: movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : null,
+      vote_average: movie.vote_average,
+      release_date: movie.release_date,
+      popularity: movie.popularity
+    }));
+
+    // 검색 결과가 없는 경우
+    if (movies.value.length === 0) {
+      alert('검색 결과가 없습니다.');
+    }
+  } catch (error) {
+    console.error('검색 오류:', error);
+    alert('검색 중 오류가 발생했습니다.');
+  } finally {
+    isLoading.value = false;
+  }
+};
 </script>
 
 <style scoped src="./css/search.css" ></style>

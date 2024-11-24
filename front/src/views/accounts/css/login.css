@@ -5,34 +5,36 @@
 }
 
 #Login {
-  position: fixed; /* 화면에 고정 */
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%; /* 화면 전체 크기 */
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: black; /* 배경 반투명 검정색 */
-
+  background-color: black;
 }
 
 #Login .login {
-  
-  max-width: 400px; /* 로그인 폼 최대 너비 */
-  width: 100%; /* 화면 크기에 맞게 너비 100% */
+  max-width: 400px;
+  width: 100%;
   padding: 40px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border-radius: 10px; /* 모서리 둥글게 처리 */
+  border-radius: 10px;
   color: white;
 }
 
-.signin {
-  display: flex;
-  justify-content: flex-start;
+.login h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.login-info {
+  width: 100%;
 }
 
 .login-info input {
@@ -43,16 +45,13 @@
   padding: 10px;
   font-size: 12px;
   background-color: rgb(250, 250, 250);
-}
-
-.login-info input:first-child {
-  margin: 20px 0 10px;
+  margin-bottom: 10px;
 }
 
 .login-button {
   margin-top: 30px;
   height: 50px;
-  width: 100%; /* 버튼을 화면 크기에 맞게 */
+  width: 100%;
   border: none;
   background-color: #A7A7A7;
   border-radius: 5px;
@@ -64,12 +63,11 @@
 }
 
 .login-button:hover {
-  background-color: rgb(211, 47, 39);  /* 호버 시 배경색 변경 */
-  color: black;  /* 호버 시 글자색을 검정색으로 변경 */
+  background-color: rgb(211, 47, 39);
+  color: black;
 }
 
-
-
+/* 소셜 로그인 구분선 */
 .social {
   display: flex;
   align-items: center;
@@ -79,34 +77,16 @@
 .social hr {
   flex: 1;
   height: 1px;
-  background-color: white;  /* 흰색 실선으로 변경 */
+  background-color: white;
   border: none;
 }
 
 .social p {
   margin: 0 10px;
-  color: white;  /* 텍스트 색상도 흰색으로 */
-}
-
-.signup {
-  margin-top: 20px;
-  width: 100%;
-  text-align: center;
- 
-}
-
-.signup span {
-  font-size: 14px;
   color: white;
 }
 
-.nav-item {
-  text-decoration: none;
-  font-weight: 500;
-  color: white;
-}
-
-
+/* 소셜 로그인 버튼 */
 .social_login {
   display: flex;
   justify-content: center;
@@ -138,6 +118,17 @@
 #my-signin2,
 #naverIdLogin {
   display: none;
+}
+
+.signup {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.nav-item {
+  text-decoration: none;
+  font-weight: 500;
+  color: white;
 }
 
 @media screen and (max-width: 375px) {

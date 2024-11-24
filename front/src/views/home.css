@@ -120,3 +120,60 @@
   margin: 0 auto;
   padding: 2rem 6rem;  /* navbar와 동일한 좌우 패딩 적용 */
 }
+
+/* 검색 박스 컨테이너 수정 */
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+/* input-wrapper 수정 */
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  background: white;
+  border-radius: 30px;
+  padding: 0.5rem 1rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 검색 버튼 스타일 수정 */
+.search-button {
+  padding: 12px 32px;
+  background: linear-gradient(45deg, #FF3366, #FF6B6B);
+  color: white;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  font-weight: 500;
+  box-shadow: 0 4px 15px rgba(255, 51, 102, 0.2);
+  white-space: nowrap;
+}
+
+.search-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 51, 102, 0.3);
+  background: linear-gradient(45deg, #FF6B6B, #FF3366);
+}
+
+.search-button:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 15px rgba(255, 51, 102, 0.2);
+}
+
+/* 마이크 아이콘 애니메이션 */
+.mic-icon.recording {
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}

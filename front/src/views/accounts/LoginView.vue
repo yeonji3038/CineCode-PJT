@@ -20,7 +20,6 @@
           <button @click="handleGoogleLogin">
             <img src="@/views/accounts/img/google.png" alt="구글 로그인" />
           </button>
-          <div id="my-signin2"></div>
         </div>
         <div class="naver">
           <div id="naverIdLogin"></div>
@@ -50,22 +49,22 @@ const credentials = ref({
 const loadGoogleAPI = () => {
   return new Promise((resolve) => {
     const script = document.createElement('script');
-    script.src = 'https://apis.google.com/js/platform.js';
+    script.src = 'https://accounts.google.com/gsi/client';
     script.onload = resolve;
     document.head.appendChild(script);
   });
 };
 
 // 구글 로그인 성공 핸들러
-const handleGoogleLoginSuccess = async (googleUser) => {
-  const googleEmail = googleUser.getBasicProfile().getEmail();
-  if (googleEmail) {
+const handleGoogleLoginSuccess = async (response) => {
+  if (response.credential) {  // 새로운 API는 credential을 반환
     try {
+      const token = response.credential;
       const response = await axios({
         method: 'post',
         url: `${authStore.API_URL}accounts/google/`,
         data: {
-          id: googleEmail,
+          id_token: token,  // 백엔드로 id_token 전송
         }
       });
       
@@ -89,32 +88,27 @@ const handleGoogleLoginFailure = (error) => {
 // 구글 로그인 초기화
 const initGoogleLogin = async () => {
   await loadGoogleAPI();
-  window.gapi.load('auth2', () => {
-    window.gapi.auth2.init({
-      client_id: import.meta.env.VITE_APP_GOOGLE_CLIENT_ID,
-      redirect_uri: '${authStore.FRONT_URL}accounts/login'  
-    }).then(() => {
-      window.gapi.signin2.render('my-signin2', {
-        scope: 'profile email',
-        width: 240,
-        height: 50,
-        longtitle: true,
-        theme: 'dark',
-        onsuccess: handleGoogleLoginSuccess,
-        onfailure: handleGoogleLoginFailure,
-      });
-    });
-  });
 };
+
+let lastLoginAttempt = 0;  // 마지막 로그인 시도 시간을 저장할 변수
 
 // 구글 로그인 버튼 클릭 핸들러
 const handleGoogleLogin = () => {
-  if (window.gapi && window.gapi.auth2) {
-    const auth = window.gapi.auth2.getAuthInstance();
-    if (auth) {
-      auth.signIn();
-    }
+  const now = Date.now();
+  const fiveMinutes = 5 * 60 * 1000;  // 5분을 밀리초로 변환
+  
+  if (now - lastLoginAttempt < fiveMinutes) {
+    alert('잠시 후 다시 시도해주세요. (5분 간격 제한)');
+    return;
   }
+  
+  lastLoginAttempt = now;
+  
+  google.accounts.id.initialize({
+    client_id: import.meta.env.VITE_APP_GOOGLE_CLIENT_ID,
+    callback: handleGoogleLoginSuccess
+  });
+  google.accounts.id.prompt();
 };
 
 onMounted(() => {

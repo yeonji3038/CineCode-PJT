@@ -339,3 +339,14 @@ def toggle_review_like(request, review_pk):
         'likes': review.likes,
         'is_liked': is_liked
     })
+
+@api_view(['GET'])
+def search_movies_by_title(request):
+    query = request.GET.get('query', '')
+    if not query:
+        return Response({'error': '검색어를 입력해주세요.'}, status=400)
+    
+    # 제목에 검색어가 포함된 영화들을 검색
+    movies = Movie.objects.filter(title__icontains=query)[:10]
+    serializer = MovieSerializer(movies, many=True)
+    return Response(serializer.data)

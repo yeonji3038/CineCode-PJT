@@ -7,16 +7,17 @@
             {{ authStore.username }}님,
         </h1>
         
-        <!--음성인식-->
+        <!--검색 및 음성인식-->
         <div class="search-container">
-          <h2>오늘 하루의 기분이나 현재 감정을 알려주시면 영화를 추천해드릴게요!</h2>
+          <h2>영화를 검색하거나 현재 감정을 알려주시면 영화를 추천해드릴게요!</h2>
           <div class="search-box">
-            <div class="search-wrapper">
+            <div class="input-wrapper">
               <input 
                 type="text" 
                 v-model="searchQuery" 
-                placeholder="ex. 오늘 힘든 하루를 보내서 조금 지쳐 있어"
+                placeholder="영화 제목을 입력하거나 감정을 표현해보세요!"
                 class="search-input"
+                @keyup.enter="handleSearch"
               >
               <img 
                 src="@/assets/mic-icon.svg" 
@@ -26,6 +27,12 @@
                 :class="{ 'recording': isRecording }"
               >
             </div>
+            <button 
+              class="search-button" 
+              @click="handleSearch"
+            >
+              검색
+            </button>
           </div>
         </div>
 
@@ -117,12 +124,12 @@
   const mediaRecorder = ref(null) // 미디어 녹음기 인스턴스
   const audioChunks = ref([])     // 녹음된 오디오 데이터 청크를 저장하는 배열
   
-  // Web Speech API 설정 추가
+  // Web Speech API 설정
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   const recognition = new SpeechRecognition();
   recognition.lang = 'ko-KR';
-  recognition.interimResults = true;  // 중간 결과 반환
-  recognition.continuous = true;      // 연속 인식 모드
+  recognition.interimResults = true;
+  recognition.continuous = true;
 
   // 인기 영화 가져오기
   const fetchPopularMovies = () => {
@@ -171,57 +178,47 @@
 
   // 음성 녹음 시작 함수
   const startVoiceRecognition = () => {
-    if (isRecording.value) {
-      return;
-    }
+    if (isRecording.value) return;
+    isRecording.value = true;
 
-    const audioConstraints = {
-      audio: {
-        echoCancellation: { ideal: true },
-        noiseSuppression: { ideal: true },
-        autoGainControl: { ideal: true },
-        deviceId: 'default'
-      }
-    };
-
-    // 실시간 음성 인식 시작
+    // Web Speech API를 통한 실시간 음성 인식 시작
     recognition.start();
-    
-    // 실시간 결과 처리
+
     recognition.onresult = (event) => {
       const transcript = Array.from(event.results)
-        .map(result => result[0].transcript)
+        .map(result => result[0])
+        .map(result => result.transcript)
         .join('');
-      searchQuery.value = transcript;  // 실시간으로 검색창에 표시
+      
+      // 실시간으로 인식된 텍스트를 검색창에 표시
+      searchQuery.value = transcript;
     };
 
-    // 기존 녹음 로직 유지
-    navigator.mediaDevices.getUserMedia(audioConstraints)
-      .then(stream => {
-        console.log('오디오 스트림 획득 성공:', stream);
-        isRecording.value = true;
-        
-        try {
-          // 다양한 오디오 형식 지원
-          const mimeType = MediaRecorder.isTypeSupported('audio/webm')
-            ? 'audio/webm'
-            : 'audio/mp4';
+    recognition.onerror = (event) => {
+      console.error('음성 인식 오류:', event.error);
+      isRecording.value = false;
+    };
 
-          mediaRecorder.value = new MediaRecorder(stream, {
-            mimeType: mimeType,
-            audioBitsPerSecond: 128000
-          });
-        } catch (e) {
-          console.log('기본 설정으로 MediaRecorder 생성');
-          mediaRecorder.value = new MediaRecorder(stream);
-        }
-        
+    recognition.onend = () => {
+      isRecording.value = false;
+    };
+
+    navigator.mediaDevices.getUserMedia({
+      audio: {
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: true,
+        sampleRate: 44100,
+        channelCount: 1,
+      }
+    })
+      .then((stream) => {
+        mediaStream.value = stream;
+        mediaRecorder.value = new MediaRecorder(stream);
         audioChunks.value = [];
 
         mediaRecorder.value.ondataavailable = (event) => {
-          if (event.data.size > 0) {
-            audioChunks.value.push(event.data);
-          }
+          audioChunks.value.push(event.data);
         };
 
         mediaRecorder.value.onstop = () => {
@@ -272,7 +269,7 @@
         const recordingIndicator = document.createElement('div');
         recordingIndicator.textContent = '녹음 중...';
         recordingIndicator.style.color = 'red';
-        document.querySelector('.search-wrapper').appendChild(recordingIndicator);
+        document.querySelector('.input-wrapper').appendChild(recordingIndicator);
 
         // 5초 후 자동 종료
         setTimeout(() => {
@@ -305,15 +302,33 @@
       });
   }
 
-  // 음성 인식 에러 처리
-  recognition.onerror = (event) => {
-    console.error('음성 인식 오류:', event.error);
-    isRecording.value = false;
-  };
+  // 검색 함수 수정
+  const handleSearch = async () => {
+    if (!searchQuery.value.trim()) {
+      alert('검색어를 입력해주세요.');
+      return;
+    }
 
-  // 음성 인식 종료 처리
-  recognition.onend = () => {
-    isRecording.value = false;
+    try {
+      const response = await axios.get(`${SERVER_URL}movies/search/`, {
+        params: { query: searchQuery.value },
+        headers: {
+          'Authorization': `Token ${authStore.token}`
+        }
+      });
+
+      // 검색 결과가 있으면 검색 페이지로 이동
+      router.push({
+        name: 'Search',
+        query: {
+          searchQuery: searchQuery.value,
+          movies: JSON.stringify(response.data)
+        }
+      });
+    } catch (error) {
+      console.error('검색 오류:', error);
+      alert('검색 중 오류가 발생했습니다.');
+    }
   };
 
   onMounted(() => {
@@ -327,41 +342,17 @@
 
   onUnmounted(() => {
     if (mediaRecorder.value && mediaRecorder.value.state === 'recording') {
-      mediaRecorder.value.stop()
+      mediaRecorder.value.stop();
     }
-    if (isRecording.value) {
-      recognition.stop();
+    if (mediaStream.value) {
+      mediaStream.value.getTracks().forEach(track => track.stop());
     }
+    // Web Speech API 정리
+    recognition.stop();
   })
 </script>
 
 
 <style scoped src="./home.css">
-.mic-icon {
-  cursor: pointer;
-}
 
-.mic-icon.recording {
-  animation: pulse 1s infinite;
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
-}
-
-.loading {
-  text-align: center;
-  padding: 2rem;
-  font-size: 1.2rem;
-  color: #666;
-}
-
-.error {
-  text-align: center;
-  padding: 2rem;
-  color: #ff4444;
-  font-size: 1.1rem;
-}
 </style>
