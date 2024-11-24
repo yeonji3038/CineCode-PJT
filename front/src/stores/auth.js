@@ -6,6 +6,7 @@ import { useRouter } from 'vue-router'
 
 export const useAuthStore = defineStore('auth', () => {
   const API_URL = import.meta.env.VITE_APP_URL
+  const FRONT_URL = import.meta.env.VITE_APP_FRONT_URL
   const router = useRouter()
 
   // 사용자 인증 상태 관리 토큰

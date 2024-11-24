@@ -29,4 +29,5 @@ urlpatterns = [
     path('community/', include('community.urls')),
     path('accounts/update/', views.UserUpdateView.as_view(), name='user-update'),
     path('accounts/profile/', views.UserProfileView.as_view(), name='user-profile'),
+    path('accounts/google/', views.google, name='google_login'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

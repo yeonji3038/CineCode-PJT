@@ -4,7 +4,7 @@
     <div class="profile-header">
       <div class="profile-img-container">
         <img 
-          :src="authStore.profileImage || require('@/views/accounts/img/profile.png')" 
+          :src="authStore.profileImage || defaultProfileImage" 
           alt="Profile Image" 
           class="profile-img"
           @error="handleImageError"
@@ -28,6 +28,23 @@
         <p>{{ userInfo.likes_count || 0 }}</p>
       </div>
     </div>
+
+    <!-- 리뷰 목록 섹션 추가 -->
+    <div v-if="showReviews" class="reviews-section">
+      <div v-if="reviews.length > 0" class="reviews-list">
+        <div v-for="review in reviews" :key="review.id" class="review-item">
+          <div class="review-header">
+            <h4>{{ review.movie_title }}</h4>
+            <span class="review-date">{{ formatDate(review.created_at) }}</span>
+          </div>
+          <p class="review-content">{{ review.content }}</p>
+          <div class="review-rating">
+            <span>평점: {{ review.rating }}/5</span>
+          </div>
+        </div>
+      </div>
+      <p v-else class="no-reviews">작성한 리뷰가 없습니다.</p>
+    </div>
   </div>
 </template>
 
@@ -35,6 +52,7 @@
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
+import defaultProfileImage from '@/views/accounts/img/profile.png'
 
 const authStore = useAuthStore()
 const userInfo = ref({})
@@ -43,7 +61,38 @@ const reviews = ref([])
 
 // 이미지 로드 실패시 기본 이미지로 대체
 const handleImageError = (e) => {
-  e.target.src = require('@/views/accounts/img/profile.png')
+  e.target.src = defaultProfileImage
+}
+
+// 리뷰 토글 및 불러오기 함수
+const toggleReviews = async () => {
+  showReviews.value = !showReviews.value
+  
+  // 리뷰가 보여질 때만 리뷰를 불러옴
+  if (showReviews.value && reviews.value.length === 0) {
+    try {
+      const response = await axios({
+        method: 'get',
+        url: `${authStore.API_URL}movies/user-reviews/`,
+        headers: {
+          'Authorization': `Token ${authStore.token}`
+        }
+      })
+      reviews.value = response.data
+    } catch (error) {
+      console.error('리뷰 불러오기 실패:', error)
+    }
+  }
+}
+
+// 날짜 포맷팅 함수
+const formatDate = (dateString) => {
+  const date = new Date(dateString)
+  return date.toLocaleDateString('ko-KR', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  })
 }
 
 onMounted(() => {
@@ -54,3 +103,70 @@ onMounted(() => {
 </script>
 
 <style scoped src="./css/profile.css"></style>
+
+<style scoped>
+/* 기존 CSS 파일에 추가 */
+.reviews-section {
+  margin-top: 2rem;
+  padding: 0 1rem;
+}
+
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.review-item {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.review-header h4 {
+  margin: 0;
+  color: #fff;
+}
+
+.review-date {
+  font-size: 0.9rem;
+  color: #888;
+}
+
+.review-content {
+  margin: 0.5rem 0;
+  color: #ddd;
+}
+
+.review-rating {
+  color: #ffd700;
+  font-weight: bold;
+}
+
+.no-reviews {
+  text-align: center;
+  color: #888;
+  padding: 2rem;
+}
+
+/* Activity 항목 호버 효과 */
+.activity-item {
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.activity-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.activity-item.active {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+</style>

@@ -22,12 +22,6 @@
       </div>
     </div>
 
-    <!-- transcript가 빈 문자열이 아닐 때만 표시,, -->
-    <!-- <div v-if="transcript !== ''" class="result-section">
-      <h2>말씀하신 내용:</h2>
-      <p>{{ transcript }}</p>
-    </div> -->
-
     <!-- sentiment가 null이 아닐 때만 표시 -->
     <!-- <div v-if="sentiment !== null" class="result-section">
       <h2>감정 분석 결과:</h2>
@@ -36,7 +30,7 @@
 
     <!-- movies 배열이 존재하고 길이가 0보다 클 때만 표시 -->
     <div v-if="movies && movies.length > 0" class="movies-section">
-      <h2>추천 영화:</h2>
+      <h2>추천 영화</h2>
       <div class="carousel-container">
         <button 
           class="carousel-prev" 
@@ -73,14 +67,14 @@
     <!-- 로딩 인디케이터 추가 -->
     <div v-if="isLoading" class="loading-overlay">
       <div class="loading-spinner"></div>
-      <p>음성 분석 중...</p>
+      <p>감정 분석중...</p>
     </div>
   </div>
 </template>
 
 <script setup>
 // 필요한 모듈과 컴포넌트 import
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import MovieCard from '@/components/MovieCard.vue'
 import { useAuthStore } from '@/stores/auth'
@@ -106,20 +100,37 @@ const isLoading = ref(false);
 
 // 음성 인식 시작 함수
 const startVoiceRecognition = () => {
-  // 이미 녹음 중이면 함수 종료
   if (isRecording.value) return;
-
-  // 로딩 상태 시작
   isLoading.value = true;
+  
 
-  // 사용자의 마이크 접근 권한 요청 및 오디오 스트림 설정
+  // Web Speech API의 SpeechRecognition 객체 생성
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const recognition = new SpeechRecognition();
+  
+  recognition.lang = 'ko-KR';
+  recognition.interimResults = true;
+  recognition.continuous = true;
+
+  recognition.onresult = (event) => {
+    const transcript = Array.from(event.results)
+      .map(result => result[0])
+      .map(result => result.transcript)
+      .join('');
+    
+    // 실시간으로 인식된 텍스트를 검색창에 표시
+    searchQuery.value = transcript;
+  };
+
+  recognition.start();
+
   navigator.mediaDevices.getUserMedia({
     audio: {
-      echoCancellation: true,      // 에코 제거
-      noiseSuppression: true,      // 노이즈 제거
-      autoGainControl: true,       // 자동 게인 제어
-      sampleRate: 44100,           // 샘플링 레이트 설정
-      channelCount: 1,             // 모노 채널 사용
+      echoCancellation: true,
+      noiseSuppression: true,
+      autoGainControl: true,
+      sampleRate: 44100,
+      channelCount: 1,
     }
   })
     .then((stream) => {
@@ -153,6 +164,7 @@ const startVoiceRecognition = () => {
 
       // 녹음이 멈출 때 실행되는 이벤트 핸들러
       mediaRecorder.value.onstop = async () => {
+        recognition.stop(); // 음성 인식 중지
         // 녹음된 오디오 데이터를 Blob으로 변환
         const audioBlob = new Blob(audioChunks.value);
         const formData = new FormData();
@@ -230,12 +242,37 @@ const startVoiceRecognition = () => {
     });
 };
 
-// 컴포넌트 마운트 시 초기화
+// localStorage에서 데이터를 불러오는 함수
+const loadFromLocalStorage = () => {
+  const savedMovies = localStorage.getItem('searchMovies')
+  const savedTranscript = localStorage.getItem('searchTranscript')
+  const savedSentiment = localStorage.getItem('searchSentiment')
+  const savedQuery = localStorage.getItem('searchQuery')
+
+  if (savedMovies) {
+    movies.value = JSON.parse(savedMovies)
+    transcript.value = savedTranscript || ''
+    sentiment.value = savedSentiment ? Number(savedSentiment) : null
+    searchQuery.value = savedQuery || ''
+  }
+}
+
+// movies가 변경될 때마다 localStorage에 저장
+watch(movies, (newMovies) => {
+  if (newMovies.length > 0) {
+    localStorage.setItem('searchMovies', JSON.stringify(newMovies))
+    localStorage.setItem('searchTranscript', transcript.value)
+    localStorage.setItem('searchSentiment', sentiment.value)
+    localStorage.setItem('searchQuery', searchQuery.value)
+  }
+}, { deep: true })
+
+// 컴포넌트 마운트 시 초기화 수정
 onMounted(() => {
   // URL의 query params에서 데이터 가져오기
-  const queryTranscript = route.query.transcript;
-  const querySentiment = route.query.sentiment;
-  const queryMovies = route.query.movies;
+  const queryTranscript = route.query.transcript
+  const querySentiment = route.query.sentiment
+  const queryMovies = route.query.movies
 
   if (queryTranscript && querySentiment && queryMovies) {
     // 기본 데이터 설정
@@ -279,6 +316,9 @@ onMounted(() => {
 
     // 데이터 설정이 완료된 후 URL 정리
     router.replace({ path: '/search' });
+  } else {
+    // URL에 쿼리 파라미터가 없으면 localStorage에서 데이터 불러오기
+    loadFromLocalStorage()
   }
 });
 

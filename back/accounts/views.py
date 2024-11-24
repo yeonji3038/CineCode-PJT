@@ -82,31 +82,31 @@ def update_user(request):
     })
 
 # #소셜 로그인
-# @api_view(['POST'])
-# def google(request):
-#     id = request.data['id']
+PASSWORD = getattr(settings, "DEFAULT_USER_PASSWORD", "default_password")
+
+@api_view(['POST'])
+def google(request):
+    id = request.data['id']
     
-#     if get_user_model().objects.filter(username=id).exists():
-#         user = get_user_model().objects.get(username = id)
-#         data = {
-#             "username" : user.username
-#         }
-#         return Response(data, status.HTTP_200_OK)
-#     else:
-#         get_user_model()(
-#             username = id,
-#             nickname = id,
-#         ).save()
-#         user = get_user_model().objects.get(username = id)
-#         user.set_password(PASSWORD)
-#         user.save()
-#         data = {
-#             "username" : user.username
-#         }
+    if get_user_model().objects.filter(username=id).exists():
+        user = get_user_model().objects.get(username = id)
+        data = {
+            "username" : user.username
+        }
+        return Response(data, status.HTTP_200_OK)
+    else:
+        get_user_model()(
+            username = id,
+        ).save()
+        user = get_user_model().objects.get(username = id)
+        user.set_password(PASSWORD)
+        user.save()
+        data = {
+            "username" : user.username
+        }
         
-#         return Response(data, status.HTTP_200_OK)
+        return Response(data, status.HTTP_200_OK)
     
-# PASSWORD = getattr(settings, "DEFAULT_USER_PASSWORD", "default_password")   
 # @api_view(['GET', 'POST'])
 # def get_naver_info(request):
 #     token = request.data['token']

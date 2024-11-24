@@ -7,7 +7,7 @@
       <div class="profile-img-container">
         <div class="profile-img-wrapper" @click="$refs.fileInput.click()">
           <img 
-            :src="previewImage || authStore.profileImage || require('@/views/accounts/img/profile.png')"
+            :src="previewImage || authStore.profileImage || defaultProfileImage"
             alt="Profile Image" 
             class="profile-img" 
           />
@@ -74,6 +74,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import defaultProfileImage from '@/views/accounts/img/profile.png'
 
 const router = useRouter()
 const authStore = useAuthStore()
