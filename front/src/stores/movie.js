@@ -65,7 +65,6 @@ export const useMovieStore = defineStore('movie', () => {
     return axios.get(`${SERVER_URL}movies/${movieId}/detail/`)
       .then((response) => {
         movieDetail.value = response.data
-        console.log('Fetched movieDetail:', response.data)  // 디버깅
         return response.data
       })
       .catch((error) => {

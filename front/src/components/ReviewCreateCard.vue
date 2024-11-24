@@ -1,5 +1,5 @@
 <template>
-    <div v-if="isLogin" class="review-create-card">
+    <div class="review-create-card">
       <div class="header">
         <img :src="userProfileImage" alt="Profile" class="profile-image" />
         <span class="username">{{ username }}</span>
@@ -25,39 +25,38 @@
   </template>
   
   <script setup>
-  import { ref } from 'vue'
+  import { ref, defineProps, defineEmits } from 'vue'
   import { useAuthStore } from '@/stores/auth'
   import { useReviewStore } from '@/stores/review'
-  
-  const authStore = useAuthStore()
-  const reviewStore = useReviewStore()
-  
-  const isLogin = authStore.isLogin
-  const username = authStore.username
-  const userProfileImage = authStore.profile_image
-  
   const props = defineProps({
     movieTitle: String,
     moviePosterPath: String,
     movieId: Number
   })
+  const emit = defineEmits(['review-created'])
+  const authStore = useAuthStore()
+  const reviewStore = useReviewStore()
+
+  const username = authStore.username
+  const userProfileImage = authStore.profile_image
+  
   const reviewContent = ref('')
   const isSpoiler = ref(false)
   const showError = ref(false)
-  
+
   const saveReview = () => {
     // 내용이 비어있는지 검사
     if (!reviewContent.value.trim()) {
       showError.value = true
       return
     }
-
     showError.value = false
     const reviewData = {
       content: reviewContent.value,
       is_spoiler: isSpoiler.value,
-      movie: props.movieId,
+      movie_id: props.movieId,
     }
+
     reviewStore.createReview(reviewData)
     .then(() => {
         // 성공 시 입력 필드 초기화
@@ -65,6 +64,8 @@
         isSpoiler.value = false
         // 성공 메시지 표시
         alert('리뷰가 성공적으로 작성되었습니다.')
+        // 부모 컴포넌트에 리뷰 생성 이벤트 발생
+        emit('review-created')
     })
     .catch((error) => {
         console.error('리뷰 생성 실패:', error)

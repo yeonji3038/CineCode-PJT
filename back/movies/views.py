@@ -264,11 +264,15 @@ def review_list_create(request):
             if not request.user.is_authenticated:
                 return Response({'error': 'Authentication required'}, status=401)
             
+            # movie_id를 사용하여 Movie 객체 가져오기
+            movie_id = request.data.get('movie_id')
+            movie = get_object_or_404(Movie, pk=movie_id)
+            
             # 필수 필드만 포함
             review_data = {
                 'content': request.data.get('content'),
                 'is_spoiler': request.data.get('is_spoiler', False),  # 기본값 False
-                'movie': request.data.get('movie')
+                'movie': movie.id # movie 객체의 id를 저장
             }
             
             serializer = ReviewSerializer(data=review_data)

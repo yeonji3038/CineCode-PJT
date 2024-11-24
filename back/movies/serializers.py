@@ -43,9 +43,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
-    movie = MovieSerializer(read_only=True)
-
     class Meta:
         model = Review
-        fields = '__all__'
+        fields = ['id', 'content', 'is_spoiler', 'movie', 'user', 'created_at']
+        read_only_fields = ['user']

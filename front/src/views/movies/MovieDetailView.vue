@@ -48,12 +48,18 @@
     <div class="content-wrapper1">
       <div class="review-section">
         <h2 class="section-title">리뷰</h2>
+        <!-- 로그인한 사용자에게만 리뷰 작성 카드 표시 -->
         <ReviewCreateCard
           v-if="authStore.isLogin"
           :movieTitle="movieStore.movieDetail.title"
           :moviePosterPath="movieStore.movieDetail.poster_path"
           :movieId="movieStore.movieDetail.id"
+          @review-created="refreshReviews"
         />
+         <!-- 로그인하지 않은 사용자에게는 안내 메시지 표시 -->
+        <div v-else class="login-prompt">
+          <p>리뷰를 작성하려면 <router-link to="/login" class="login-link">로그인</router-link>이 필요합니다.</p>
+        </div>
       </div>
     </div>
 
@@ -90,10 +96,15 @@ const movieStore = useMovieStore()
 const reviewStore = useReviewStore() 
 const reviews = ref([])
 
+// 리뷰 생성 후 리뷰 목록을 새로고침하는 함수 추가
+const refreshReviews = async () => {
+  const data = await reviewStore.fetchReviews()
+  reviews.value = data
+}
+
 // 영화와 리뷰 정보 불러오기
 onMounted(() => {
   movieStore.fetchMovieDetail(route.params.id)
-  console.log('Movie Detail:', movieStore.movieDetail) // trailer_id 값 확인
   reviewStore.fetchReviews().then((data) => {
     reviews.value = data
   })
@@ -291,6 +302,25 @@ watch(
   padding: 2rem 6rem;
   margin: 0 auto;
   width: 100%;
+}
+
+.login-prompt {
+  background-color: #d9d9d9;
+  padding: 2rem;
+  border-radius: 8px;
+  text-align: center;
+  color: #333;
+  margin: 0 6rem;  /* review-section의 padding과 동일하게 맞춤 */
+}
+
+.login-link {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.login-link:hover {
+  text-decoration: underline;
 }
 
 .reviews-section {
