@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from django.conf import settings
-from .models import Movie, WatchedMovie, LikedMovie, Review
+from .models import Movie, WatchedMovie, LikedMovie, Review, LikedReview
 from .serializers import MovieSerializer, WatchedMovieSerializer, LikedMovieSerializer, ReviewSerializer
 import requests
 import requests
@@ -250,11 +250,10 @@ def analyze_voice(request):
         return JsonResponse({"error": str(e)}, status=500)
     
 
-
+# 리뷰 목록 생성 및 조회
 @api_view(['GET', 'POST'])
 def review_list_create(request):
     if request.method == 'GET':
-        # GET 요청은 인증 불필요
         reviews = Review.objects.all()
         serializer = ReviewSerializer(reviews, many=True)
         return Response(serializer.data)
@@ -287,6 +286,8 @@ def review_list_create(request):
             print("Error creating review:", str(e))
             return Response({'error': str(e)}, status=500)
 
+
+# 리뷰 상세 조회, 수정, 삭제
 @api_view(['GET', 'PUT', 'DELETE'])
 def review_detail_update_delete(request, pk):
     review = get_object_or_404(Review, pk=pk)
@@ -310,3 +311,31 @@ def review_detail_update_delete(request, pk):
     elif request.method == 'DELETE':
         review.delete()
         return Response(status=204)
+
+
+# 리뷰 좋아요 버튼
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def toggle_review_like(request, review_pk):
+    review = get_object_or_404(Review, pk=review_pk)
+    
+    # 자신의 리뷰는 좋아요 할 수 없음
+    if review.user == request.user:
+        return Response({'error': '자신의 리뷰는 좋아요할 수 없습니다.'}, status=400)
+    
+    like_instance = LikedReview.objects.filter(user=request.user, review=review)
+    
+    if like_instance.exists():
+        like_instance.delete()
+        review.likes -= 1
+        is_liked = False
+    else:
+        LikedReview.objects.create(user=request.user, review=review)
+        review.likes += 1
+        is_liked = True
+    
+    review.save()
+    return Response({
+        'likes': review.likes,
+        'is_liked': is_liked
+    })

@@ -58,7 +58,7 @@
         />
          <!-- 로그인하지 않은 사용자에게는 안내 메시지 표시 -->
         <div v-else class="login-prompt">
-          <p>리뷰를 작성하려면 <router-link to="/login" class="login-link">로그인</router-link>이 필요합니다.</p>
+          <p>리뷰를 작성하려면 <router-link to="/accounts/login" class="login-link">로그인</router-link>이 필요합니다.</p>
         </div>
       </div>
     </div>

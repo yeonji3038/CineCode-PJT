@@ -9,7 +9,9 @@
         </div>
         <!-- 좋아요 버튼 섹션 -->
         <div class="review-likes">
-          <button @click="toggleLike" class="like-button">
+          <button @click="handleLikeClick" class="like-button"
+          :disabled="!authStore.isLogin || review.user.username === authStore.username"
+          :class="{ 'liked': review.is_liked }">
             <img src="@/assets/like-icon.svg" alt="Like" />
           </button>
           <span>{{ review.likes }}</span>
@@ -30,6 +32,8 @@
   <script setup>
   import { ref, computed } from 'vue'
   import { useReviewStore } from '@/stores/review'
+  import { useAuthStore } from '@/stores/auth'
+  import { useRouter } from 'vue-router'
   
   const props = defineProps({
     review: Object,
@@ -38,17 +42,29 @@
   })
   
   const reviewStore = useReviewStore()
+  const authStore = useAuthStore()
   const showContent = ref(false)
+  const router = useRouter()
   
-  const toggleLike = () => {
+  const handleLikeClick = () => {
+    if (!authStore.isLogin) {
+      router.push('/login')
+      return
+    }
+
+    if (props.review.user.username === authStore.username) {
+      alert('자신의 리뷰는 좋아요할 수 없습니다.')
+      return
+    }
+
     reviewStore.toggleLike(props.review.id)
-    .catch((error) => {
-      if (error.response?.status === 401) {
-        // 401 에러 시 로그인 페이지로 이동
-        router.push('/login')
-      }
+      .catch(error => {
+        if (error.response?.status === 400) {
+          alert(error.response.data.error)
+        }
     })
   }
+
   const formattedDate = computed(() => {
     const createdAt = new Date(props.review.created_at)
     const now = new Date()
@@ -75,6 +91,7 @@
     padding: 16px;
     margin-bottom: 16px;
     background-color: #f9f9f9;
+    color: #000000;
   }
   
   .review-header {

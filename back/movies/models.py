@@ -21,8 +21,8 @@ class Movie(models.Model):
         choices=STATUS_CHOICES,
         default='미시청'
     )
+    tags = models.ManyToManyField('community.Tag', through='MovieTag')
     genres = models.ManyToManyField('Genre', through='MovieGenre')
-    tags = models.ManyToManyField('Tag', through='MovieTag')
     watched_by = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         through='WatchedMovie',
@@ -43,32 +43,12 @@ class Genre(models.Model):
     def __str__(self):
         return self.name
 
-class Category(models.Model):
-    name = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.name
-
-class Tag(models.Model):
-    name = models.CharField(max_length=100)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.name
-
 class MovieGenre(models.Model):
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
     genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'movie_genres'
-
-class MovieTag(models.Model):
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
-    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
-
-    class Meta:
-        db_table = 'movie_tags'
 
 class WatchedMovie(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -94,6 +74,29 @@ class Review(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     likes = models.IntegerField(default=0)
+    liked_by = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        through='LikedReview',
+        related_name='liked_reviews'
+    )
 
     def __str__(self):
         return f"{self.user.username}의 {self.movie.title} 리뷰"
+    
+class LikedReview(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    review = models.ForeignKey('Review', on_delete=models.CASCADE, related_name='liked_reviews')
+    liked_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'review')
+
+class MovieTag(models.Model):
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    tag = models.ForeignKey('community.Tag', on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('movie', 'tag')
+
+    def __str__(self):
+        return f"{self.movie.title} - {self.tag.name}"

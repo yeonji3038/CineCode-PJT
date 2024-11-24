@@ -1,6 +1,6 @@
 [
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 1,
         "fields": {
             "name": "힐링 모드",
@@ -8,7 +8,7 @@
         }
     },
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 2,
         "fields": {
             "name": "자존감 회복",
@@ -16,7 +16,7 @@
         }
     },
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 3,
         "fields": {
             "name": "웃음버튼",
@@ -24,7 +24,7 @@
         }
     },
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 4,
         "fields": {
             "name": "도파민 방출",
@@ -32,7 +32,7 @@
         }
     },
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 5,
         "fields": {
             "name": "시리즈 정주행",
@@ -40,7 +40,7 @@
         }
     },
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 6,
         "fields": {
             "name": "무조건 끝까지 보세요",
@@ -48,7 +48,7 @@
         }
     },
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 7,
         "fields": {
             "name": "인생띵작",
@@ -56,7 +56,7 @@
         }
     },
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 8,
         "fields": {
             "name": "연인과 함께",
@@ -64,7 +64,7 @@
         }
     },
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 9,
         "fields": {
             "name": "가족과 함께",
@@ -72,7 +72,7 @@
         }
     },
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 10,
         "fields": {
             "name": "친구와 함께",
@@ -80,7 +80,7 @@
         }
     },
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 11,
         "fields": {
             "name": "OST 맛집",
@@ -88,7 +88,7 @@
         }
     },
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 12,
         "fields": {
             "name": "뮤지컬 영화",
@@ -96,7 +96,7 @@
         }
     },
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 13,
         "fields": {
             "name": "밴드 영화",
@@ -104,7 +104,7 @@
         }
     },
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 14,
         "fields": {
             "name": "클래식 영화",
@@ -112,7 +112,7 @@
         }
     },
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 15,
         "fields": {
             "name": "밥친구",
@@ -120,7 +120,7 @@
         }
     },
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 16,
         "fields": {
             "name": "우울할 때",
@@ -128,7 +128,7 @@
         }
     },
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 17,
         "fields": {
             "name": "잠이 안오면",
@@ -136,7 +136,7 @@
         }
     },
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 18,
         "fields": {
             "name": "짝사랑",
@@ -144,7 +144,7 @@
         }
     },
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 19,
         "fields": {
             "name": "이별",
@@ -152,7 +152,7 @@
         }
     },
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 20,
         "fields": {
             "name": "과제나 일할 때",
@@ -160,7 +160,7 @@
         }
     },
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 21,
         "fields": {
             "name": "킬링 타임",
@@ -168,7 +168,7 @@
         }
     },
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 22,
         "fields": {
             "name": "1월",
@@ -176,7 +176,7 @@
         }
     },
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 23,
         "fields": {
             "name": "2월",
@@ -184,7 +184,7 @@
         }
     },
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 24,
         "fields": {
             "name": "3월",
@@ -192,7 +192,7 @@
     }
     },
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 25,
         "fields": {
             "name": "4월",
@@ -200,7 +200,7 @@
         }
     },
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 26,
         "fields": {
             "name": "5월",
@@ -208,7 +208,7 @@
         }
     },
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 27,
         "fields": {
             "name": "6월",
@@ -216,7 +216,7 @@
         }
     },
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 28,
         "fields": {
             "name": "7월",
@@ -224,7 +224,7 @@
         }
     },
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 29,
         "fields": {
             "name": "8월",
@@ -232,7 +232,7 @@
         }
     },
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 30,
         "fields": {
             "name": "9월",
@@ -240,7 +240,7 @@
         }
     },
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 31,
         "fields": {
             "name": "10월",
@@ -248,7 +248,7 @@
         }
     },
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 32,
         "fields": {
             "name": "11월",
@@ -256,7 +256,7 @@
         }
     },
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 33,
         "fields": {
             "name": "12월",
@@ -264,7 +264,7 @@
         }
     },
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 34,
         "fields": {
             "name": "연애세포 자극",
@@ -272,7 +272,7 @@
         }
     },
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 35,
         "fields": {
             "name": "하이틴",
@@ -280,7 +280,7 @@
         }
     },
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 36,
         "fields": {
             "name": "사이다 결말",
@@ -288,7 +288,7 @@
         }
     },
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 37,
         "fields": {
             "name": "봄",
@@ -296,7 +296,7 @@
         }
     },
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 38,
         "fields": {
             "name": "여름",
@@ -304,7 +304,7 @@
         }
     },
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 39,
         "fields": {
             "name": "가을",
@@ -312,7 +312,7 @@
         }
     },
     {
-        "model": "movies.tag",
+        "model": "community.tag",
         "pk": 40,
         "fields": {
             "name": "겨울",

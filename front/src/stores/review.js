@@ -61,6 +61,7 @@ export const useReviewStore = defineStore('review', () => {
         const review = reviews.value.find(r => r.id === reviewId)
         if (review) {
           review.likes = response.data.likes
+          review.is_liked = response.data.is_liked
         }
         return response.data
       })

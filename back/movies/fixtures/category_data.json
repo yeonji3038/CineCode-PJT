@@ -1,41 +1,41 @@
 [
     {
-        "model": "movies.category",
+        "model": "community.category",
         "pk": 1,
         "fields": {
             "name": "내용별"
         }
     },
     {
-        "model": "movies.category",
+        "model": "community.category",
         "pk": 2,
         "fields": {
             "name": "같이 보고 싶은 사람"
         }
     },
     {
-        "model": "movies.category",
+        "model": "community.category",
         "pk": 3,
         "fields": {
             "name": "수록곡 기반"
         }
     },
     {
-        "model": "movies.category",
+        "model": "community.category",
         "pk": 4,
         "fields": {
             "name": "상황별"
         }
     },
     {
-        "model": "movies.category",
+        "model": "community.category",
         "pk": 5,
         "fields": {
             "name": "월별"
         }
     },
     {
-        "model": "movies.category",
+        "model": "community.category",
         "pk": 6,
         "fields": {
             "name": "계절별"
