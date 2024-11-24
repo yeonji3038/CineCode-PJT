@@ -1,5 +1,8 @@
 from rest_framework import serializers
 from .models import Movie, WatchedMovie, LikedMovie
+from .models import Review
+from django.contrib.auth.models import User
+from movies.models import Movie
 
 class MovieSerializer(serializers.ModelSerializer):
     poster_path = serializers.SerializerMethodField()
@@ -31,3 +34,18 @@ class LikedMovieSerializer(serializers.ModelSerializer):
     class Meta:
         model = LikedMovie
         fields = ('movie', 'liked_at',)
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'profile_image']
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+    movie = MovieSerializer(read_only=True)
+
+    class Meta:
+        model = Review
+        fields = '__all__'

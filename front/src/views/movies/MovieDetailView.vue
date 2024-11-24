@@ -1,11 +1,8 @@
 <template>
-  <div class="movie-detail" v-if="movie">
+  <div class="movie-detail" v-if="movieStore.movieDetail">
     <!-- 배경 이미지 -->
     <div class="backdrop-section">
-      <div 
-        class="background-image" 
-        :style="{ backgroundImage: `url(https://image.tmdb.org/t/p/original${movie.backdrop_path})` }"
-      >
+      <div class="background-image" :style="{ backgroundImage: `url(https://image.tmdb.org/t/p/original${movieStore.movieDetail.backdrop_path})` }">
         <div class="overlay"></div>
       </div>
     </div>
@@ -14,48 +11,64 @@
       <div class="content">
         <!-- 영화 포스터 -->
         <div class="poster">
-          <img :src="movie.poster_path" :alt="movie.title">
+          <img :src="movieStore.movieDetail.poster_path" :alt="movieStore.movieDetail.title">
         </div>
-  
         <!-- 영화 정보 -->
         <div class="info">
-          <h1>{{ movie.title }}</h1>
+          <h1>{{ movieStore.movieDetail.title }}</h1>
           <div class="meta">
-            <span>{{ movie.released_date }}</span>
-            <span v-if="movie.runtime">{{ movie.runtime }}분</span>
-            <span v-if="movie.genres">{{ movie.genres?.join(', ') }}</span>
+            <span>{{ movieStore.movieDetail.released_date }}</span>
+            <span v-if="movieStore.movieDetail.runtime">{{ movieStore.movieDetail.runtime }}분</span>
+            <span v-if="movieStore.movieDetail.genres">{{ movieStore.movieDetail.genres?.join(', ') }}</span>
           </div>
-          <p class="overview">{{ movie.overview }}</p>
+          <p class="overview">{{ movieStore.movieDetail.overview }}</p>
+          <!-- 버튼 섹션 -->
+          <div class="button-section" v-if="movieStore.movieDetail">
+            <WatchButton :movie="movieStore.movieDetail" class="action-button"/>
+            <LikeButton :movie="movieStore.movieDetail" class="action-button"/>
+          </div>
         </div>
       </div>
+    </div>
       
-      <!-- 버튼 섹션 -->
-    <div class="content-wrapper">
-      <div class="button-section" v-if="movie">
-        <WatchButton 
-          :movie="movie" 
-          class="action-button"
-        />
-        <LikeButton 
-          :movie="movie" 
-          class="action-button"
-        />
-      </div>
-    </div>
-    </div>
-
-
     <!-- 예고편 섹션 -->
-    <div class="content-wrapper" v-if="movie.trailer_id">
+    <div class="content-wrapper1">
       <div class="trailer-section">
-        <h2>예고편</h2>
+        <h2 class="section-title">예고편</h2>
         <iframe
-          :src="`https://www.youtube.com/embed/${movie.trailer_id}`"
+          :src="`https://www.youtube.com/embed/${movieStore.movieDetail.trailer_id}`"
           frameborder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowfullscreen
         ></iframe>
       </div>
+    </div>
+
+    <!-- 리뷰 작성 섹션 -->
+    <div class="content-wrapper1">
+      <div class="review-section">
+        <h2 class="section-title">리뷰</h2>
+        <ReviewCreateCard
+          v-if="authStore.isLogin"
+          :movieTitle="movieStore.movieDetail.title"
+          :moviePosterPath="movieStore.movieDetail.poster_path"
+          :movieId="movieStore.movieDetail.id"
+        />
+      </div>
+    </div>
+
+    <!-- 리뷰 조회 섹션 -->
+    <div class="reviews-section">
+      <div v-if="reviews.length === 0" class="no-reviews">
+        아직 작성된 리뷰가 없습니다.
+      </div>
+      <ReviewReadCard
+        v-for="review in reviews"
+        :key="review.id"
+        :review="review"
+        :movieTitle="movieStore.movieDetail.title"
+        :moviePosterPath="movieStore.movieDetail.poster_path"
+      />
     </div>
   </div>
 </template>
@@ -63,28 +76,37 @@
 <script setup>
 import WatchButton from '@/components/WatchButton.vue'
 import LikeButton from '@/components/LikeButton.vue'
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, watch } from 'vue'
+import ReviewCreateCard from '@/components/ReviewCreateCard.vue'
+import ReviewReadCard from '@/components/ReviewReadCard.vue'
 import { useRoute } from 'vue-router'
-import axios from 'axios'
+import { useAuthStore } from '@/stores/auth'
+import { useMovieStore } from '@/stores/movie'
+import { useReviewStore } from '@/stores/review'
 
 const route = useRoute()
-const movie = ref(null)
-const SERVER_URL = import.meta.env.VITE_APP_URL;
+const authStore = useAuthStore()
+const movieStore = useMovieStore()
+const reviewStore = useReviewStore() 
+const reviews = ref([])
 
-onMounted(async () => {
-  try {
-    // 데이터 로딩 상태 확인을 위한 콘솔 로그
-    console.log('영화 상세 정보 로딩 시작')
-    
-    const response = await axios.get(`${SERVER_URL}movies/${route.params.id}/detail/`)
-    movie.value = response.data
-    
-    // 받아온 데이터 확인을 위한 콘솔 로그
-    console.log('받아온 영화 데이터:', movie.value)
-  } catch (error) {
-    console.error('영화 상세 정보를 불러오는데 실패했습니다:', error)
-  }
+// 영화와 리뷰 정보 불러오기
+onMounted(() => {
+  movieStore.fetchMovieDetail(route.params.id)
+  console.log('Movie Detail:', movieStore.movieDetail) // trailer_id 값 확인
+  reviewStore.fetchReviews().then((data) => {
+    reviews.value = data
+  })
 })
+
+// 영화 상태가 변경될 때마다 상세 정보 다시 불러오기
+watch(
+  [() => movieStore.watchedMovies, () => movieStore.likedMovies],
+  () => {
+    movieStore.fetchMovieDetail(route.params.id)
+  },
+  { deep: true }
+)
 </script>
 
 <style scoped>
@@ -138,9 +160,16 @@ onMounted(async () => {
   padding-top: 100px;
 }
 
+.content-wrapper1 {
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  padding-bottom: 70px;
+}
+
 .content {
   position: relative;
-  padding: 120px 6rem 60px;  /* 상단 여백 늘림 (navbar 고려) */
+  padding: 150px 6rem 60px;  /* 상단 여백 늘림 (navbar 고려) */
   display: flex;
   gap: 3rem;
   z-index: 1;
@@ -184,7 +213,7 @@ onMounted(async () => {
 }
 
 .poster img {
-  width: 300px;
+  width: 350px;
   border-radius: 8px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 }
@@ -230,14 +259,19 @@ onMounted(async () => {
 .button-section {
   display: flex;
   gap: 1rem;
-  justify-content: center;
-  padding: 2rem 0;
-  z-index: 2;
-  position: relative;
+  margin-top: 2rem;  /* overview와의 간격 */
 }
 
 .action-button {
   min-width: 120px;
+}
+
+.section-title {
+  margin-left: 2rem; /* 제목을 같은 위치에 정렬 */
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  color: white;
 }
 
 .trailer-section {
@@ -246,18 +280,41 @@ onMounted(async () => {
   z-index: 2;
 }
 
-.trailer-section h2 {
-  font-size: 1.8rem;
-  font-weight: bold;
-  margin-bottom: 1.5rem;
-  color: white;
-}
-
 .trailer-section iframe {
   width: 100%;
   height: 600px;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.review-section {
+  padding: 2rem 6rem;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.reviews-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0 2rem;
+}
+
+.no-reviews {
+  text-align: center;
+  color: #888;
+  font-size: 1.2rem;
+  margin-bottom: 100px;
+}
+
+.review-card {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  background-color: #fff;
 }
 
 /* 반응형 디자인 */
@@ -280,16 +337,26 @@ onMounted(async () => {
     margin: 0 auto 2rem;
   }
 
+  .button-section {
+    justify-content: center;  /* 버튼 중앙 정렬 */
+  }
+  
   .trailer-section {
     padding: 2rem 2rem 4rem;
   }
-
+  
   .trailer-section iframe {
     height: 400px;
   }
 }
 
 @media (max-width: 768px) {
+  .content {
+    flex-direction: column;
+    align-items: center;
+    padding: 100px 1rem 40px;
+  }
+
   .poster img {
     width: 250px;
   }
@@ -298,8 +365,21 @@ onMounted(async () => {
     font-size: 2.2rem;
   }
 
+  .meta {
+    justify-content: center;
+  }
+
+  .overview {
+    margin: 0 auto 2rem;
+  }
+
+  .button-section {
+    justify-content: center;
+  }
+  
   .trailer-section iframe {
     height: 300px;
   }
 }
+
 </style>

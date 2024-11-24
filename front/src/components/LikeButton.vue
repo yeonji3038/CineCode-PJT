@@ -1,9 +1,16 @@
 <template>
-  <button :class="likeButtonClass" @click="handleLikeClick"> {{ likeButtonText }} </button>
+  <button 
+    @click="handleLikeClick" 
+    class="like-button"
+    :class="buttonStyle.class"
+  >
+    <i :class="buttonStyle.icon"></i>
+    {{ buttonStyle.text }}
+  </button>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { computed, watch } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useMovieStore } from '@/stores/movie'
 import { useRouter } from 'vue-router'
@@ -12,39 +19,86 @@ const authStore = useAuthStore()
 const movieStore = useMovieStore()
 const router = useRouter()
 const props = defineProps({
-  movie: Object
-})
-// 찜 버튼 텍스트 
-const likeButtonText = ref(props.movie?.is_liked ? '찜 취소' : '찜하기')
-// 찜 버튼 스타일
-const likeButtonClass = computed(() => {
-  return props.movie?.is_liked ? 'like-button liked' : 'like-button'
+  movie: {
+    type: Object,
+    required: true
+  }
 })
 
-const handleLikeClick = () => {
-  if (!authStore.token) {
-    router.push('/login')
-    return;
+const buttonStyle = computed(() => {
+  const styles = {
+    liked: {
+      text: '찜 취소',
+      class: 'liked',
+      icon: 'bi bi-heart-fill'
+    },
+    default: {
+      text: '찜',
+      class: '',
+      icon: 'bi bi-heart'
+    }
   }
-  movieStore.toggleLikeStatus(props.movie);
-  likeButtonText.value = props.movie?.is_liked ? '찜 취소' : '찜하기'
+  
+  // 로그인 체크
+  if (!authStore.isLogin) {
+    return styles.default
+  }
+  
+  // likedMovies 배열에서 현재 영화 확인
+  const isLiked = movieStore.likedMovies.some(m => m.id === props.movie.id)
+  return isLiked ? styles.liked : styles.default
+})
+
+const handleWatchClick = () => {
+  if (!authStore.isLogin) {
+    router.push('/login')
+    return
+  }
+  movieStore.toggleWatchStatus(props.movie)
+    .then(() => {
+      console.log('Watch status toggled successfully')
+    })
+    .catch((error) => {
+      console.error('Failed to toggle watch status:', error)
+    })
 }
+
+// 상태 변경 시 컴포넌트 리렌더링
+watch(() => movieStore.watchedMovies, () => {
+  console.log('Watched movies updated')
+})
 </script>
 
 <style scoped>
 .like-button {
-  padding: 10px 20px;
-  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  padding: 0.8rem 2rem;
+  border-radius: 5px;
+  border: none;
   cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s, color 0.3s;
-  background-color: #fff;
-  color: #000;
-  border: 1px solid #ccc;
+  font-weight: 500;
+  font-size: 1.2rem;
+  background-color: #D9D9D9;
+  color: #000000;
+  transition: all 0.2s;
+  min-width: 140px;
 }
 
-.liked {
-  background-color: #f00;
-  color: #fff;
+.like-button i {
+  display: flex;
+  align-items: center;
+  font-size: 1.2rem;
+}
+
+.like-button.liked {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+.like-button:hover {
+  opacity: 0.8;
 }
 </style>

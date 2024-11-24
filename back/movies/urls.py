@@ -10,5 +10,6 @@ urlpatterns = [
     path('<int:movie_pk>/like/', views.toggle_like, name='toggle_like'),
     path('<int:movie_pk>/detail/', views.movie_detail, name='movie_detail'),
     path('analyze_voice/', views.analyze_voice, name='analyze-voice'),
-
+    path('reviews/', views.review_list_create, name='review_list_create'), # 리뷰 목록 조회 및 생성(CR)
+    path('reviews/<int:pk>/', views.review_detail_update_delete, name='review_detail_update_delete') # 리뷰 상세 조회, 수정, 삭제(RUD)
 ]

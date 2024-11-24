@@ -3,8 +3,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from django.conf import settings
-from .models import Movie, WatchedMovie, LikedMovie
-from .serializers import MovieSerializer, WatchedMovieSerializer, LikedMovieSerializer
+from .models import Movie, WatchedMovie, LikedMovie, Review
+from .serializers import MovieSerializer, WatchedMovieSerializer, LikedMovieSerializer, ReviewSerializer
 import requests
 import requests
 from django.http import JsonResponse
@@ -113,9 +113,9 @@ def movie_detail(request, movie_pk):
             movie=movie
         ).first()
         response_data['status'] = '시청 중' if watched_movie else '미시청'
+
     # 장르 한글명 추가
     response_data['genres'] = [genre.name for genre in movie.genres.all()]
-
     
     # YouTube에서 예고편 검색
     youtube_api_key = settings.YOUTUBE_API_KEY
@@ -130,11 +130,10 @@ def movie_detail(request, movie_pk):
     youtube_data = youtube_response.json()
     if youtube_data.get('items'):
         response_data['trailer_id'] = youtube_data['items'][0]['id']['videoId']
-    
     return Response(response_data)
 
 
-#음성인식
+# 음성인식
 # 음성 파일을 텍스트로 변환하는 함수
 def transcribe_file(audio_file: str) -> str:
     os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = settings.GOOGLE_APPLICATION_CREDENTIALS
@@ -249,3 +248,61 @@ def analyze_voice(request):
     except Exception as e:
         print(f"오류 발생: {str(e)}")
         return JsonResponse({"error": str(e)}, status=500)
+    
+
+
+@api_view(['GET', 'POST'])
+def review_list_create(request):
+    if request.method == 'GET':
+        # GET 요청은 인증 불필요
+        reviews = Review.objects.all()
+        serializer = ReviewSerializer(reviews, many=True)
+        return Response(serializer.data)
+        
+    elif request.method == 'POST':
+        try:
+            if not request.user.is_authenticated:
+                return Response({'error': 'Authentication required'}, status=401)
+            
+            # 필수 필드만 포함
+            review_data = {
+                'content': request.data.get('content'),
+                'is_spoiler': request.data.get('is_spoiler', False),  # 기본값 False
+                'movie': request.data.get('movie')
+            }
+            
+            serializer = ReviewSerializer(data=review_data)
+            if serializer.is_valid():
+                review = serializer.save(user=request.user)  # user 정보 추가
+                return Response(serializer.data, status=201)
+            
+            print("Serializer errors:", serializer.errors)
+            return Response(serializer.errors, status=400)
+            
+        except Exception as e:
+            print("Error creating review:", str(e))
+            return Response({'error': str(e)}, status=500)
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def review_detail_update_delete(request, pk):
+    review = get_object_or_404(Review, pk=pk)
+    
+    if request.method == 'GET':
+        # GET 요청은 인증 불필요
+        serializer = ReviewSerializer(review)
+        return Response(serializer.data)
+    
+    # PUT과 DELETE 요청은 인증 필요
+    if not request.user.is_authenticated:
+        return Response({'error': 'Authentication required'}, status=401)
+    
+    if request.method == 'PUT':
+        serializer = ReviewSerializer(review, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
+    
+    elif request.method == 'DELETE':
+        review.delete()
+        return Response(status=204)

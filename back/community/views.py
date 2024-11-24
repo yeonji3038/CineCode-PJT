@@ -1,4 +1,9 @@
-from django.http import HttpResponse
+from .models import Example
+from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 
-def example_view(request):
-    return HttpResponse("This is an example view!")
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+def example(request):
+    return Response({'message': 'Hello, world!'})
