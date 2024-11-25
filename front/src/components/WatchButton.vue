@@ -58,7 +58,7 @@ const buttonStyle = computed(() => {
 
 const handleWatchClick = () => {
   if (!authStore.isLogin) {
-    router.push('/login')
+    router.push('/accounts/login')
     return
   }
   movieStore.toggleWatchStatus(props.movie)

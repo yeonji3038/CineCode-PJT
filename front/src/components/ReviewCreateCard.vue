@@ -62,7 +62,7 @@
       is_spoiler: isSpoiler.value,
       movie_id: props.movieId,
     }
-
+    console.log('전송할 데이터:', reviewData)  // 디버깅용 로그
     reviewStore.createReview(reviewData)
     .then(() => {
         // 성공 시 입력 필드 초기화

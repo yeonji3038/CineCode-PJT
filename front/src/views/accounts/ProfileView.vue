@@ -20,7 +20,7 @@
       </div>
       <div class="activity-item" @click="showLikedReviews" :class="{ 'active': showingLikes }">
         <h5>내가 좋아요한 리뷰</h5>
-        <p>{{ likedReviews.length }}</p>
+        <p>{{ displayedLikedReviewsCount }}</p>
       </div>
     </div>
 
@@ -63,8 +63,10 @@ import { useAuthStore } from '@/stores/auth'
 import defaultProfileImage from '@/assets/profile.png'
 import ReviewUDCard from '@/components/ReviewUDCard.vue'
 import ReviewReadCard from '@/components/ReviewReadCard.vue'
+import { useReviewStore } from '@/stores/review'
 
 const authStore = useAuthStore()
+const reviewStore = useReviewStore()
 const showingReviews = ref(true) // 기본값을 true로 설정
 const showingLikes = ref(false)
 const userReviews = ref([])
@@ -72,6 +74,11 @@ const likedReviews = ref([])
 
 const profileImageSrc = computed(() => {
   return authStore.profileImage || defaultProfileImage
+})
+
+// likedReviewsCount를 computed로 변경
+const displayedLikedReviewsCount = computed(() => {
+  return reviewStore.likedReviewsCount || likedReviews.value.length
 })
 
 // 사용자 리뷰 보기
@@ -117,6 +124,7 @@ const fetchLikedReviews = () => {
   })
   .then(response => {
     likedReviews.value = response.data
+    reviewStore.likedReviewsCount = response.data.length
   })
   .catch(error => {
     console.error('좋아요한 리뷰 불러오기 실패:', error)
@@ -135,7 +143,8 @@ const refreshReviews = () => {
 
 onMounted(() => {
   if (authStore.isLogin) {
-    fetchUserReviews()  // 초기 로드 시 사용자 리뷰 가져오기
+    fetchUserReviews()
+    fetchLikedReviews()  // 초기 로드 시 좋아요한 리뷰도 가져오기
   }
 })
 </script>

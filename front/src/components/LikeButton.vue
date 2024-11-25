@@ -39,19 +39,14 @@ const buttonStyle = computed(() => {
     }
   }
   
-  // 로그인 체크
-  if (!authStore.isLogin) {
-    return styles.default
-  }
-  
   // likedMovies 배열에서 현재 영화 확인
   const isLiked = movieStore.likedMovies.some(m => m.id === props.movie.id)
   return isLiked ? styles.liked : styles.default
 })
 
-const handleWatchClick = () => {
+const handleLikeClick = () => {
   if (!authStore.isLogin) {
-    router.push('/login')
+    router.push('/accounts/login')
     return
   }
   movieStore.toggleWatchStatus(props.movie)

@@ -62,7 +62,9 @@
     review: {
       type: Object,
       required: true
-    }
+    },
+    movieTitle: String,
+    moviePosterPath: String
   })
   
   const authStore = useAuthStore()
@@ -73,6 +75,7 @@
   const isEditing = ref(false)
   const editedContent = ref('')
   const editedSpoiler = ref(false)
+  const showContent = ref(false)
   
   // 프로필 이미지 computed 속성
   const profileImageSrc = computed(() => {

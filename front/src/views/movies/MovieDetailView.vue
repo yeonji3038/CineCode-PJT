@@ -48,7 +48,7 @@
     <div class="content-wrapper1">
       <div class="review-section">
         <div class="review-header">
-          <h2 class="section-title">리뷰 작성하기</h2>
+          <h2 class="section-title">내 리뷰</h2>
         </div>
         <!-- 로그인한 사용자에게만 리뷰 작성 카드 표시 -->
         <ReviewCreateCard

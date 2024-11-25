@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from movies.models import Movie
 from django.contrib.auth import get_user_model
 
+TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500'
 User = get_user_model()
 
 class MovieSerializer(serializers.ModelSerializer):
@@ -15,9 +16,13 @@ class MovieSerializer(serializers.ModelSerializer):
         fields = '__all__'
     
     def get_poster_path(self, obj):
-        if obj.poster_path:
-            return f"https://image.tmdb.org/t/p/w500{obj.poster_path}"
-        return None
+        if not obj.poster_path:
+            return None
+        # 이미 전체 URL인 경우
+        if obj.poster_path.startswith(('http://', 'https://')):
+           return obj.poster_path
+        # 상대 경로인 경우 기본 URL 추가
+        return f"{TMDB_IMAGE_BASE_URL}{obj.poster_path}"
     
     # def get_genres(self, obj):
     #     return [genre.name for genre in obj.genres.all()]
@@ -54,14 +59,17 @@ class MovieSimpleSerializer(serializers.ModelSerializer):
 class ReviewSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     movie = MovieSimpleSerializer(read_only=True)
+    username = serializers.CharField(source='user.username', read_only=True)
+    profile_image = serializers.CharField(source='user.profile_image', read_only=True)
     is_liked = serializers.SerializerMethodField()
     
     class Meta:
         model = Review
         fields = [
             'id', 'content', 'created_at', 'updated_at', 
-            'likes', 'is_spoiler', 'user', 'movie', 'is_liked'
+            'likes', 'is_spoiler', 'user', 'movie', 'is_liked', 'username', 'profile_image'
         ]
+        read_only_fields = ['user', 'likes']
 
     def get_is_liked(self, obj):
         request = self.context.get('request')

@@ -255,20 +255,21 @@ def review_list_create(request):
             if not request.user.is_authenticated:
                 return Response({'error': 'Authentication required'}, status=401)
             
+            print("Received data:", request.data)
+            
             # movie_id를 사용하여 Movie 객체 가져오기
             movie_id = request.data.get('movie_id')
             movie = get_object_or_404(Movie, pk=movie_id)
-            
-            # 필수 필드만 포함
-            review_data = {
+
+            # 시리얼라이저에 movie 인스턴스를 직접 전달
+            serializer = ReviewSerializer(data={
                 'content': request.data.get('content'),
-                'is_spoiler': request.data.get('is_spoiler', False),  # 기본값 False
-                'movie': movie.id # movie 객체의 id를 저장
-            }
+                'is_spoiler': request.data.get('is_spoiler', False),
+            })   
             
-            serializer = ReviewSerializer(data=review_data)
             if serializer.is_valid():
-                review = serializer.save(user=request.user)  # user 정보 추가
+                # movie와 user를 직접 설정하여 저장
+                review = serializer.save(user=request.user, movie=movie)
                 return Response(serializer.data, status=201)
             
             print("Serializer errors:", serializer.errors)
@@ -316,15 +317,14 @@ def toggle_review_like(request, review_pk):
         return Response({'error': '자신의 리뷰는 좋아요할 수 없습니다.'}, status=400)
     
     like_instance = LikedReview.objects.filter(user=request.user, review=review)
+    is_liked = not like_instance.exists()  # 토글 후의 상태를 미리 계산
     
     if like_instance.exists():
         like_instance.delete()
-        review.likes -= 1
-        is_liked = False
+        review.likes = LikedReview.objects.filter(review=review).count()  # 정확한 좋아요 수 계산
     else:
         LikedReview.objects.create(user=request.user, review=review)
-        review.likes += 1
-        is_liked = True
+        review.likes = LikedReview.objects.filter(review=review).count()  # 정확한 좋아요 수 계산
     
     review.save()
     return Response({

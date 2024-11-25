@@ -56,7 +56,7 @@
   
   const handleLikeClick = () => {
     if (!authStore.isLogin) {
-      router.push('/login')
+      router.push('/accounts/login')
       return
     }
 
@@ -65,12 +65,19 @@
       return
     }
 
+    const isLiked = props.review.likes > 0
     reviewStore.toggleLike(props.review.id)
+      .then(() => {
+        // 좋아요 수 업데이트
+        props.review.likes += isLiked ? -1 : 1
+        // store의 좋아요 카운트 업데이트
+        reviewStore.updateLikedReviewsCount(!isLiked)
+      })
       .catch(error => {
         if (error.response?.status === 400) {
           alert(error.response.data.error)
         }
-    })
+      })
   }
 
   const formattedDate = computed(() => {
