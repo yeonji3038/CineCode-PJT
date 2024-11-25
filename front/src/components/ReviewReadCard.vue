@@ -97,8 +97,9 @@
 
   // 프로필 이미지 computed 속성 추가
   const profileImageSrc = computed(() => {
-    return props.review.user.profile_image || defaultProfileImage 
-  })
+  // user 객체와 profile_image가 있는지 안전하게 확인
+  return props.review?.user?.profile_image || defaultProfileImage
+})
   </script>
   
   <style scoped>

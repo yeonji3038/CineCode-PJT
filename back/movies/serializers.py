@@ -44,17 +44,30 @@ class UserSerializer(serializers.ModelSerializer):
 
 class ReviewSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username', read_only=True)
-    profile_image = serializers.CharField(source='user.profile_image', read_only=True)
+    movie_title = serializers.CharField(source='movie.title', read_only=True)
+    movie_poster_path = serializers.CharField(source='movie.poster_path', read_only=True)
     is_liked = serializers.SerializerMethodField()
+    liked_at = serializers.SerializerMethodField()
 
     class Meta:
         model = Review
-        fields = ['id', 'content', 'is_spoiler', 'movie', 'user', 'created_at', 
-                 'username', 'profile_image', 'likes', 'is_liked']
-        read_only_fields = ['user', 'likes']
+        fields = [
+            'id', 'content', 'created_at', 'updated_at', 'likes',
+            'is_spoiler', 'username', 'movie_title', 'movie_poster_path',
+            'is_liked', 'liked_at', 'movie'
+        ]
+
+    def get_user(self, obj):
+        return {
+            'username': obj.user.username,
+            'profile_image': obj.user.profile_image.url if obj.user.profile_image else None
+        }
+
 
     def get_is_liked(self, obj):
-        request = self.context.get('request')
-        if request and request.user.is_authenticated:
-            return obj.liked_reviews.filter(user=request.user).exists()
-        return False
+        return hasattr(obj, 'user_likes') and len(obj.user_likes) > 0
+
+    def get_liked_at(self, obj):
+        if hasattr(obj, 'user_likes') and obj.user_likes:
+            return obj.user_likes[0].created_at
+        return None

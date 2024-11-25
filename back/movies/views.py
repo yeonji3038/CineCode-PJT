@@ -16,6 +16,7 @@ from google.cloud import language_v1
 import json
 import random
 from pathlib import Path
+from django.db.models import Prefetch
 
 
 TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500'
@@ -340,4 +341,38 @@ def search_movies_by_title(request):
     # 제목에 검색어가 포함된 영화들을 검색
     movies = Movie.objects.filter(title__icontains=query)[:10]
     serializer = MovieSerializer(movies, many=True)
+    return Response(serializer.data)
+
+
+# 사용자가 작성한 리뷰 목록
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def user_reviews(request):
+    reviews = Review.objects.filter(user=request.user)\
+        .select_related('movie', 'user')\
+        .prefetch_related(
+            Prefetch('likedreview_set', 
+                    queryset=LikedReview.objects.filter(user=request.user),
+                    to_attr='user_likes')
+        )\
+        .order_by('-created_at')
+    
+    serializer = ReviewSerializer(reviews, many=True)
+    return Response(serializer.data)
+
+
+# 사용자가 좋아요한 리뷰 목록
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def liked_reviews(request):
+    liked_reviews = Review.objects.filter(
+        likedreview__user=request.user
+    ).select_related('movie', 'user')\
+     .prefetch_related(
+        Prefetch('likedreview_set',
+                queryset=LikedReview.objects.filter(user=request.user),
+                to_attr='user_likes')
+    ).order_by('-likedreview__created_at')
+    
+    serializer = ReviewSerializer(liked_reviews, many=True)
     return Response(serializer.data)

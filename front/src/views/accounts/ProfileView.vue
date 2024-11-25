@@ -14,31 +14,44 @@
 
     <!-- Activity 영역 -->
     <div class="activity-section">
-      <div class="activity-item" @click="toggleReviews" :class="{ 'active': showReviews }">
+      <div class="activity-item" @click="showUserReviews" :class="{ 'active': showingReviews }">
         <h5>Reviews Written</h5>
         <p>{{ userInfo.review_count || 0 }}</p>
       </div>
-      <div class="activity-item">
+      <div class="activity-item" @click="showLikedReviews" :class="{ 'active': showingLikes }">
         <h5>Likes</h5>
         <p>{{ userInfo.likes_count || 0 }}</p>
       </div>
     </div>
 
-    <!-- 리뷰 목록 섹션 추가 -->
-    <div v-if="showReviews" class="reviews-section">
-      <div v-if="reviews.length > 0" class="reviews-list">
-        <div v-for="review in reviews" :key="review.id" class="review-item">
-          <div class="review-header">
-            <h4>{{ review.movie_title }}</h4>
-            <span class="review-date">{{ formatDate(review.created_at) }}</span>
-          </div>
-          <p class="review-content">{{ review.content }}</p>
-          <div class="review-rating">
-            <span>평점: {{ review.rating }}/5</span>
-          </div>
-        </div>
+    <!-- 리뷰 목록 섹션 -->
+    <div v-if="showingReviews" class="reviews-section">
+      <div v-if="userReviews.length > 0" class="reviews-list">
+        <ReviewUDCard
+          v-for="review in userReviews"
+          :key="review.id"
+          :review="review"
+          :movieTitle="review.movie_title"
+          :moviePosterPath="review.movie_poster_path"
+          @review-updated="refreshReviews"
+          @review-deleted="refreshReviews"
+        />
       </div>
       <p v-else class="no-reviews">작성한 리뷰가 없습니다.</p>
+    </div>
+
+    <!-- 좋아요한 리뷰 목록 섹션 -->
+    <div v-if="showingLikes" class="reviews-section">
+      <div v-if="likedReviews.length > 0" class="reviews-list">
+        <ReviewReadCard
+          v-for="review in likedReviews"
+          :key="review.id"
+          :review="review"
+          :movieTitle="review.movie_title"
+          :moviePosterPath="review.movie_poster_path"
+        />
+      </div>
+      <p v-else class="no-reviews">좋아요한 리뷰가 없습니다.</p>
     </div>
   </div>
 </template>
@@ -48,23 +61,25 @@ import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
 import defaultProfileImage from '@/assets/profile.png'
+import ReviewUDCard from '@/components/ReviewUDCard.vue'
+import ReviewReadCard from '@/components/ReviewReadCard.vue'
 
 const authStore = useAuthStore()
 const userInfo = ref({})
-const showReviews = ref(false)
-const reviews = ref([])
+const showingReviews = ref(false)
+const showingLikes = ref(false)
+const userReviews = ref([])
+const likedReviews = ref([])
 
-// 프로필 이미지 computed 속성 추가
 const profileImageSrc = computed(() => {
   return authStore.profileImage || defaultProfileImage
 })
 
-// 리뷰 토글 및 불러오기 함수
-const toggleReviews = async () => {
-  showReviews.value = !showReviews.value
-  
-  // 리뷰가 보여질 때만 리뷰를 불러옴
-  if (showReviews.value && reviews.value.length === 0) {
+// 사용자 리뷰 보기
+const showUserReviews = async () => {
+  showingLikes.value = false
+  showingReviews.value = !showingReviews.value
+  if (showingReviews.value) {
     try {
       const response = await axios({
         method: 'get',
@@ -73,21 +88,31 @@ const toggleReviews = async () => {
           'Authorization': `Token ${authStore.token}`
         }
       })
-      reviews.value = response.data
+      userReviews.value = response.data
     } catch (error) {
       console.error('리뷰 불러오기 실패:', error)
     }
   }
 }
 
-// 날짜 포맷팅 함수
-const formatDate = (dateString) => {
-  const date = new Date(dateString)
-  return date.toLocaleDateString('ko-KR', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  })
+// 좋아요한 리뷰 보기
+const showLikedReviews = async () => {
+  showingReviews.value = false
+  showingLikes.value = !showingLikes.value
+  if (showingLikes.value) {
+    try {
+      const response = await axios({
+        method: 'get',
+        url: `${authStore.API_URL}movies/liked-reviews/`,
+        headers: {
+          'Authorization': `Token ${authStore.token}`
+        }
+      })
+      likedReviews.value = response.data
+    } catch (error) {
+      console.error('좋아요한 리뷰 불러오기 실패:', error)
+    }
+  }
 }
 
 onMounted(() => {
