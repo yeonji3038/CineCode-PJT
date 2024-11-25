@@ -348,31 +348,109 @@ def search_movies_by_title(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def user_reviews(request):
-    reviews = Review.objects.filter(user=request.user)\
-        .select_related('movie', 'user')\
-        .prefetch_related(
-            Prefetch('likedreview_set', 
+    """사용자가 작성한 리뷰 목록을 반환"""
+    try:
+        reviews = Review.objects.filter(user=request.user)\
+            .select_related('user', 'movie')\
+            .prefetch_related(
+                Prefetch(
+                    'liked_by',
                     queryset=LikedReview.objects.filter(user=request.user),
-                    to_attr='user_likes')
-        )\
-        .order_by('-created_at')
-    
-    serializer = ReviewSerializer(reviews, many=True)
-    return Response(serializer.data)
+                    to_attr='user_likes'
+                )
+            )\
+            .order_by('-created_at')
+        
+        serializer = ReviewSerializer(
+            reviews, 
+            many=True,
+            context={'request': request}
+        )
+        return Response(serializer.data)
+    except Exception as e:
+        return Response(
+            {'error': str(e)}, 
+            status=500
+        )
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def liked_reviews(request):
+    """사용자가 좋아요한 리뷰 목록을 반환"""
+    try:
+        liked_reviews = Review.objects.filter(
+            likedreview__user=request.user
+        ).select_related('user', 'movie')\
+         .prefetch_related('likedreview_set')\
+         .order_by('-likedreview__created_at')
+        
+        serializer = ReviewSerializer(
+            liked_reviews, 
+            many=True,
+            context={'request': request}
+        )
+        return Response(serializer.data)
+    except Exception as e:
+        return Response(
+            {'error': str(e)}, 
+            status=500
+        )
 
 
 # 사용자가 좋아요한 리뷰 목록
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
+def user_reviews(request):
+    """사용자가 작성한 리뷰 목록을 반환"""
+    try:
+        reviews = Review.objects.filter(user=request.user)\
+            .select_related('user', 'movie')\
+            .prefetch_related(
+                Prefetch(
+                    'liked_by',
+                    queryset=LikedReview.objects.filter(user=request.user),
+                    to_attr='user_likes'
+                )
+            )\
+            .order_by('-created_at')
+        
+        serializer = ReviewSerializer(
+            reviews, 
+            many=True,
+            context={'request': request}
+        )
+        return Response(serializer.data)
+    except Exception as e:
+        return Response(
+            {'error': str(e)}, 
+            status=500
+        )
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def liked_reviews(request):
-    liked_reviews = Review.objects.filter(
-        likedreview__user=request.user
-    ).select_related('movie', 'user')\
-     .prefetch_related(
-        Prefetch('likedreview_set',
+    """사용자가 좋아요한 리뷰 목록을 반환"""
+    try:
+        liked_reviews = Review.objects.filter(
+            liked_by__user=request.user
+        ).select_related('user', 'movie')\
+         .prefetch_related(
+            Prefetch(
+                'liked_by',
                 queryset=LikedReview.objects.filter(user=request.user),
-                to_attr='user_likes')
-    ).order_by('-likedreview__created_at')
-    
-    serializer = ReviewSerializer(liked_reviews, many=True)
-    return Response(serializer.data)
+                to_attr='user_likes'
+            )
+         )\
+         .order_by('-liked_by__created_at')
+        
+        serializer = ReviewSerializer(
+            liked_reviews, 
+            many=True,
+            context={'request': request}
+        )
+        return Response(serializer.data)
+    except Exception as e:
+        return Response(
+            {'error': str(e)}, 
+            status=500
+        )

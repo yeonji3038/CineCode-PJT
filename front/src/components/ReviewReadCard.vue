@@ -3,19 +3,19 @@
       <!-- 사용자 정보 섹션 -->
       <div class="review-header">
         <div class="user-info-container">
-          <img :src="profileImageSrc" :alt="review.user.username" class="user-profile">
+          <div class="profile-image-container">
+            <img :src="profileImageSrc" :alt="review.username" class="user-profile">
+          </div>
           <div class="review-info">
-            <div class="username">{{ review.username }}</div>
+            <div class="username">{{ review.user.username }}</div>
             <div class="created-at">{{ formattedDate }}</div>
           </div>
         </div>
         <div class="review-likes">
           <button @click="handleLikeClick" class="like-button"
-          :disabled="!authStore.isLogin || review.user.username === authStore.username"
-          :class="{ 'liked': review.is_liked }" >
-            <img src="@/assets/like-icon.svg" alt="Like" class="like-icon"/>
+          :disabled="!authStore.isLogin || review.username === authStore.username" >
+            👍 {{ review.likes }}
           </button>
-          <span>{{ review.likes }}</span>
         </div>
       </div>
       <!-- 리뷰 내용 섹션 -->
@@ -60,7 +60,7 @@
       return
     }
 
-    if (props.review.user.username === authStore.username) {
+    if (props.review.username === authStore.username) {
       alert('자신의 리뷰는 좋아요할 수 없습니다.')
       return
     }
@@ -98,7 +98,7 @@
   // 프로필 이미지 computed 속성 추가
   const profileImageSrc = computed(() => {
   // user 객체와 profile_image가 있는지 안전하게 확인
-  return props.review?.user?.profile_image || defaultProfileImage
+  return props.review?.profile_image || defaultProfileImage
 })
   </script>
   
@@ -109,7 +109,7 @@
     border-radius: 8px;
     padding: 16px;
     margin-bottom: 16px;
-    background-color: #f9f9f9;
+    background-color: #ffffff;
     color: #000000;
   }
   
@@ -126,11 +126,18 @@
     align-items: center;
   }
   
-  .user-profile {
-    width: 50px;
-    height: 50px;
+  .profile-image-container {
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    margin-right: 10px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  
+  .user-profile {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
   
   .review-info {
@@ -157,17 +164,17 @@
   .like-button {
     background: none;
     border: none;
+    font-size: 1.2rem;
     cursor: pointer;
-    padding: 5px;
+    padding: 5px 10px;
   }
   
-  .like-icon {
-    width: 25px;
-    height: 25px;
+  .like-button:hover {
+    background-color: #eee;
   }
-
+  
   .like-button:disabled {
-    opacity: 0.5; 
+    opacity: 0.5;
     cursor: not-allowed;
   }
 

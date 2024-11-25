@@ -1,4 +1,5 @@
 import { ref, computed } from 'vue'
+import { useReviewStore } from '@/stores/review'
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import router from '@/router'
@@ -109,6 +110,9 @@ export const useAuthStore = defineStore('auth', () => {
         // 응답에서 프로필 이미지가 있으면 store의 profileImage 업데이트
         if (response.data.profile_image) {
           profileImage.value = response.data.profile_image
+          // 리뷰 스토어의 프로필 이미지 업데이트
+          const reviewStore = useReviewStore()
+          reviewStore.updateUserProfileImage(username.value, response.data.profile_image) 
         }
         return response.data
       })

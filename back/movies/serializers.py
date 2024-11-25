@@ -3,6 +3,9 @@ from .models import Movie, WatchedMovie, LikedMovie
 from .models import Review
 from django.contrib.auth.models import User
 from movies.models import Movie
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 class MovieSerializer(serializers.ModelSerializer):
     poster_path = serializers.SerializerMethodField()
@@ -42,32 +45,28 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'profile_image']
 
 
-class ReviewSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(source='user.username', read_only=True)
-    movie_title = serializers.CharField(source='movie.title', read_only=True)
-    movie_poster_path = serializers.CharField(source='movie.poster_path', read_only=True)
-    is_liked = serializers.SerializerMethodField()
-    liked_at = serializers.SerializerMethodField()
+class MovieSimpleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Movie
+        fields = ['id', 'title', 'poster_path']
 
+
+class ReviewSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+    movie = MovieSimpleSerializer(read_only=True)
+    is_liked = serializers.SerializerMethodField()
+    
     class Meta:
         model = Review
         fields = [
-            'id', 'content', 'created_at', 'updated_at', 'likes',
-            'is_spoiler', 'username', 'movie_title', 'movie_poster_path',
-            'is_liked', 'liked_at', 'movie'
+            'id', 'content', 'created_at', 'updated_at', 
+            'likes', 'is_spoiler', 'user', 'movie', 'is_liked'
         ]
 
-    def get_user(self, obj):
-        return {
-            'username': obj.user.username,
-            'profile_image': obj.user.profile_image.url if obj.user.profile_image else None
-        }
-
-
     def get_is_liked(self, obj):
-        return hasattr(obj, 'user_likes') and len(obj.user_likes) > 0
-
-    def get_liked_at(self, obj):
-        if hasattr(obj, 'user_likes') and obj.user_likes:
-            return obj.user_likes[0].created_at
-        return None
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            if hasattr(obj, 'user_likes'):
+                return len(obj.user_likes) > 0
+            return obj.liked_by.filter(user=request.user).exists()
+        return False

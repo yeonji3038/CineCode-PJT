@@ -75,6 +75,53 @@ export const useReviewStore = defineStore('review', () => {
       })
     }
 
+    const updateUserProfileImage = (username, newImage) => {
+      return new Promise((resolve) => {
+        reviews.value = reviews.value.map(review => {
+          if (review.user.username === username) {
+            return {
+              ...review,
+              user: {
+                ...review.user,
+                profile_image: newImage
+              }
+            }
+          }
+          return review
+        })
+        resolve()
+      })
+    }
 
-  return { reviews, fetchReviews, createReview, toggleLike }
+    // ReviewUDCard : 리뷰 수정하기 (인증 필요)
+    const updateReview = (reviewId, updatedData) => {
+      if (!authStore.isLogin) {
+        router.push('/login')
+        return Promise.reject('로그인이 필요합니다.')
+      }
+
+      return axios.put(`${SERVER_URL}movies/reviews/${reviewId}/`, updatedData, {
+        headers: {
+          Authorization: `Token ${authStore.token}`
+        }
+      })
+        .then((response) => {
+          // 로컬 상태 업데이트
+          const index = reviews.value.findIndex(r => r.id === reviewId)
+          if (index !== -1) {
+            reviews.value[index] = {
+              ...reviews.value[index],
+              ...response.data
+            }
+          }
+          return response.data
+        })
+        .catch((error) => {
+        console.error('Failed to update review:', error)
+        throw error
+      })
+    }
+
+
+  return { reviews, fetchReviews, createReview, toggleLike, updateUserProfileImage, updateReview }
 })

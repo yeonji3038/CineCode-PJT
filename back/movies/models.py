@@ -71,11 +71,11 @@ class Review(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
     content = models.TextField()
-    is_spoiler = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     likes = models.IntegerField(default=0)
-    liked_by = models.ManyToManyField(
+    is_spoiler = models.BooleanField(default=False)
+    liked_users = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         through='LikedReview',
         related_name='liked_reviews'
@@ -86,8 +86,8 @@ class Review(models.Model):
     
 class LikedReview(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    review = models.ForeignKey('Review', on_delete=models.CASCADE, related_name='liked_reviews')
-    liked_at = models.DateTimeField(auto_now_add=True)
+    review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name='liked_by')
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         unique_together = ('user', 'review')

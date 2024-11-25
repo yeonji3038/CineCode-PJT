@@ -15,12 +15,12 @@
     <!-- Activity 영역 -->
     <div class="activity-section">
       <div class="activity-item" @click="showUserReviews" :class="{ 'active': showingReviews }">
-        <h5>Reviews Written</h5>
-        <p>{{ userInfo.review_count || 0 }}</p>
+        <h5>내가 작성한 리뷰</h5>
+        <p>{{ userReviews.length }}</p>
       </div>
       <div class="activity-item" @click="showLikedReviews" :class="{ 'active': showingLikes }">
-        <h5>Likes</h5>
-        <p>{{ userInfo.likes_count || 0 }}</p>
+        <h5>내가 좋아요한 리뷰</h5>
+        <p>{{ likedReviews.length }}</p>
       </div>
     </div>
 
@@ -65,8 +65,7 @@ import ReviewUDCard from '@/components/ReviewUDCard.vue'
 import ReviewReadCard from '@/components/ReviewReadCard.vue'
 
 const authStore = useAuthStore()
-const userInfo = ref({})
-const showingReviews = ref(false)
+const showingReviews = ref(true) // 기본값을 true로 설정
 const showingLikes = ref(false)
 const userReviews = ref([])
 const likedReviews = ref([])
@@ -76,48 +75,67 @@ const profileImageSrc = computed(() => {
 })
 
 // 사용자 리뷰 보기
-const showUserReviews = async () => {
+const showUserReviews = () => {
   showingLikes.value = false
-  showingReviews.value = !showingReviews.value
-  if (showingReviews.value) {
-    try {
-      const response = await axios({
-        method: 'get',
-        url: `${authStore.API_URL}movies/user-reviews/`,
-        headers: {
-          'Authorization': `Token ${authStore.token}`
-        }
-      })
-      userReviews.value = response.data
-    } catch (error) {
-      console.error('리뷰 불러오기 실패:', error)
-    }
-  }
+  showingReviews.value = true
+  fetchUserReviews()
 }
 
 // 좋아요한 리뷰 보기
-const showLikedReviews = async () => {
+const showLikedReviews = () => {
   showingReviews.value = false
-  showingLikes.value = !showingLikes.value
-  if (showingLikes.value) {
-    try {
-      const response = await axios({
-        method: 'get',
-        url: `${authStore.API_URL}movies/liked-reviews/`,
-        headers: {
-          'Authorization': `Token ${authStore.token}`
-        }
-      })
-      likedReviews.value = response.data
-    } catch (error) {
-      console.error('좋아요한 리뷰 불러오기 실패:', error)
+  showingLikes.value = true
+  fetchLikedReviews()
+}
+
+// 사용자 리뷰 가져오기
+const fetchUserReviews = () => {
+  axios({
+    method: 'get',
+    url: `${authStore.API_URL}movies/user-reviews/`,
+    headers: {
+      'Authorization': `Token ${authStore.token}`
     }
+  })
+  .then(response => {
+    userReviews.value = response.data
+  })
+  .catch(error => {
+    console.error('리뷰 불러오기 실패:', error.response?.data?.error || error.message)
+    userReviews.value = []
+  })
+}
+
+// 좋아요한 리뷰 가져오기
+const fetchLikedReviews = () => {
+  axios({
+    method: 'get',
+    url: `${authStore.API_URL}movies/liked-reviews/`,
+    headers: {
+      'Authorization': `Token ${authStore.token}`
+    }
+  })
+  .then(response => {
+    likedReviews.value = response.data
+  })
+  .catch(error => {
+    console.error('좋아요한 리뷰 불러오기 실패:', error)
+    likedReviews.value = []
+  })
+}
+
+// 리뷰 새로고침
+const refreshReviews = () => {
+  if (showingReviews.value) {
+    fetchUserReviews()
+  } else if (showingLikes.value) {
+    fetchLikedReviews()
   }
 }
 
 onMounted(() => {
   if (authStore.isLogin) {
-    authStore.fetchUserInfo()
+    fetchUserReviews()  // 초기 로드 시 사용자 리뷰 가져오기
   }
 })
 </script>
