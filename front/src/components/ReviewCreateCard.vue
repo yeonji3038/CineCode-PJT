@@ -124,9 +124,8 @@
   }
   
   textarea {
-    width: 95%;
+    width: 99%;
     height: 100px;
-    margin-bottom: 10px;
     border: none; /* 박스 border 제거 */
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -138,31 +137,41 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding: 0 5px 0 0;  /* 오른쪽 패딩 추가 */
   }
 
   .label {
+    display: flex;  /* 추가 */
     align-items: center;
+    gap: 8px;  /* 체크박스와 텍스트 사이 간격 */
   }
 
   .checkbox {
-    width: 18px; /* 체크박스 크기 조정 */
-    height: 18px;
-    margin-left: 5px;
+    width: 16px;
+    height: 16px;
+    margin: 0;  /* 기존 마진 제거 */
+    cursor: pointer;
   }
 
   .error-message {
     color: #ff4444;
     font-size: 0.9rem;
-    padding-left: 5px;
+    padding-left: 2px;
   }
   
   button {
-    background-color: #007bff;
+    background-color: #A7A7A7;
     color: white;
     border: none;
-    padding: 5px 10px;
-    margin-right: 15px;
+    padding: 5px 15px;
+    margin-top: 10px;
     border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.2s ease;  /* 호버 효과 추가 */
+  }
+
+  button:hover {
+    background-color: rgb(211, 47, 39);  /* 호버 시 색상 */
+    color: black;
   }
   </style>

@@ -97,7 +97,7 @@ watch(() => movieStore.watchedMovies, () => {
 }
 
 .watch-button.play {
-  background-color: #323232;
+  background-color: rgb(211, 47, 39);
   color: #ffffff;
 }
 

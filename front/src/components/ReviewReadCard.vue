@@ -2,28 +2,33 @@
     <div class="review-card">
       <!-- 사용자 정보 섹션 -->
       <div class="review-header">
-        <img :src="review.user.profile_image" alt="Profile" class="profile-image" />
+        <img :src="review.profile_image" alt="Profile" class="profile-image" />
         <div class="review-info">
-          <span class="username">{{ review.user.username }}</span>
-          <span class="created-at">{{ formattedDate }}</span>
+          <div class="username">{{ review.username }}</div>
+          <div class="created-at">{{ formattedDate }}</div>
         </div>
         <!-- 좋아요 버튼 섹션 -->
         <div class="review-likes">
           <button @click="handleLikeClick" class="like-button"
           :disabled="!authStore.isLogin || review.user.username === authStore.username"
-          :class="{ 'liked': review.is_liked }">
-            <img src="@/assets/like-icon.svg" alt="Like" />
+          :class="{ 'liked': review.is_liked }" >
+            <img src="@/assets/like-icon.svg" alt="Like" class="like-icon"/>
           </button>
           <span>{{ review.likes }}</span>
         </div>
       </div>
       <!-- 리뷰 내용 섹션 -->
       <div class="review-content">
-        <img :src="moviePosterPath" alt="Movie Poster" class="movie-poster" />
-        <div>
+        <img :src="moviePosterPath" alt="Movie Poster" class="movie-poster"
+          @click="goToMovieDetail"
+          style="cursor: pointer;"
+        />
+        <div class="review-details">
           <h3>{{ movieTitle }}</h3>
-          <p v-if="!isSpoiler || showContent">{{ review.content }}</p>
-          <button v-else @click="showContent = true">스포일러가 포함된 리뷰입니다.</button>
+          <div class="review-text">
+            <p v-if="!review.is_spoiler || showContent">{{ review.content }}</p>
+            <button v-else @click="showContent = true" class="spoiler-button">스포일러가 포함된 리뷰입니다.</button>
+          </div>
         </div>
       </div>
     </div>
@@ -45,6 +50,7 @@
   const authStore = useAuthStore()
   const showContent = ref(false)
   const router = useRouter()
+  const isSpoiler = computed(() => props.review.is_spoiler)
   
   const handleLikeClick = () => {
     if (!authStore.isLogin) {
@@ -82,10 +88,15 @@
     if (months < 12) return `${months}달 전`
     return `${years}년 전`
   })
+
+  const goToMovieDetail = () => {
+    router.push(`/movies/${props.review.movie}`)
+  }
   </script>
   
   <style scoped>
   .review-card {
+    width: 100%;  
     border: 1px solid #ccc;
     border-radius: 8px;
     padding: 16px;
@@ -123,6 +134,7 @@
   .review-likes {
     display: flex;
     align-items: center;
+    margin-right: 10px;
   }
   
   .like-button {
@@ -131,14 +143,57 @@
     cursor: pointer;
   }
   
+  .like-icon {
+    width: 25px;  /* 아이콘 크기 조정 */
+    height: 25px;
+  }
+
+  .like-button:disabled {
+    opacity: 0.5; 
+    cursor: not-allowed;
+  }
+
+  .review-likes span {
+    margin-left: 10px;
+    font-size: 1rem;
+    font-weight: bold;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+
   .review-content {
     display: flex;
     margin-top: 16px;
   }
   
   .movie-poster {
-    width: 100px;
-    height: 150px;
-    margin-right: 20px;
-  }
+  width: 100px;
+  height: 150px;
+  margin-right: 20px;
+  border-radius: 4px;
+  transition: transform 0.2s;
+}
+
+.movie-poster:hover {
+  transform: scale(1.05);
+}
+
+.spoiler-button {
+  width: 100%;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  padding: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #666;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.spoiler-button:hover {
+  background-color: #e0e0e0;
+}
+
+.review-text {
+  margin-top: 8px;
+}
   </style>

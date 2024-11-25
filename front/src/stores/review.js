@@ -10,9 +10,13 @@ export const useReviewStore = defineStore('review', () => {
   const router = useRouter()
   const reviews = ref([])
 
-  // 리뷰 목록 가져오기 (인증 불필요)
-  const fetchReviews = () => {
-    return axios.get(`${SERVER_URL}movies/reviews/`)
+  // ReviewReadCard : 특정 영화의 리뷰 목록 가져오기
+  const fetchReviews = (movieId) => {
+    return axios.get(`${SERVER_URL}movies/reviews/`, {
+      params: {
+        movie_id: movieId
+      }
+    })
     .then((response) => {
       reviews.value = response.data
       return response.data
@@ -21,7 +25,7 @@ export const useReviewStore = defineStore('review', () => {
       console.error('Failed to fetch reviews:', error)
       throw error
     })
-   }
+  }
 
   // ReviewCreateCard : 리뷰 생성하기 (인증 필요)
   const createReview = (reviewData) => {
@@ -45,7 +49,7 @@ export const useReviewStore = defineStore('review', () => {
       })
   }
   
-  // 리뷰 좋아요 토글 (인증 필요)
+  // ReviewCreateCard : 리뷰 좋아요 토글 (인증 필요)
   const toggleLike = (reviewId) => {
     if (!authStore.isLogin) {
       router.push('/login')

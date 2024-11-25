@@ -254,7 +254,11 @@ def analyze_voice(request):
 @api_view(['GET', 'POST'])
 def review_list_create(request):
     if request.method == 'GET':
-        reviews = Review.objects.all()
+        movie_id = request.GET.get('movie_id')
+        if movie_id:
+            reviews = Review.objects.filter(movie_id=movie_id)
+        else:
+            reviews = Review.objects.all()
         serializer = ReviewSerializer(reviews, many=True)
         return Response(serializer.data)
         

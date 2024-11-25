@@ -33,7 +33,7 @@ const buttonStyle = computed(() => {
       icon: 'bi bi-heart-fill'
     },
     default: {
-      text: '찜',
+      text: '찜하기',
       class: '',
       icon: 'bi bi-heart'
     }

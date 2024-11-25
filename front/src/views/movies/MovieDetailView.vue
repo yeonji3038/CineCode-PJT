@@ -47,7 +47,9 @@
     <!-- 리뷰 작성 섹션 -->
     <div class="content-wrapper1">
       <div class="review-section">
-        <h2 class="section-title">리뷰</h2>
+        <div class="review-header">
+          <h2 class="section-title">리뷰 작성하기</h2>
+        </div>
         <!-- 로그인한 사용자에게만 리뷰 작성 카드 표시 -->
         <ReviewCreateCard
           v-if="authStore.isLogin"
@@ -65,6 +67,13 @@
 
     <!-- 리뷰 조회 섹션 -->
     <div class="reviews-section">
+      <div class="review-header">
+        <h2 class="section-title">리뷰</h2>
+        <select v-model="sortOption" class="sort-select" @change="sortReviews">
+          <option value="latest">최신순</option>
+          <option value="likes">좋아요순</option>
+        </select>
+        </div>
       <div v-if="reviews.length === 0" class="no-reviews">
         아직 작성된 리뷰가 없습니다.
       </div>
@@ -95,19 +104,40 @@ const authStore = useAuthStore()
 const movieStore = useMovieStore()
 const reviewStore = useReviewStore() 
 const reviews = ref([])
+const sortOption = ref('latest')
 
-// 리뷰 생성 후 리뷰 목록을 새로고침하는 함수 추가
-const refreshReviews = async () => {
-  const data = await reviewStore.fetchReviews()
-  reviews.value = data
+// 리뷰 생성 후 리뷰 목록을 새로고침하는 함수
+const refreshReviews = () => {
+  reviewStore.fetchReviews(route.params.id)
+    .then((data) => {
+      reviews.value = data
+      sortReviews()
+    })
+    .catch((error) => {
+      console.error('Failed to refresh reviews:', error)
+    })
+}
+
+// 리뷰 정렬 함수
+const sortReviews = () => {
+  if (sortOption.value === 'latest') {
+    reviews.value.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+  } else {
+    reviews.value.sort((a, b) => b.likes - a.likes)
+  }
 }
 
 // 영화와 리뷰 정보 불러오기
 onMounted(() => {
   movieStore.fetchMovieDetail(route.params.id)
-  reviewStore.fetchReviews().then((data) => {
-    reviews.value = data
-  })
+  reviewStore.fetchReviews(route.params.id)
+    .then((data) => {
+      reviews.value = data
+      sortReviews()
+    })
+    .catch((error) => {
+      console.error('Failed to load reviews:', error)
+    })
 })
 
 // 영화 상태가 변경될 때마다 상세 정보 다시 불러오기
@@ -168,28 +198,24 @@ watch(
   max-width: 1400px;
   margin: 0 auto;
   width: 100%;
-  padding-top: 100px;
+  padding: 100px 12rem 0;  /* 좌우 패딩 6rem 추가 */
 }
 
 .content-wrapper1 {
-  max-width: 1400px;
+  max-width: 1000px;  /* HomeView와 동일한 최대 폭 */
   margin: 0 auto;
   width: 100%;
-  padding-bottom: 70px;
+  padding-bottom: 30px;
 }
 
 .content {
   position: relative;
-  padding: 150px 6rem 60px;  /* 상단 여백 늘림 (navbar 고려) */
+  padding: 150px 0 60px;  /* 좌우 패딩 제거, 상하 패딩만 유지 */
   display: flex;
   gap: 3rem;
   z-index: 1;
+  width: 100%;
 }
-
-/* content-wrapper 안의 content padding 조정 */
-/* .content-wrapper .content {
-  padding: 120px 0 60px;  /* 좌우 패딩 제거 */
-/* } */
 
 .meta {
   display: flex;
@@ -278,22 +304,24 @@ watch(
 }
 
 .section-title {
-  margin-left: 2rem; /* 제목을 같은 위치에 정렬 */
   font-size: 1.8rem;
   font-weight: bold;
-  margin-bottom: 1.5rem;
   color: white;
+  margin-left: 2rem;
 }
 
 .trailer-section {
-  padding: 2rem 6rem;
+  padding: 2rem 0;
   position: relative;
   z-index: 2;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
 .trailer-section iframe {
   width: 100%;
-  height: 600px;
+  height: 507px;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
@@ -302,6 +330,32 @@ watch(
   padding: 2rem 6rem;
   margin: 0 auto;
   width: 100%;
+  max-width: 1000px;
+}
+
+.review-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.sort-select {
+  background-color: transparent;
+  color: #fff;
+  padding: 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.sort-select:focus {
+  outline: none;
+  border-color:rgb(211, 47, 39);
+}
+
+.sort-select option {
+  background-color: #000;
+  color: #fff;
 }
 
 .login-prompt {
@@ -326,8 +380,10 @@ watch(
 .reviews-section {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  margin: 0 2rem;
+  gap: 30px;
+  padding: 0 6rem;
+  margin: 0 auto 150px;
+  max-width: 1000px;
 }
 
 .no-reviews {
@@ -337,6 +393,13 @@ watch(
   margin-bottom: 100px;
 }
 
+.section-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: white;
+  margin: 0;  /* margin-left 제거 */
+  padding-bottom: 1rem;
+}
 .review-card {
   width: 100%;
   max-width: 800px;
@@ -348,11 +411,28 @@ watch(
 }
 
 /* 반응형 디자인 */
+@media (max-width: 1200px) {
+  .trailer-section iframe {
+    height: calc((100vw - 12rem) * 0.507);
+  }
+}
+
 @media (max-width: 1024px) {
+  .trailer-section,
+  .review-section,
+  .reviews-section {
+    padding: 2rem;
+  }
+
+  .content-wrapper,
+  .content-wrapper1 {
+    padding: 0 2rem;
+  }
+
   .content {
     flex-direction: column;
     align-items: center;
-    padding: 100px 2rem 40px;
+    padding: 0 2rem 40px;
   }
 
   .info {
@@ -371,12 +451,8 @@ watch(
     justify-content: center;  /* 버튼 중앙 정렬 */
   }
   
-  .trailer-section {
-    padding: 2rem 2rem 4rem;
-  }
-  
   .trailer-section iframe {
-    height: 400px;
+    height: calc((100vw - 4rem) * 0.507);
   }
 }
 
@@ -385,6 +461,17 @@ watch(
     flex-direction: column;
     align-items: center;
     padding: 100px 1rem 40px;
+  }
+
+  .content-wrapper,
+  .content-wrapper1 {
+    padding: 0 1rem;
+  }
+
+  .trailer-section,
+  .review-section,
+  .reviews-section {
+    padding: 2rem 1rem;
   }
 
   .poster img {
@@ -408,7 +495,7 @@ watch(
   }
   
   .trailer-section iframe {
-    height: 300px;
+    height: calc((100vw - 2rem) * 0.507);
   }
 }
 
