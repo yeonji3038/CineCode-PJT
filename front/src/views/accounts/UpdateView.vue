@@ -74,7 +74,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import defaultProfileImage from '@/views/accounts/img/profile.png'
+import defaultProfileImage from '@/assets/profile.png'
 
 const router = useRouter()
 const authStore = useAuthStore()

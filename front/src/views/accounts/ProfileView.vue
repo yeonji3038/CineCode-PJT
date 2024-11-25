@@ -3,12 +3,7 @@
     <!-- 상단 프로필 영역 -->
     <div class="profile-header">
       <div class="profile-img-container">
-        <img 
-          :src="authStore.profileImage || defaultProfileImage" 
-          alt="Profile Image" 
-          class="profile-img"
-          @error="handleImageError"
-        />
+        <img :src="profileImageSrc" alt="Profile Image" class="profile-image">
       </div>
       <div class="profile-info">
         <h3>{{ authStore.username }}</h3>
@@ -49,20 +44,20 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
-import defaultProfileImage from '@/views/accounts/img/profile.png'
+import defaultProfileImage from '@/assets/profile.png'
 
 const authStore = useAuthStore()
 const userInfo = ref({})
 const showReviews = ref(false)
 const reviews = ref([])
 
-// 이미지 로드 실패시 기본 이미지로 대체
-const handleImageError = (e) => {
-  e.target.src = defaultProfileImage
-}
+// 프로필 이미지 computed 속성 추가
+const profileImageSrc = computed(() => {
+  return authStore.profileImage || defaultProfileImage
+})
 
 // 리뷰 토글 및 불러오기 함수
 const toggleReviews = async () => {
@@ -168,5 +163,19 @@ onMounted(() => {
 
 .activity-item.active {
   background-color: rgba(255, 255, 255, 0.15);
+}
+
+.profile-image {
+  width: 100px;  /* 프로필 페이지는 더 큰 크기 유지 */
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #fff;
+}
+
+.profile-img-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
 }
 </style>

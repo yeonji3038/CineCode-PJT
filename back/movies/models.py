@@ -16,6 +16,7 @@ class Movie(models.Model):
     popularity = models.FloatField(null=True, blank=True)
     vote_avg = models.FloatField(null=True, blank=True)
     overview = models.TextField(blank=True)
+    trailer_id = models.CharField(max_length=100, null=True, blank=True)  # 추가
     status = models.CharField(
         max_length=10,
         choices=STATUS_CHOICES,

@@ -2,12 +2,13 @@
     <div class="review-card">
       <!-- 사용자 정보 섹션 -->
       <div class="review-header">
-        <img :src="review.profile_image" alt="Profile" class="profile-image" />
-        <div class="review-info">
-          <div class="username">{{ review.username }}</div>
-          <div class="created-at">{{ formattedDate }}</div>
+        <div class="user-info-container">
+          <img :src="profileImageSrc" :alt="review.user.username" class="user-profile">
+          <div class="review-info">
+            <div class="username">{{ review.username }}</div>
+            <div class="created-at">{{ formattedDate }}</div>
+          </div>
         </div>
-        <!-- 좋아요 버튼 섹션 -->
         <div class="review-likes">
           <button @click="handleLikeClick" class="like-button"
           :disabled="!authStore.isLogin || review.user.username === authStore.username"
@@ -39,6 +40,7 @@
   import { useReviewStore } from '@/stores/review'
   import { useAuthStore } from '@/stores/auth'
   import { useRouter } from 'vue-router'
+  import defaultProfileImage from '@/assets/profile.png'
   
   const props = defineProps({
     review: Object,
@@ -92,6 +94,11 @@
   const goToMovieDetail = () => {
     router.push(`/movies/${props.review.movie}`)
   }
+
+  // 프로필 이미지 computed 속성 추가
+  const profileImageSrc = computed(() => {
+    return props.review.user.profile_image || defaultProfileImage 
+  })
   </script>
   
   <style scoped>
@@ -109,20 +116,28 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding: 0 10px;
+    width: 100%;
   }
   
-  .profile-image {
-    width: 40px;
-    height: 40px;
+  .user-info-container {
+    display: flex;
+    align-items: center;
+  }
+  
+  .user-profile {
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
+    margin-right: 10px;
   }
   
   .review-info {
-    flex-grow: 1;
-    margin-left: 16px;
+    margin-left: 10px;
   }
   
   .username {
+    font-size: 1rem;
     font-weight: bold;
   }
   
@@ -132,19 +147,21 @@
   }
   
   .review-likes {
+    margin-left: auto;
     display: flex;
     align-items: center;
-    margin-right: 10px;
+    gap: 5px;
   }
   
   .like-button {
     background: none;
     border: none;
     cursor: pointer;
+    padding: 5px;
   }
   
   .like-icon {
-    width: 25px;  /* 아이콘 크기 조정 */
+    width: 25px;
     height: 25px;
   }
 

@@ -117,19 +117,6 @@ def movie_detail(request, movie_pk):
     # 장르 한글명 추가
     response_data['genres'] = [genre.name for genre in movie.genres.all()]
     
-    # YouTube에서 예고편 검색
-    youtube_api_key = settings.YOUTUBE_API_KEY
-    youtube_url = 'https://www.googleapis.com/youtube/v3/search'
-    youtube_response = requests.get(youtube_url, params={
-        'key': youtube_api_key,
-        'q': f'{movie.title} 예고편',
-        'part': 'snippet',
-        'maxResults': 1,
-        'type': 'video'
-    })
-    youtube_data = youtube_response.json()
-    if youtube_data.get('items'):
-        response_data['trailer_id'] = youtube_data['items'][0]['id']['videoId']
     return Response(response_data)
 
 

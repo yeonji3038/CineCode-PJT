@@ -1,7 +1,7 @@
 <template>
     <div class="review-create-card">
       <div class="header">
-        <img :src="userProfileImage" alt="Profile" class="profile-image" />
+        <img :src="profileImageSrc" :alt="authStore.username" class="user-profile">
         <span class="username">{{ username }}</span>
       </div>
       <div class="content">
@@ -25,9 +25,11 @@
   </template>
   
   <script setup>
-  import { ref, defineProps, defineEmits } from 'vue'
+  import { ref, computed, defineProps, defineEmits } from 'vue'
   import { useAuthStore } from '@/stores/auth'
   import { useReviewStore } from '@/stores/review'
+  import defaultProfileImage from '@/assets/profile.png'
+
   const props = defineProps({
     movieTitle: String,
     moviePosterPath: String,
@@ -39,6 +41,10 @@
 
   const username = authStore.username
   const userProfileImage = authStore.profile_image
+  // 프로필 이미지 computed 속성 추가
+  const profileImageSrc = computed(() => {
+    return authStore.profileImage || defaultProfileImage
+  })
   
   const reviewContent = ref('')
   const isSpoiler = ref(false)
@@ -87,18 +93,18 @@
   .header {
     display: flex;
     align-items: center;
+    padding: 0 10px;
   }
   
-  .profile-image {
-    width: 60px;
-    height: 60px;
+  .user-profile {
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
-    margin-right: 20px;
-    margin-left: 10px;
+    margin-right: 10px;
   }
 
   .username {
-    font-size: 1.2rem; /* 사용자 이름 크기 조정 */
+    font-size: 1rem;
     font-weight: bold;
   }
   
