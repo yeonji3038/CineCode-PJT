@@ -1,0 +1,152 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+#Signup {
+  position: fixed; /* 화면에 고정 */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%; /* 화면 전체 크기 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: black; /* 배경 반투명 검정색 */
+
+}
+
+h2 {
+  margin: 0; /* 기본 마진 제거 */
+  margin-top: 10px; /* 필요에 따라 설정 */
+  margin-bottom: 30px;
+}
+
+#Signup .signup {
+  max-width: 400px; /* 로그인 폼 최대 너비 */
+  width: 100%; /* 화면 크기에 맞게 너비 100% */
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px; /* 모서리 둥글게 처리 */
+  color: white;
+}
+
+
+
+.signup-info input {
+  border: 1px solid rgb(211, 211, 211);
+  width: 100%;
+  height: 40px;
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 12px;
+  background-color: rgb(250, 250, 250);
+  margin-bottom: 15px; /* 입력 필드 간의 공백 */
+}
+/* 에러가 있을 경우 테두리 빨간색 */
+.signup-info input.input-error {
+  border: 2px solid red;
+}
+.signup-info input:last-child {
+  margin-bottom: 0; /* 마지막 입력 필드 아래쪽에 공백 제거 */
+}
+
+/* .signup-info input:first-child {
+  margin: 20px 0 10px;
+} */
+
+.signup-button {
+  margin-top: 30px;
+  height: 50px;
+  width: 100%; /* 버튼을 화면 크기에 맞게 */
+  border: none;
+  background-color: #A7A7A7;
+  border-radius: 5px;
+  font-weight: 700;
+  color: #ffffff;
+  padding: 5px;
+  padding: 5px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  cursor: pointer;
+}
+
+.signup-button:hover {
+  background-color: rgb(211, 47, 39);  /* 호버 시 배경색 변경 */
+  color: black;  /* 호버 시 글자색을 검정색으로 변경 */
+}
+
+/* 오류 메시지 스타일 */
+.error-message {
+  color: red;
+  font-size: 10px; /* 폰트 크기 조정 */
+  margin-bottom: 5px;
+}
+/* 프로필 이미지 스타일 */
+.profile-img-container {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 20px;
+  position: relative;
+  cursor: pointer;
+}
+
+.profile-img-wrapper {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  border: 3px solid white;  /* 흰색 테두리 추가 */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);  /* 약간의 그림자 효과 */
+}
+
+.profile-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.profile-img-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.profile-img-overlay span {
+  color: white;
+  font-size: 14px;
+}
+
+.profile-img-wrapper:hover .profile-img-overlay {
+  opacity: 1;
+}
+
+@media screen and (max-width: 375px) {
+  .signup {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+  }
+
+  .signup-info input {
+    width: 100%;
+  }
+
+  .signup button {
+    width: 100%;
+  }
+
+}
