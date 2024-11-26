@@ -1,0 +1,322 @@
+[
+    {
+        "model": "community.tag",
+        "pk": 1,
+        "fields": {
+            "name": "힐링 모드",
+            "category": 4
+        }
+    },
+    {
+        "model": "community.tag",
+        "pk": 2,
+        "fields": {
+            "name": "자존감 회복",
+            "category": 1
+        }
+    },
+    {
+        "model": "community.tag",
+        "pk": 3,
+        "fields": {
+            "name": "웃음버튼",
+            "category": 1
+        }
+    },
+    {
+        "model": "community.tag",
+        "pk": 4,
+        "fields": {
+            "name": "도파민 방출",
+            "category": 1
+        }
+    },
+    {
+        "model": "community.tag",
+        "pk": 5,
+        "fields": {
+            "name": "시리즈 정주행",
+            "category": 1
+        }
+    },
+    {
+        "model": "community.tag",
+        "pk": 6,
+        "fields": {
+            "name": "무조건 끝까지 보세요",
+            "category": 1
+        }
+    },
+    {
+        "model": "community.tag",
+        "pk": 7,
+        "fields": {
+            "name": "인생띵작",
+            "category": 1
+        }
+    },
+    {
+        "model": "community.tag",
+        "pk": 8,
+        "fields": {
+            "name": "연인과 함께",
+            "category": 2
+        }
+    },
+    {
+        "model": "community.tag",
+        "pk": 9,
+        "fields": {
+            "name": "가족과 함께",
+            "category": 2
+        }
+    },
+    {
+        "model": "community.tag",
+        "pk": 10,
+        "fields": {
+            "name": "친구와 함께",
+            "category": 2
+        }
+    },
+    {
+        "model": "community.tag",
+        "pk": 11,
+        "fields": {
+            "name": "OST 맛집",
+            "category": 3
+        }
+    },
+    {
+        "model": "community.tag",
+        "pk": 12,
+        "fields": {
+            "name": "뮤지컬 영화",
+            "category": 3
+        }
+    },
+    {
+        "model": "community.tag",
+        "pk": 13,
+        "fields": {
+            "name": "밴드 영화",
+            "category": 3
+        }
+    },
+    {
+        "model": "community.tag",
+        "pk": 14,
+        "fields": {
+            "name": "클래식 영화",
+            "category": 3
+        }
+    },
+    {
+        "model": "community.tag",
+        "pk": 15,
+        "fields": {
+            "name": "밥친구",
+            "category": 4
+        }
+    },
+    {
+        "model": "community.tag",
+        "pk": 16,
+        "fields": {
+            "name": "우울할 때",
+            "category": 4
+        }
+    },
+    {
+        "model": "community.tag",
+        "pk": 17,
+        "fields": {
+            "name": "잠이 안오면",
+            "category": 4
+        }
+    },
+    {
+        "model": "community.tag",
+        "pk": 18,
+        "fields": {
+            "name": "짝사랑",
+            "category": 4
+        }
+    },
+    {
+        "model": "community.tag",
+        "pk": 19,
+        "fields": {
+            "name": "이별",
+            "category": 4
+        }
+    },
+    {
+        "model": "community.tag",
+        "pk": 20,
+        "fields": {
+            "name": "과제나 일할 때",
+            "category": 4
+        }
+    },
+    {
+        "model": "community.tag",
+        "pk": 21,
+        "fields": {
+            "name": "킬링 타임",
+            "category": 4
+        }
+    },
+    {
+        "model": "community.tag",
+        "pk": 22,
+        "fields": {
+            "name": "1월",
+            "category": 5
+        }
+    },
+    {
+        "model": "community.tag",
+        "pk": 23,
+        "fields": {
+            "name": "2월",
+            "category": 5
+        }
+    },
+    {
+        "model": "community.tag",
+        "pk": 24,
+        "fields": {
+            "name": "3월",
+            "category": 5
+    }
+    },
+    {
+        "model": "community.tag",
+        "pk": 25,
+        "fields": {
+            "name": "4월",
+            "category": 5
+        }
+    },
+    {
+        "model": "community.tag",
+        "pk": 26,
+        "fields": {
+            "name": "5월",
+            "category": 5
+        }
+    },
+    {
+        "model": "community.tag",
+        "pk": 27,
+        "fields": {
+            "name": "6월",
+            "category": 5
+        }
+    },
+    {
+        "model": "community.tag",
+        "pk": 28,
+        "fields": {
+            "name": "7월",
+            "category": 5
+        }
+    },
+    {
+        "model": "community.tag",
+        "pk": 29,
+        "fields": {
+            "name": "8월",
+            "category": 5
+        }
+    },
+    {
+        "model": "community.tag",
+        "pk": 30,
+        "fields": {
+            "name": "9월",
+            "category": 5
+        }
+    },
+    {
+        "model": "community.tag",
+        "pk": 31,
+        "fields": {
+            "name": "10월",
+            "category": 5
+        }
+    },
+    {
+        "model": "community.tag",
+        "pk": 32,
+        "fields": {
+            "name": "11월",
+            "category": 5
+        }
+    },
+    {
+        "model": "community.tag",
+        "pk": 33,
+        "fields": {
+            "name": "12월",
+            "category": 5
+        }
+    },
+    {
+        "model": "community.tag",
+        "pk": 34,
+        "fields": {
+            "name": "연애세포 자극",
+            "category": 1
+        }
+    },
+    {
+        "model": "community.tag",
+        "pk": 35,
+        "fields": {
+            "name": "하이틴",
+            "category": 1
+        }
+    },
+    {
+        "model": "community.tag",
+        "pk": 36,
+        "fields": {
+            "name": "사이다 결말",
+            "category": 1
+        }
+    },
+    {
+        "model": "community.tag",
+        "pk": 37,
+        "fields": {
+            "name": "봄",
+            "category": 6
+        }
+    },
+    {
+        "model": "community.tag",
+        "pk": 38,
+        "fields": {
+            "name": "여름",
+            "category": 6
+        }
+    },
+    {
+        "model": "community.tag",
+        "pk": 39,
+        "fields": {
+            "name": "가을",
+            "category": 6
+        }
+    },
+    {
+        "model": "community.tag",
+        "pk": 40,
+        "fields": {
+            "name": "겨울",
+            "category": 6
+        }
+    }
+]

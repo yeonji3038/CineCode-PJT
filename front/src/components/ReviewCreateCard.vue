@@ -79,5 +79,109 @@
   }
 </script>
   
+<<<<<<< HEAD
 <style scoped src="./css/reviewCreat.css">
+=======
+<style scoped>
+  .review-create-card {
+    background-color: #d9d9d9;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px auto;
+    max-width: 800px; 
+    color: #000000;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  .header {
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+  }
+  
+  .user-profile {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+
+  .username {
+    font-size: 1rem;
+    font-weight: bold;
+  }
+  
+  .content {
+    display: flex;
+  }
+  
+  .movie-poster {
+    width: 114px;
+    height: 171px;
+    border-radius: 8px;
+    margin-right: 20px;
+    margin-top: 15px; /* 포스터 위치 조정 */
+  }
+  
+  h3 {
+    font-size: 1.2rem;
+    margin: 15px 0;
+  }
+
+  .review-input {
+    flex: 1;
+  }
+  
+  textarea {
+    width: 99%;
+    height: 100px;
+    border: none; /* 박스 border 제거 */
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    font-family: 'Inter', sans-serif; /* 폰트 변경 */
+  }
+  
+  .controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 5px 0 0;  /* 오른쪽 패딩 추가 */
+  }
+
+  .label {
+    display: flex;  /* 추가 */
+    align-items: center;
+    gap: 8px;  /* 체크박스와 텍스트 사이 간격 */
+  }
+
+  .checkbox {
+    width: 16px;
+    height: 16px;
+    margin: 0;  /* 기존 마진 제거 */
+    cursor: pointer;
+  }
+
+  .error-message {
+    color: #ff4444;
+    font-size: 0.9rem;
+    padding-left: 2px;
+  }
+  
+  button {
+    background-color: #A7A7A7;
+    color: white;
+    border: none;
+    padding: 5px 15px;
+    margin-top: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;  /* 호버 효과 추가 */
+  }
+
+  button:hover {
+    background-color: rgb(211, 47, 39);  /* 호버 시 색상 */
+    color: black;
+  }
+>>>>>>> 54bcfec37d7384b11f1c69f60b5e4337e2ff53aa
   </style>
