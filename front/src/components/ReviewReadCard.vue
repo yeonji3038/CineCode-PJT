@@ -73,15 +73,14 @@
       return
     }
 
-    const isLiked = props.review.likes > 0
     reviewStore.toggleLike(props.review.id)
-      .then(() => {
-        // 좋아요 수 업데이트
-        props.review.likes += isLiked ? -1 : 1
+      .then((response) => {
+        // 서버에서 반환된 좋아요 수를 직접 사용
+        props.review.likes = response.likes
         // store의 좋아요 카운트 업데이트
-        reviewStore.updateLikedReviewsCount(!isLiked)
+        reviewStore.updateLikedReviewsCount(response.is_liked)
       })
-      .catch(error => {
+      .catch((error) => {
         if (error.response?.status === 400) {
           alert(error.response.data.error)
         }
