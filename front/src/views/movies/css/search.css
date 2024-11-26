@@ -88,11 +88,13 @@
     width: 100%;
     margin: 0 auto;
     padding: 0 40px;
-    overflow: hidden;
+    overflow: visible;  /* 자식 요소가 영역을 벗어날 수 있도록 설정 */
   }
   
   .movies-wrapper {
     width: 100%;
+    padding: 20px 0;  /* 상하 여백 추가 */
+    overflow: visible;  /* 자식 요소가 영역을 벗어날 수 있도록 설정 */
   }
   
   .movies-track {
