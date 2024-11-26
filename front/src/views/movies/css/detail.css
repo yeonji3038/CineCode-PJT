@@ -345,3 +345,26 @@
     height: calc((100vw - 2rem) * 0.507);
   }
 }
+
+.reviews-section {
+  width: 100%;
+  max-width: 1008px;
+  margin: 0 auto;
+  padding-bottom: 150px !important;
+}
+
+.review-section {
+  width: 100%;
+  max-width: 1008px;
+  margin: 0 auto;
+  padding-bottom: 150px !important;
+}
+
+/* 만약 content-wrapper1 클래스가 있다면 이것도 수정 */
+.content-wrapper1 {
+  width: 100%;
+  max-width: 1008px !important;
+  margin: 0 auto;
+  padding: 0;
+  padding-bottom: 100px;
+}
