@@ -174,7 +174,7 @@
 }
 
 .review-section {
-  padding: 2rem 0;
+  padding: 0rem 0;
   margin: 0 auto;
   width: 100%;
   max-width: 1000px;
@@ -203,6 +203,10 @@
 .sort-select option {
   background-color: #000;
   color: #fff;
+}
+
+.sort-select option:hover {
+  background-color: #333;
 }
 
 .login-prompt {
@@ -264,7 +268,6 @@
 
 @media (max-width: 1024px) {
   .trailer-section,
-  .review-section,
   .reviews-section {
     padding: 2rem;
   }

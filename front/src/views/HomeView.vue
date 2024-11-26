@@ -9,7 +9,7 @@
         
         <!--검색 및 음성인식-->
         <div class="search-container">
-          <h2>영화를 검색하거나 현재 감정을 알려주시면 영화를 추천해드릴게요!</h2>
+          <h2>영화를 검색하거나 현재 감정을 말씀해주시면 영화를 추천해드릴게요!</h2>
           <div class="search-box">
             <div class="input-wrapper">
               <input 
@@ -18,13 +18,18 @@
                 placeholder="영화 제목을 입력하거나 감정을 표현해보세요!"
                 class="search-input"
                 @keyup.enter="handleSearch"
+                :disabled="isRecording"
+                @input="handleTextInput"
               >
               <img 
                 src="@/assets/mic-icon.svg" 
                 class="mic-icon" 
                 alt="voice"
-                @click="startVoiceRecognition"
-                :class="{ 'recording': isRecording }"
+                @click="handleMicClick"
+                :class="{ 
+                  'recording': isRecording,
+                  'disabled': isTyping 
+                }"
               >
             </div>
             <button 
@@ -372,6 +377,21 @@ const prevLikedSlide = () => {
       alert('검색 중 오류가 발생했습니다.');
     }
   };
+
+  // 새로운 ref 추가
+  const isTyping = ref(false)
+
+  // 텍스트 입력 핸들러 추가
+  const handleTextInput = () => {
+    isTyping.value = searchQuery.value.length > 0
+  }
+
+  // 마이크 클릭 핸들러 추가
+  const handleMicClick = () => {
+    if (!isTyping.value) {
+      startVoiceRecognition()
+    }
+  }
 
   onMounted(() => {
     fetchPopularMovies()

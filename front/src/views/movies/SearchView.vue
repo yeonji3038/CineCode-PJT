@@ -9,13 +9,18 @@
             placeholder="영화 제목을 입력하거나 음성으로 감정을 표현해보세요!"
             class="search-input"
             @keyup.enter="handleSearch"
+            :disabled="isRecording"
+            @input="handleTextInput"
           >
           <img 
             src="@/assets/mic-icon.svg" 
             class="mic-icon" 
             alt="voice"
-            @click="startVoiceRecognition"
-            :class="{ 'recording': isRecording }"
+            @click="handleMicClick"
+            :class="{ 
+              'recording': isRecording,
+              'disabled': isTyping 
+            }"
           >
         </div>
         <button 
@@ -385,7 +390,30 @@ const handleSearch = async () => {
     isLoading.value = false;
   }
 };
+
+// 새로운 ref 추가
+const isTyping = ref(false)
+
+// 텍스트 입력 핸들러 추가
+const handleTextInput = () => {
+  isTyping.value = searchQuery.value.length > 0
+}
+
+// 마이크 클릭 핸들러 추가
+const handleMicClick = () => {
+  if (!isTyping.value) {
+    startVoiceRecognition()
+  }
+}
 </script>
 
 <style scoped src="./css/search.css" ></style>
+
+<style scoped>
+/* 기존 스타일에 추가 */
+.mic-icon.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+</style>
 
