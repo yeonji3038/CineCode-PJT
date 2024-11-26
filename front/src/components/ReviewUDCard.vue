@@ -18,7 +18,7 @@
       </div>
     </div>
     <div class="review-content">
-      <img :src="review.movie.poster_path" alt="Movie Poster" class="movie-poster"
+      <img :src="`https://image.tmdb.org/t/p/w500${review.movie.poster_path}`" alt="Movie Poster" class="movie-poster"
         @click="goToMovieDetail"
       />
       <div class="review-details">
