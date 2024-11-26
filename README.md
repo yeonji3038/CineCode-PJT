@@ -16,6 +16,27 @@
 
 ---
 
+## ERD
+![ERD](./images/ERD.png)
+
+---
+
+## 영화 추천 알고리즘
+#### AI를 활용한 사용자 음성 인식 기반 감정 분석 추천
+1. Web Speech API와 MediaRecorder API를 활용하여 사용자의 음성을 녹음하고 실시간으로 텍스트로 변환하며, 5초간의 음성 데이터를 수집합니다. (back/moveis/views.py analyze_sentiment 참고)
+2. 수집된 음성 데이터는 서버로 전송되어 감정 분석(sentiment analysis)을 수행하고, 분석된 감정 점수를 기반으로 영화를 추천합니다. (back/moveis/views.py recommend_movies 참고)
+3. 분석 결과는 프론트엔드에서 캐러셀 형태로 표시되며, localStorage를 통해 검색 결과를 저장하여 페이지 새로고침 시에도 이전 검색 결과를 유지합니다. (front/src/views/movies/SearchView.vue 참고)
+
+---
+
+## 핵심 기능
+- 영화 추천 알고리즘
+- 영화 리뷰 작성, 수정, 삭제
+- 영화 리뷰 조회
+- 영화 검색
+
+---
+
 ## Daily Report
 ### 1117(일) 
 >[민주]
