@@ -197,11 +197,11 @@ def analyze_voice(request):
 
         # 감정 점수에 따른 장르 ID 매핑
         if sentiment_score >= 0.3:  # 긍정적인 감정
-            target_genres = [35, 12, 10751]  # 코미디(35), 모험(12), 가족(10751)
+            target_genres = [18, 14, 878]  # 드라마(18), 판타지(14), SF(878)
         elif sentiment_score <= -0.3:  # 부정적인 감정
-            target_genres = [27, 53, 80]  # 공포(27), 스릴러(53), 범죄(80)
+            target_genres = [35, 12, 10751]  # 코미디(35), 모험(12), 가족(10751)
         else:  # 중립적인 감정
-            target_genres = [18, 10749, 878]  # 드라마(18), 로맨스(10749), SF(878)
+            target_genres = [27, 9648, 28]  # 공포(27), 미스터리(9648), 액션(28)
 
         # JSON 파일 경로
         json_path = Path(__file__).parent / 'fixtures' / 'genre_secure_movie_data.json'
