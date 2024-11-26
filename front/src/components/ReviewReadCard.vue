@@ -99,14 +99,14 @@
   })
 
   const goToMovieDetail = () => {
-    router.push(`/movies/${props.review.movie}`)
+    router.push(`/movies/${props.review.movie.id}`)
   }
 
   // 프로필 이미지 computed 속성 추가
   const profileImageSrc = computed(() => {
-  // user 객체와 profile_image가 있는지 안전하게 확인
-  return props.review?.profile_image || defaultProfileImage
-})
+    // user 객체가 있는지 확인하고, user.profile_image가 있으면 사용
+    return props.review?.user?.profile_image || defaultProfileImage
+  })
   </script>
   
   <style scoped>

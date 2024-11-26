@@ -140,7 +140,7 @@
 > - 이후 새로운 검색도 정상적으로 동작합니다
 >
 > 위의 방법대로 했는데 JSON 파싱 에러가 발생하여 claude-3.5-sonnet 모델을 활용한 cursor가 알려준 코드로 수정
-> **SearchView.vue의 onMounted 함수 참고**
+> **쿼리 파라미터 처리 후 깨끗한 URL로 변경 (SearchView.vue onMounted 참고)**
 >[연지]
 >- [X] 음성인식 실시간으로 작성, 스크롤
 

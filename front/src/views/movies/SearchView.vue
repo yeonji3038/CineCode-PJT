@@ -294,6 +294,9 @@ onMounted(() => {
         release_date: movie.release_date,
         popularity: movie.popularity
       }));
+
+      // 쿼리 파라미터 처리 후 깨끗한 URL로 변경
+      router.replace('/search');
     } catch (error) {
       console.error('Movies parsing error:', error);
       movies.value = [];
@@ -316,6 +319,9 @@ onMounted(() => {
         release_date: movie.released_date,
         popularity: movie.popularity
       }));
+
+      // 쿼리 파라미터 처리 후 깨끗한 URL로 변경
+      router.replace('/search');
     } catch (error) {
       console.error('Movies parsing error:', error);
       movies.value = [];

@@ -32,7 +32,7 @@
           :key="review.id"
           :review="review"
           :movieTitle="review.movie_title"
-          :moviePosterPath="review.movie_poster_path"
+          :moviePosterPath="`https://image.tmdb.org/t/p/w500${review.movie.poster_path}`"
           @review-updated="refreshReviews"
           @review-deleted="refreshReviews"
         />
@@ -47,8 +47,8 @@
           v-for="review in likedReviews"
           :key="review.id"
           :review="review"
-          :movieTitle="review.movie_title"
-          :moviePosterPath="review.movie_poster_path"
+          :movieTitle="review.movie.title"
+          :moviePosterPath="`https://image.tmdb.org/t/p/w500${review.movie.poster_path}`"
         />
       </div>
       <p v-else class="no-reviews">좋아요한 리뷰가 없습니다.</p>
