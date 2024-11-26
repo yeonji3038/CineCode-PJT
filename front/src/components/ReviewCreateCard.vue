@@ -74,7 +74,7 @@
         emit('review-created')
     })
     .catch((error) => {
-        console.error('리뷰 생성 실패:', error)
+      console.error('리뷰 생성 실패:', error)
     })
   }
 </script>
