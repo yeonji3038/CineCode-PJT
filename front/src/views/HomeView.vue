@@ -39,42 +39,86 @@
         <!-- 시청 중인 영화 섹션 -->
         <div v-if="authStore.isLogin" class="movie-section">
             <h3 class="section-title">{{ authStore.username }}님이 시청중인 영화</h3>
-            <div v-if="watchedMovies.length" class="movie-scroll"
-              @mousedown="startDragging"
-              @mousemove="drag"
-              @mouseup="stopDragging"
-              @mouseleave="stopDragging">
-            <MovieCard 
-                v-for="watchedMovie in watchedMovies" 
-                :key="{...watchedMovie.movie.id}"
-                :movie="{
-                  ...watchedMovie.movie,
-                  status: '시청 중',
-                  watched_at: watchedMovie.watched_at
-                }"
-            />
+            <div v-if="watchedMovies.length" class="carousel-container">
+                <button 
+                    class="carousel-prev" 
+                    @click="prevWatchedSlide" 
+                    v-show="watchedStartIndex > 0"
+                >
+                    <span class="arrow">&#10094;</span>
+                </button>
+
+                <div class="movies-wrapper">
+                    <div 
+                        class="movies-track" 
+                        :style="{ transform: `translateX(-${watchedStartIndex * (100/4)}%)` }"
+                    >
+                        <MovieCard 
+                            v-for="watchedMovie in watchedMovies" 
+                            :key="{...watchedMovie.movie.id}"
+                            :movie="{
+                                ...watchedMovie.movie,
+                                status: '시청 중',
+                                watched_at: watchedMovie.watched_at
+                            }"
+                            class="movie-item"
+                        />
+                    </div>
+                </div>
+
+                <button 
+                    class="carousel-next" 
+                    @click="nextWatchedSlide" 
+                    v-show="watchedStartIndex < watchedMovies.length - 4"
+                >
+                    <span class="arrow">&#10095;</span>
+                </button>
             </div>
             <div v-else class="empty-message">
-              시청 중인 영화가 없습니다.
+                시청 중인 영화가 없습니다.
             </div>
         </div>
 
         <!-- 찜한 영화 섹션 -->
         <div v-if="authStore.isLogin" class="movie-section">
             <h3 class="section-title">{{ authStore.username }}님이 찜한 영화</h3>
-            <div v-if="likedMovies.length" class="movie-scroll">
-            <MovieCard 
-                v-for="likedMovie in likedMovies" 
-                :key="{...likedMovie.movie.id}"
-                :movie="{
-                  ...likedMovie.movie,
-                  is_liked: true,
-                  liked_at: likedMovie.liked_at
-                }"
-            />
+            <div v-if="likedMovies.length" class="carousel-container">
+                <button 
+                    class="carousel-prev" 
+                    @click="prevLikedSlide" 
+                    v-show="likedStartIndex > 0"
+                >
+                    <span class="arrow">&#10094;</span>
+                </button>
+
+                <div class="movies-wrapper">
+                    <div 
+                        class="movies-track" 
+                        :style="{ transform: `translateX(-${likedStartIndex * (100/4)}%)` }"
+                    >
+                        <MovieCard 
+                            v-for="likedMovie in likedMovies" 
+                            :key="{...likedMovie.movie.id}"
+                            :movie="{
+                                ...likedMovie.movie,
+                                is_liked: true,
+                                liked_at: likedMovie.liked_at
+                            }"
+                            class="movie-item"
+                        />
+                    </div>
+                </div>
+
+                <button 
+                    class="carousel-next" 
+                    @click="nextLikedSlide" 
+                    v-show="likedStartIndex < likedMovies.length - 4"
+                >
+                    <span class="arrow">&#10095;</span>
+                </button>
             </div>
             <div v-else class="empty-message">
-            찜한 영화가 없습니다.
+                찜한 영화가 없습니다.
             </div>
         </div>
         
@@ -113,10 +157,8 @@
   const searchQuery = ref('')
   const router = useRouter()
 
-  // 드래그 스크롤 관련 상태 변수들
-  const isDragging = ref(false)
-  const startX = ref(0)
-  const scrollLeft = ref(0)
+  const watchedStartIndex = ref(0)
+  const likedStartIndex = ref(0)
 
   // 음성 녹음 관련 상태 변수들
   const isRecording = ref(false)  // 현재 녹음 중인지 상태
@@ -150,29 +192,29 @@
   }
 
 
-  // 드래그 시작
-  const startDragging = (e) => {
-    isDragging.value = true
-    const slider = e.currentTarget
-    startX.value = e.pageX
-    scrollLeft.value = slider.scrollLeft
-  }
+  const nextWatchedSlide = () => {
+    if (watchedStartIndex.value < watchedMovies.value.length - 4) {
+        watchedStartIndex.value++
+    }
+}
 
-  // 드래그 중
-  const drag = (e) => {
-    if (!isDragging.value) return
-    e.preventDefault()
-    const slider = e.currentTarget
-    const x = e.pageX - slider.offsetLeft
-    const walk = (x - startX.value) * 2 // 스크롤 속도 조절
-    slider.scrollLeft = scrollLeft.value - walk
-  }
+const prevWatchedSlide = () => {
+    if (watchedStartIndex.value > 0) {
+        watchedStartIndex.value--
+    }
+}
 
-  // 드래그 종료
-  const stopDragging = () => {
-    isDragging.value = false
-  }
+const nextLikedSlide = () => {
+    if (likedStartIndex.value < likedMovies.value.length - 4) {
+        likedStartIndex.value++
+    }
+}
 
+const prevLikedSlide = () => {
+    if (likedStartIndex.value > 0) {
+        likedStartIndex.value--
+    }
+}
 
 
 

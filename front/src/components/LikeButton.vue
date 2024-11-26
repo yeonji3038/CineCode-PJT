@@ -49,7 +49,7 @@ const handleLikeClick = () => {
     router.push('/accounts/login')
     return
   }
-  movieStore.toggleWatchStatus(props.movie)
+  movieStore.toggleLikeStatus(props.movie)
     .then(() => {
       console.log('Watch status toggled successfully')
     })
