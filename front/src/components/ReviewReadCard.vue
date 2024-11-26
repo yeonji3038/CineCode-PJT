@@ -54,6 +54,13 @@
   const router = useRouter()
   const isSpoiler = computed(() => props.review.is_spoiler)
   
+  // 프로필 이미지 computed 속성 추가
+  const profileImageSrc = computed(() => {
+    console.log('Review data:', props.review) // 데이터 구조 확인용
+    // user 객체가 있는지 확인하고, user.profile_image가 있으면 사용
+    return props.review.user?.profile_image || defaultProfileImage
+  })
+
   const handleLikeClick = () => {
     if (!authStore.isLogin) {
       router.push('/accounts/login')
@@ -102,11 +109,6 @@
     router.push(`/movies/${props.review.movie.id}`)
   }
 
-  // 프로필 이미지 computed 속성 추가
-  const profileImageSrc = computed(() => {
-    // user 객체가 있는지 확인하고, user.profile_image가 있으면 사용
-    return props.review?.user?.profile_image || defaultProfileImage
-  })
   </script>
   
   <style scoped src="./css/reviewRead.css">

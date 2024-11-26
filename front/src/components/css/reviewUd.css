@@ -1,9 +1,9 @@
 .review-card {
   background: #1a1a1a;
-  padding: 20px;
+  padding: 40px;
   color: #ffffff;
   position: relative;
-  border-radius: 8px;
+  border-radius: 20px;
   overflow: hidden;
   width: 100%;
   max-width: 1008px;
@@ -70,12 +70,13 @@
   background: none;
   border: none;
   font-size: 1.2rem;
+  color: #ffffff;
   cursor: pointer;
   padding: 5px 10px;
 }
 
 .like-button:hover {
-  background-color: #eee;
+  background-color: #d9d9d9;
 }
 
 .like-button:disabled {
@@ -89,8 +90,8 @@
 }
 
 .movie-poster {
-  width: 60px;
-  height: 90px;
+  width: 100px;
+  height: 150px;
   margin-right: 15px;
   border-radius: 4px;
   transition: transform 0.2s;
@@ -115,9 +116,14 @@
   color: #ffffff;
   padding: 15px;
   font-size: 1.1em;
-  transition: all 0.3s ease;
+  width: 100%;
   min-height: 80px;
+  margin-top: 8px;
+  border-radius: 4px;
+  resize: vertical;
+  transition: all 0.3s ease;
 }
+
 
 .controls {
   display: flex;
@@ -126,34 +132,6 @@
   margin-top: 10px;
 }
 
-.button-group {
-  display: flex;
-  gap: 8px;
-  justify-content: flex-end;
-  margin-top: 10px;
-}
-
-.edit-button, .delete-button, .cancel-button {
-  padding: 6px 16px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9em;
-  color: white;
-  transition: all 0.2s ease;
-}
-
-.edit-button {
-  background-color: #A7A7A7;
-}
-
-.delete-button {
-  background-color: #dc3545;
-}
-
-.cancel-button {
-  background-color: #6c757d;
-}
 
 .spoiler-button {
   width: 100%;
@@ -172,19 +150,76 @@
   background-color: #e0e0e0;
 }
 
-.button-group button {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #ffffff;
-  padding: 12px 35px;
-  font-weight: 400;
-  letter-spacing: 1px;
-  transition: all 0.3s ease;
+/* 기존 스타일은 유지하고 아래 스타일만 수정 */
+.controls {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;  /* space-between으로 변경하여 양쪽 정렬 */
+  align-items: center;
+  gap: 8px;
+  margin-top: 15px;
 }
 
-.button-group button:hover {
-  border-color: #d32f27;
-  color: #d32f27;
+/* 스포일러 체크박스 컨테이너 스타일 */
+.spoiler-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.spoiler-container input[type="checkbox"] {
+  margin: 0;
+}
+
+.spoiler-container label {
+  color: #ffffff;
+  font-size: 0.9rem;
+}
+
+
+.button-group {
+  display: flex;
+  gap: 10px;
+}
+
+/* 버튼 그룹 스타일 수정 */
+.button-group button {
+  padding: 8px 20px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: normal;
+  font-family: 'Noto Sans KR', sans-serif;
+  transition: all 0.2s ease;
+}
+
+
+.edit-button, .delete-button, .cancel-button {
+  padding: 8px 16px;  /* 패딩 값 수정 */
+  width: auto;        /* 너비 auto로 변경 */
+  max-width: none;    /* 최대 너비 제한 제거 */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: normal;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+
+.edit-button {
+  background-color: #A7A7A7;
+  color: #ffffff;
+}
+
+.delete-button {
+  background-color: #dc3545;
+  color: #ffffff;
+}
+
+.cancel-button {
+  background-color: #6c757d;
 }
 
 .edit-button:hover {
@@ -193,4 +228,15 @@
 
 .delete-button:hover {
   background-color: #c82333;
+}
+
+.cancel-button {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+.cancel-button:hover {
+  border-color: #888;
+  color: #888;
 }

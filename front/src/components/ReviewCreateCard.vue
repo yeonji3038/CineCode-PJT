@@ -79,5 +79,5 @@
   }
 </script>
   
-<style scoped src="./css/reviewCreat.css">
+<style scoped src="./css/reviewCreate.css">
   </style>
