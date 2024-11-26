@@ -4,7 +4,7 @@
   margin-bottom: 100px;
   color: #ffffff;
   position: relative;
-  border-radius: 0;
+  border-radius: 20px;
   overflow: hidden;
   width: 100% !important;
   max-width: 1008px !important;
@@ -83,6 +83,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  margin-right: 10px;
 }
 
 .review-info {
@@ -132,7 +133,7 @@
 
 .review-content {
   display: flex;
-  margin-top: 16px;
+  margin-top: 20px;
   width: 100%;
 }
 
