@@ -4,18 +4,18 @@
     class="like-button"
     :class="buttonStyle.class"
   >
-    <i :class="buttonStyle.icon"></i>
+    <img :src="buttonStyle.icon" class="button-icon">
     {{ buttonStyle.text }}
   </button>
 </template>
 
 <script setup>
-import { computed, watch } from 'vue'
+import { computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useMovieStore } from '@/stores/movie'
 import { useRouter } from 'vue-router'
-import LikeIcon from '@/assets/like-icon.svg'
-import LikeFillIcon from '@/assets/like-fill-icon.svg'
+import LikeIcon from '@/assets/heart-icon.svg'
+import LikeFillIcon from '@/assets/heart-fill-icon.svg'
 
 const authStore = useAuthStore()
 const movieStore = useMovieStore()
@@ -40,28 +40,27 @@ const buttonStyle = computed(() => {
       icon: LikeIcon
     }
   }
-  
+
   if (!authStore.isLogin) {
     return styles.default
   }
-  
-  const isLiked = movieStore.likedMovies.some(m => m.id === props.movie.id)
+
+  const isLiked = movieStore.likedMovies.some(m => m.movie?.id === props.movie.id)
   return isLiked ? styles.liked : styles.default
 })
 
-const handleLikeClick = () => {
+const handleLikeClick = async () => {
   if (!authStore.isLogin) {
     router.push('/accounts/login')
     return
   }
 
-  movieStore.toggleLikeStatus(props.movie)
+  try {
+    await movieStore.toggleLikeStatus(props.movie)
+  } catch (error) {
+    console.error('Failed to toggle like status:', error)
+  }
 }
-
-// 상태 변경 시 컴포넌트 리렌더링
-watch(() => movieStore.watchedMovies, () => {
-  console.log('Watched movies updated')
-})
 </script>
 
 <style scoped>
@@ -89,7 +88,7 @@ watch(() => movieStore.watchedMovies, () => {
 
 
 .like-button.liked {
-  background-color: #000000;
+  background-color: #484848;
   color: #ffffff;
 }
 

@@ -110,43 +110,32 @@ export const useMovieStore = defineStore('movie', () => {
 
 
 // LikeButton : 영화 찜 상태 업데이트
-const toggleLikeStatus = (movie) => {
+const toggleLikeStatus = async (movie) => {
   if (!authStore.token) return Promise.resolve()
 
-  return axios.post(`${SERVER_URL}movies/${movie.id}/like/`, null, {
-    headers: { Authorization: `Token ${authStore.token}` }
-  })
-  .then((response) => {
+  try {
+    const response = await axios.post(`${SERVER_URL}movies/${movie.id}/like/`, null, {
+      headers: { Authorization: `Token ${authStore.token}` }
+    })
+    
     // 서버 응답에서 상태를 가져옴
     const isLiked = response.data.is_liked
     
-    if (!isLiked) {
-      // 찜 취소: likedMovies에서 제거
-      likedMovies.value = likedMovies.value.filter(m => m.id !== movie.id)
-    } else {
+    if (isLiked) {
       // 찜하기: likedMovies에 추가
       if (!likedMovies.value.some(m => m.id === movie.id)) {
         likedMovies.value.push(movie)
       }
-    }
-
-    // movies 배열에서도 해당 영화의 상태 업데이트
-    const movieInList = movies.value.find(m => m.id === movie.id)
-    if (movieInList) {
-      movieInList.is_liked = isLiked
-    }
-
-    // movieDetail도 업데이트
-    if (movieDetail.value?.id === movie.id) {
-      movieDetail.value.is_liked = isLiked
+    } else {
+      // 찜 취소: likedMovies에서 제거
+      likedMovies.value = likedMovies.value.filter(m => m.id !== movie.id)
     }
 
     return response.data
-  })
-  .catch((error) => {
+  } catch (error) {
     console.error('찜하기 상태 변경 실패:', error)
     throw error
-  })
+  }
 }
 
   return { movies, watchedMovies, likedMovies, movieDetail, fetchAllMovies, fetchWatchedMovies, fetchLikedMovies, fetchMovieDetail, toggleWatchStatus, toggleLikeStatus }
