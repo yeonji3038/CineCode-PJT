@@ -26,7 +26,7 @@ const props = defineProps({
   }
 })
 
-// 버튼 스타일과 텍스트를 한번에 관리
+// 버튼 computed 속성
 const buttonStyle = computed(() => {
   const styles = {
     '미시청': {
@@ -45,35 +45,42 @@ const buttonStyle = computed(() => {
       icon: ReplayIcon
     }
   }
-  
-  // 로그인 체크 추가
+
   if (!authStore.isLogin) {
     return styles['미시청']
   }
+
+  // watchedMovies에 있는지 확인
+  const isWatched = movieStore.watchedMovies.some(w => w.movie.id === props.movie.id)
   
-  // watchedMovies 배열에서 현재 영화 확인
-  const isWatched = movieStore.watchedMovies.some(m => m.id === props.movie.id)
-  return styles[isWatched ? '시청 중' : '미시청']
+  if (isWatched) {
+    return styles['시청 중']
+  }
+  return styles[props.movie.lastStatus === '시청 완료' ? '시청 완료' : '미시청']
 })
 
+// 클릭 핸들러
 const handleWatchClick = () => {
   if (!authStore.isLogin) {
     router.push('/accounts/login')
     return
   }
-  movieStore.toggleWatchStatus(props.movie)
-    .then(() => {
-      console.log('Watch status toggled successfully')
-    })
-    .catch((error) => {
-      console.error('Failed to toggle watch status:', error)
-    })
-}
 
-// 상태 변경 시 컴포넌트 리렌더링
-watch(() => movieStore.watchedMovies, () => {
-  console.log('Watched movies updated')
-})
+  const isWatched = movieStore.watchedMovies.some(w => w.movie.id === props.movie.id)
+  
+  if (isWatched) {
+    // 시청 중 -> 시청 완료
+    props.movie.lastStatus = '시청 완료'
+  } else if (props.movie.lastStatus === '시청 완료') {
+    // 시청 완료 -> 시청 중
+    props.movie.lastStatus = '시청 중'
+  } else {
+    // 미시청 -> 시청 중
+    props.movie.lastStatus = '시청 중'
+  }
+
+  movieStore.toggleWatchStatus(props.movie)
+}
 </script>
 
 <style scoped>
@@ -83,10 +90,11 @@ watch(() => movieStore.watchedMovies, () => {
   justify-content: center;
   gap: 0.8rem;
   padding: 0.8rem 2rem;
-  border-radius: 5px;
+  border-radius: 10px;
   cursor: pointer;
   font-weight: 500;
   font-size: 1.2rem;
+  font-family: 'Noto Sans KR';
   transition: all 0.2s;
   min-width: 140px;
 }
@@ -103,8 +111,8 @@ watch(() => movieStore.watchedMovies, () => {
 
 .watch-button.continue,
 .watch-button.replay {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
+  background-color: white;
+  color: black;
 }
 
 .watch-button:hover {

@@ -62,15 +62,22 @@ def toggle_watch(request, movie_pk):
     movie = get_object_or_404(Movie, pk=movie_pk)
     watched = WatchedMovie.objects.filter(user=request.user, movie=movie)
     
-    if watched.exists():
-        watched.delete()
-        return Response({'message': '시청 목록에서 제거됨'})
-    else:
+    if not watched.exists():
+        # 미시청 상태에서 처음 클릭 시 '시청 중'으로 추가
         WatchedMovie.objects.create(user=request.user, movie=movie)
-        return Response({'message': '시청 목록에 추가됨'})
+        status = '시청 중'
+    else:
+        # 이미 시청 중인 경우 제거하고 '시청 완료'로
+        watched.delete()
+        status = '시청 완료'
+    
+    return Response({
+        'message': '시청 상태가 변경되었습니다.',
+        'status': status,
+        'movie_id': movie.id
+    })
 
-
-# 영화 찜하기 취소
+# 찜한 영화 목록에서 제거
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def toggle_like(request, movie_pk):
@@ -78,11 +85,21 @@ def toggle_like(request, movie_pk):
     liked = LikedMovie.objects.filter(user=request.user, movie=movie)
     
     if liked.exists():
+        # 찜 취소
         liked.delete()
-        return Response({'message': '찜 목록에서 제거됨'})
+        is_liked = False
+        message = '찜 목록에서 제거됨'
     else:
+        # 찜하기
         LikedMovie.objects.create(user=request.user, movie=movie)
-        return Response({'message': '찜 목록에 추가됨'})
+        is_liked = True
+        message = '찜 목록에 추가됨'
+    
+    return Response({
+        'message': message,
+        'is_liked': is_liked,
+        'movie_id': movie.id
+    })
 
 # 영화 시청 상태 업데이트
 @api_view(['POST'])
@@ -197,11 +214,11 @@ def analyze_voice(request):
 
         # 감정 점수에 따른 장르 ID 매핑
         if sentiment_score >= 0.3:  # 긍정적인 감정
-            target_genres = [18, 14, 878]  # 드라마(18), 판타지(14), SF(878)
-        elif sentiment_score <= -0.3:  # 부정적인 감정
             target_genres = [35, 12, 10751]  # 코미디(35), 모험(12), 가족(10751)
+        elif sentiment_score <= -0.3:  # 부정적인 감정
+            target_genres = [27, 53, 80]  # 공포(27), 스릴러(53), 범죄(80)
         else:  # 중립적인 감정
-            target_genres = [27, 9648, 28]  # 공포(27), 미스터리(9648), 액션(28)
+            target_genres = [18, 10749, 878]  # 드라마(18), 로맨스(10749), SF(878)
 
         # JSON 파일 경로
         json_path = Path(__file__).parent / 'fixtures' / 'genre_secure_movie_data.json'
@@ -255,21 +272,20 @@ def review_list_create(request):
             if not request.user.is_authenticated:
                 return Response({'error': 'Authentication required'}, status=401)
             
-            print("Received data:", request.data)
-            
             # movie_id를 사용하여 Movie 객체 가져오기
             movie_id = request.data.get('movie_id')
             movie = get_object_or_404(Movie, pk=movie_id)
-
-            # 시리얼라이저에 movie 인스턴스를 직접 전달
-            serializer = ReviewSerializer(data={
-                'content': request.data.get('content'),
-                'is_spoiler': request.data.get('is_spoiler', False),
-            })   
             
+            # 필수 필드만 포함
+            review_data = {
+                'content': request.data.get('content'),
+                'is_spoiler': request.data.get('is_spoiler', False),  # 기본값 False
+                'movie': movie.id # movie 객체의 id를 저장
+            }
+            
+            serializer = ReviewSerializer(data=review_data)
             if serializer.is_valid():
-                # movie와 user를 직접 설정하여 저장
-                review = serializer.save(user=request.user, movie=movie)
+                review = serializer.save(user=request.user)  # user 정보 추가
                 return Response(serializer.data, status=201)
             
             print("Serializer errors:", serializer.errors)
@@ -317,14 +333,15 @@ def toggle_review_like(request, review_pk):
         return Response({'error': '자신의 리뷰는 좋아요할 수 없습니다.'}, status=400)
     
     like_instance = LikedReview.objects.filter(user=request.user, review=review)
-    is_liked = not like_instance.exists()  # 토글 후의 상태를 미리 계산
     
     if like_instance.exists():
         like_instance.delete()
-        review.likes = LikedReview.objects.filter(review=review).count()  # 정확한 좋아요 수 계산
+        review.likes -= 1
+        is_liked = False
     else:
         LikedReview.objects.create(user=request.user, review=review)
-        review.likes = LikedReview.objects.filter(review=review).count()  # 정확한 좋아요 수 계산
+        review.likes += 1
+        is_liked = True
     
     review.save()
     return Response({

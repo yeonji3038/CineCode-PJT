@@ -98,7 +98,7 @@
                     >
                         <MovieCard 
                             v-for="likedMovie in likedMovies" 
-                            :key="{...likedMovie.movie.id}"
+                            :key="{...likedMovie.id}"
                             :movie="{
                                 ...likedMovie.movie,
                                 is_liked: true,
