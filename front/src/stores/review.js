@@ -19,6 +19,7 @@ export const useReviewStore = defineStore('review', () => {
       }
     })
     .then((response) => {
+      console.log('Fetched review data:', response.data)  // 받아온 데이터 확인
       reviews.value = response.data
       return response.data
     })
