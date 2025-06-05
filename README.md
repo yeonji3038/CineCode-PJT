@@ -173,7 +173,7 @@
         <sub><b>FullStack : 최연지<br>rokmc17047200@gmail.com</b></sub></a><br />
       </td>
       <td align="center">
-        <a href="#"><img src="./image/jw.png" width="100px;" alt=""/><br />
+        <a href="#"><img src="./images/mj.jpg" width="100px;" alt=""/><br />
         <sub><b>FullStack : 김민주<br>hong00zzzzzz@gmail.com</b></sub></a><br />
       </td>
     </tr>
