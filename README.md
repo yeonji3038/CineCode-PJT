@@ -117,7 +117,34 @@
 
 </br>
 
+## 기술적 특징
 
+**1. 감정 인식 기반 영화 추천 시스템**
+ - Web Speech API를 통해 사용자의 음성 데이터를 실시간 수집하고, Google Cloud Speech-to-Text API로 텍스트로 변환
+ - 변환된 텍스트는 Google Cloud Natural Language API를 통해 감정 분석하여, 분석된 감정 점수 기반 영화 추천 로직 구현
+ - 추천 로직은 Django 백엔드에서 처리되고, 결과는 Vue.js 프론트에서 캐러셀 형태로 시각화
+
+**2.  자연어 감정 분석 기반 영화 추천 (Google Cloud API 활용)**
+  - Google Cloud Natural Language API를 사용해 사용자의 음성 텍스트에서 감정 점수를 추출
+  - 추출된 감정(예: joy, anger, sadness 등)에 따라 해당 감정에 맞는 영화 장르를 자동 매핑
+  - 장르에 맞는 영화를 내부 DB에서 추천해주는 **감정 연동형 추천 기능** 구현
+
+
+**3. SPA 구조 기반 프론트엔드(Vue.js)**
+
+- Vue Router를 활용한 싱글 페이지 애플리케이션 구조 설계
+- 컴포넌트 재사용성과 유지보수성을 고려한 UI 구조 분리
+- LocalStorage를 통해 추천 결과 유지 및 사용성 향상
+
+**4. 사용자 인증 및 상태 관리**
+
+ - Django Auth를 기반으로 한 로그인/회원가입 기능 구현
+ - 사용자 정보 수정, 리뷰 CRUD, 찜하기 등 개인화 기능 구현
+
+**5. RESTful API 설계**
+
+ - Django REST Framework를 사용해 API를 모듈화 및 명확한 책임 분리
+ - Swagger를 통해 API 문서 자동화
 
 ## ERD
 ![ERD](./images/ERD.png)
@@ -125,99 +152,7 @@
 ## 컴포넌트 구조도
 ![Component](./images/Component.png)
 
----
 
-
-
-
----
-
-## 생성형 AI를 활용한 TIL
-### 1123(토)
->[민주]
-> #### router를 사용하면서 URL에 query를 표시하지 않는 방법
-> HomeView.vue에서 SearchView.vue로 데이터를 전달할 때 2가지 방법이 존재
-> 1. router의 params를 사용 <br>
-> >1-1. 먼저 라우터 설정을 수정합니다:
-> >```
-> > {
-> >  path: '/search/:searchData?',  // optional parameter
-> >  name: 'Search',
-> >  component: SearchView
-> > }
-> > ```
-> >
-> > 1-2. HomeView.vue를 수정합니다:
-> > ```
-> > router.push({
-> >     name: 'Search',
-> >     params: {
-> >       searchData: btoa(JSON.stringify(searchData)) // base64로 인코딩
->>     },
-> >     replace: true // URL 히스토리를 남기지 않음
->>   });
->> ```
->>
-> > 1-3. SearchView.vue에서 params를 받아서 처리합니다:
-> >```
-> > onMounted(() => {
-> >   if (route.params.searchData) {
-> >     const searchData = JSON.parse(atob(route.params.searchData)); // base64 디코딩
-> >     transcript.value = searchData.transcript;
-> >     sentiment.value = searchData.sentiment;
-> >     movies.value = searchData.movies;
-> >   }
-> > });
-> > ```
->
-> 2. router.push 시에 replace: true와 함께 query를 사용한 후, 즉시 query를 제거 <br>
-> > 2-1. router 설정에 props: true 추가
-> > ```
-> > router.push({
-> >    name: 'Search',
-> >    query: {
-> >      transcript: data.transcript,
-> >      sentiment: data.sentiment_score,
-> >      movies: JSON.stringify(data.movies)
-> >    },
-> >    replace: true
-> >  }).then(() => {
-> >     // query 제거
-> >     router.replace({ name: 'Search' });
-> >   });
-> > ```
->
-> 위의 방법을 사용하였던 데이터가 완전히 로드되기 전에 query가 제거되어 데이터가 사라지는 문제가 있었음.
-> > 1. HomeView.vue는 기존 그대로 유지
-> > 2. SearchView.vue에서 데이터를 로드한 후 URL을 정리합니다:
-> > ```
-> > onMounted(() => {
-> >   // URL의 query params에서 데이터 가져오기
-> >   const queryTranscript = route.query.transcript;
-> >   const querySentiment = route.query.sentiment;
-> >   const queryMovies = route.query.movies;
-> >
-> >   if (queryTranscript && querySentiment && queryMovies) {
-> >     // 데이터 설정
-> >     transcript.value = queryTranscript;
-> >     sentiment.value = Number(querySentiment);
-> >     movies.value = JSON.parse(queryMovies);
-> >
-> >     // 데이터 설정 후 URL 정리
-> >     router.replace({ path: '/search' });
-> >   }
-> > });
-> > ```
-> >이렇게 하면:
-> > - SearchView가 마운트될 때 먼저 query 파라미터에서 데이터를 가져옵니다
-> > - 데이터를 컴포넌트의 상태로 설정합니다
-> > - 그 후에 URL을 깔끔하게 정리합니다
-> > - 이후 새로운 검색도 정상적으로 동작합니다
->
-> 위의 방법대로 했는데 JSON 파싱 에러가 발생하여 claude-3.5-sonnet 모델을 활용한 cursor가 알려준 코드로 수정 <br>
-> **쿼리 파라미터 처리 후 깨끗한 URL로 변경 (SearchView.vue onMounted 참고)**
-
----
 
 <br>
 
