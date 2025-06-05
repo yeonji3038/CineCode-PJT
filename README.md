@@ -1,15 +1,20 @@
-# CineCode-PJT
+# 🎬 CINECODE
 
-## 개발 기간
-2024.11.17 ~ 2024.11.27
+### Samsung Software Academy For Youth 12th - 관통 프로젝트
+#### 영화 추천 및 리뷰 관리 웹사이트
+
+> 2024.11.17 ~ 2024.11.27
+
+<br>
 
 ## 팀원
-#### 김민주 : (FE&BE) MovieDetail, Review CRUD, Navbar <br>
-#### 최연지 : (FE&BE) Login, Signup, Profile, Home, Search, Speech Recognition
+#### 김민주 : (DB) 영화, 장르 데이터 생성 / (FE&BE) MovieDetail, Review CRUD, Navbar, Home <br>
+#### 최연지 : (FE&BE) Login·Signup, Profile, Home, Search, Speech Recognition
 
 ---
 
 ## 개발 환경
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)![Django](https://img.shields.io/badge/django-%23092E20.svg?style=for-the-badge&logo=django&logoColor=white)![Vue.js](https://img.shields.io/badge/vuejs-%2335495e.svg?style=for-the-badge&logo=vuedotjs&logoColor=%234FC08D)
 - Python 3.11.X
 - Django 4.2.X
 - Vue 3.X
@@ -18,6 +23,9 @@
 
 ## ERD
 ![ERD](./images/ERD.png)
+
+## 컴포넌트 구조도
+![Component](./images/Component.png)
 
 ---
 
@@ -30,13 +38,134 @@
 ---
 
 ## 핵심 기능
-- 영화 추천 알고리즘
-- 영화 리뷰 작성, 수정, 삭제
-- 영화 리뷰 조회
-- 영화 검색
+### 1. 로그인/회원가입
+ ![image](https://github.com/user-attachments/assets/8c4ff624-48a8-4e35-8046-e0ca2d40b54b)
+ ![image](https://github.com/user-attachments/assets/35390834-4ae3-4662-872b-e9178211ecd4)
+
+### 2. 메인화면
+ - 로그인 전
+   
+![localhost_5173_movies_945961 (2)](https://github.com/user-attachments/assets/068bd630-d60e-4c66-b0a5-5139aba287e2)
+
+ - 로그인 후
+   
+![localhost_5173_movies_945961 (1)](https://github.com/user-attachments/assets/694cd5de-ac45-4c8e-9adf-c592c0e384de)
+
+
+### 3. 영화 상세 화면
+   ![localhost_5173_movies_945961](https://github.com/user-attachments/assets/34dde8e2-bd98-4d9b-accc-8374aca8212c)
+   - 재생, 찜하기 상태 관리
+   - 리뷰 조회(최신순/좋아요순 정렬), 작성, 좋아요 버튼
+
+### 4. 마이페이지 화면
+   ![localhost_5173_](https://github.com/user-attachments/assets/fa59e707-32c0-46e2-b1fa-4ebe2a1b3d9c)
+   ![localhost_5173_ (1)](https://github.com/user-attachments/assets/96f7a581-8fd4-4f9a-be47-6376d4766eef)
+   ![localhost_5173_ (2)](https://github.com/user-attachments/assets/425a6e4a-259d-44e7-b697-18294a755fb0)
+   - 리뷰 수정, 삭제, 좋아요 관리
+   - 회원 정보 수정 (프로필 이미지, 닉네임, 이메일, 비밀번호 변경)
+
+### 5. 영화 추천 및 검색
+   ![localhost_5173_search](https://github.com/user-attachments/assets/f25e77ee-65d8-4616-9c5c-223f0448841e)
+   - 제목으로 검색
+   - 음성 인식으로 감정 분석 후 장르 기반으로 영화 추천 (화면 사진은 추후 업로드 예정)
 
 ---
 
+## Daily Report
+### 1117(일) 
+>[민주]
+>- [X] 피그마&컴포넌트 구조 작성 - 로그인, 회원가입
+>
+>[연지]
+>- [x] ERD 설계
+
+### 1118(월)
+>[민주]
+>- [X] DB - 초기 영화, 장르 데이터 생성
+>- [X] 피그마&컴포넌트 구조 작성 - 홈
+>
+>[연지]
+>- [X] 프로젝트 생성
+>- [X] 로그인,회원가입 프론트
+
+### 1119(화)
+>[민주]
+>- [X] HomeView -  프론트, 백엔드
+>- [X] 피그마&컴포넌트 구조도 작성 - 커뮤니티, 영화 상세 정보, 프로필
+>
+>[연지]
+>- [X] 회원가입 백앤드
+>- [X] ERD 수정
+
+### 1120(수)
+>[민주]
+>- [X] HomeView 마무리
+>- [X] Navbar - 프론트, 백엔드
+>
+>[연지]
+>- [X] LoginView - 로그인 구현
+>- [X] Navbar - 메인화면에 로그인된거 띄우기
+
+### 1121(목)
+>[민주]
+>- [X] MovieDetail - 영화 정보, 예고편 프론트
+>- [X] MovieDetail - 영화 정보, 예고편 백엔드
+>- [X] DB - fixtures 데이터 수정
+>      
+>[연지]
+>- [X] UpdateView - 회원정보 수정
+>- [X] ProfileVIew - 프로필 프론트,백앤드
+
+### 1122(금)
+>[민주]
+>- [X] MovieDetail - 찜하기, 시청 상태 프론트
+>- [X] MovieDetail - 찜하기, 시청 상태 백엔드
+>      
+>[연지]
+>- [X] 음성 API 끌고 오기, 연결
+>- [X] UpdateView - 프로필 사진 수정
+
+### 1123(토)
+>[민주]
+>- [X] SearchView - URL 쿼리 처리
+>      
+>[연지]
+>- [X] 음성인식 실시간으로 작성, 스크롤
+
+### 1124(일)
+>[민주]
+>- [X] ReviewReadCard - 프론트, 백엔드
+>- [X] ReviewCreateCard - 프론트, 백엔드
+>      
+>[연지]
+>- [X] SearchView - 음성인식 오류 해결
+>- [X] ProfileView - css 수정
+
+### 1125(월)
+>[민주]
+>- [X] SearchView - URL 쿼리 처리 재수정
+>- [X] ReviewUDCard - 프론트, 백엔드
+>
+>[연지]
+>- [X] HomeView - 검색창 작업
+>- [X] HomeView - 검색창 css 작업
+
+### 1126(화)
+>[민주]
+>- [X] DB - 초기 데이터 작업
+>- [X] MovieDetail - 예고편 링크 수정
+>- [X] HomeView - MovieCard css 작업 (정렬 수정)
+>
+>[연지]
+>- [X] DB - 초기 데이터 작업
+>- [X] ReviewCard - css 작업
+>- [X] Navbar - 시계 추가
+>- [X] PPT 작업
+
+### 1127(수)
+> 최종 발표
+
+---
 
 ## 생성형 AI를 활용한 TIL
 ### 1123(토)
@@ -125,6 +254,14 @@
 
 ---
 
+## 시간 남으면 추가 할 거
+
+- [ ] LoginView -회원가입 안 된 계정 에러 처리
+- [ ] SignupView - ID 중복 처리 (이미 가입된 계정 구분)
+- [ ] 사용자 ID랑 Email 필드 서로 바꾸기
+- [ ] 소셜 로그인
+
+---
 
 ## 소감
 
