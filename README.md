@@ -173,7 +173,7 @@
       </td>
       <td align="center">
         <a href="#"><img src="./image/jw.png" width="100px;" alt=""/><br />
-        <sub><b>HardWare : 김민주<br>hong00zzzzzz@gmail.com</b></sub></a><br />
+        <sub><b>FullStack : 김민주<br>hong00zzzzzz@gmail.com</b></sub></a><br />
       </td>
     </tr>
   </tbody>
