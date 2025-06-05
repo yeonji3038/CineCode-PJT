@@ -151,10 +151,10 @@
 
 # ✨ 프로젝트 진행 및 산출물
 
-## ERD
+<h2>ERD</h2>
 ![ERD](./images/ERD.png)
 
-## 컴포넌트 구조도
+<h2>컴포넌트 구조도</h2>
 ![Component](./images/conpo.png)
 
 
