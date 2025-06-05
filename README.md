@@ -1,12 +1,42 @@
-# 🎬 CINECODE
+# 🎬 CINECODE(영화 추천 및 리뷰 관리 웹사이트)
 <img src="./images/main.png" alt="main" width="800"/>
 
-### Samsung Software Academy For Youth 12th - 관통 프로젝트
-#### 영화 추천 및 리뷰 관리 웹사이트
+<br/>
 
-> 2024.11.17 ~ 2024.11.27
+## 목차
 
-<br>
+1. [**개요**](#✨-개요)
+1. [**주요 기능**](#-주요-기능)
+1. [**서비스 화면 (교사 / 학생)**](#-땡그랑-서비스-화면-교사)
+1. [**기술 스택**](#-기술-스택)
+1. [**프로젝트 진행 및 산출물**](#-프로젝트-진행-및-산출물)
+1. [**개발 멤버 및 회고**](#-개발-멤버-및-역할분담)
+1. [**메뉴얼 및 상세문서**](#-메뉴얼-및-상세-문서)
+
+<br/>
+
+<div id="1"></div>
+
+## ✨ 개요
+
+#### 서비스명 : CINECODE ( 똑똑한 경제 학습 )
+#### Samsung Software Academy For Youth 12th - 관통 프로젝트
+#### 한줄 설명 : `감정 음성인식기반 영화추천 알고리즘`
+#### 프로젝트 기간 : 2024.11.17 ~ 2024.11.27
+
+## ✨ 프로젝트 소개
+
+## 영화 추천 알고리즘
+#### AI를 활용한 사용자 음성 인식 기반 감정 분석 추천
+1. Web Speech API와 MediaRecorder API를 활용하여 사용자의 음성을 녹음하고 실시간으로 텍스트로 변환하며, 5초간의 음성 데이터를 수집합니다. (back/moveis/views.py analyze_sentiment 참고)
+2. 수집된 음성 데이터는 서버로 전송되어 감정 분석(sentiment analysis)을 수행하고, 분석된 감정 점수를 기반으로 영화를 추천합니다. (back/moveis/views.py recommend_movies 참고)
+3. 분석 결과는 프론트엔드에서 캐러셀 형태로 표시되며, localStorage를 통해 검색 결과를 저장하여 페이지 새로고침 시에도 이전 검색 결과를 유지합니다. (front/src/views/movies/SearchView.vue 참고)
+
+
+<br/>
+
+<div id="2"></div>
+
 
 ---
 
@@ -26,11 +56,7 @@
 
 ---
 
-## 영화 추천 알고리즘
-#### AI를 활용한 사용자 음성 인식 기반 감정 분석 추천
-1. Web Speech API와 MediaRecorder API를 활용하여 사용자의 음성을 녹음하고 실시간으로 텍스트로 변환하며, 5초간의 음성 데이터를 수집합니다. (back/moveis/views.py analyze_sentiment 참고)
-2. 수집된 음성 데이터는 서버로 전송되어 감정 분석(sentiment analysis)을 수행하고, 분석된 감정 점수를 기반으로 영화를 추천합니다. (back/moveis/views.py recommend_movies 참고)
-3. 분석 결과는 프론트엔드에서 캐러셀 형태로 표시되며, localStorage를 통해 검색 결과를 저장하여 페이지 새로고침 시에도 이전 검색 결과를 유지합니다. (front/src/views/movies/SearchView.vue 참고)
+
 
 ---
 
