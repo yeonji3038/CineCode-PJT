@@ -8,10 +8,6 @@
 
 <br>
 
-## 팀원
-#### 김민주 : (DB) 영화, 장르 데이터 생성 / (FE&BE) MovieDetail, Review CRUD, Navbar, Home <br>
-#### 최연지 : (FE&BE) Login·Signup, Profile, Home, Search, Speech Recognition
-
 ---
 
 ## 개발 환경
@@ -163,7 +159,7 @@
 
 <br>
 
-## 팀원소개
+## 👨‍👩‍👧‍👦 개발 멤버 및 역할분담
 
 <table>
   <tbody>
@@ -181,6 +177,17 @@
 </table>
 </br>
 
+### 역할
+
+#### 👩‍💻 김민주
+- (DB) 영화 및 장르 데이터 생성
+- (FE&BE) MovieDetail, Review CRUD, Navbar, Home 화면 구성
+
+#### 👩‍💻 최연지
+- (FE&BE) Login·Signup, Profile, Home, Search 기능 구현
+- 음성 인식 기반 검색 기능(Speech Recognition) 개발
+- 
+<br>
 
 ## 소감
 
