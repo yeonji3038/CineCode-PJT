@@ -1,5 +1,5 @@
 # 🎬 CINECODE
-![main](./images/main.png)
+<img src="./images/main.png" alt="main" width="800"/>
 
 ### Samsung Software Academy For Youth 12th - 관통 프로젝트
 #### 영화 추천 및 리뷰 관리 웹사이트
