@@ -146,11 +146,17 @@
  - Django REST Framework를 사용해 API를 모듈화 및 명확한 책임 분리
  - Swagger를 통해 API 문서 자동화
 
+<br/>
+
+<div id="5"></div>
+
+# ✨ 프로젝트 진행 및 산출물
+
 ## ERD
 ![ERD](./images/ERD.png)
 
 ## 컴포넌트 구조도
-![Component](./images/Component.png)
+![Component](./images/compo.png)
 
 
 
