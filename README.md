@@ -7,7 +7,7 @@
 
 1. [**개요**](#✨-개요)
 1. [**주요 기능**](#-주요-기능)
-1. [**서비스 화면 (교사 / 학생)**](#-땡그랑-서비스-화면-교사)
+1. [**서비스 화면**](#)
 1. [**기술 스택**](#-기술-스택)
 1. [**프로젝트 진행 및 산출물**](#-프로젝트-진행-및-산출물)
 1. [**개발 멤버 및 회고**](#-개발-멤버-및-역할분담)
@@ -26,7 +26,8 @@
 
 ## ✨ 프로젝트 소개
 
-## 영화 추천 알고리즘
+<h2>영화 추천 알고리즘</h2>
+
 #### AI를 활용한 사용자 음성 인식 기반 감정 분석 추천
 1. Web Speech API와 MediaRecorder API를 활용하여 사용자의 음성을 녹음하고 실시간으로 텍스트로 변환하며, 5초간의 음성 데이터를 수집합니다. (back/moveis/views.py analyze_sentiment 참고)
 2. 수집된 음성 데이터는 서버로 전송되어 감정 분석(sentiment analysis)을 수행하고, 분석된 감정 점수를 기반으로 영화를 추천합니다. (back/moveis/views.py recommend_movies 참고)
@@ -37,30 +38,21 @@
 
 <div id="2"></div>
 
+## ✨ 기획 배경
+사용자의 **감정 상태를 음성으로 입력 받아**,
+**Google Cloud Speech-to-Text API와 Google Cloud Natural Language API**를 활용하여
+**그에 맞는 영화를 추천하는 혁신적인 시스템**을 구축하고자 기획되었습니다.
 
----
+또한, 영화에 대한 리뷰를 작성하고 공유할 수 있는 커뮤니티 기능을 통해
+사용자 간의 **자유롭고 활발한 상호작용**을 유도하였습니다.
 
-## 개발 환경
-![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)![Django](https://img.shields.io/badge/django-%23092E20.svg?style=for-the-badge&logo=django&logoColor=white)![Vue.js](https://img.shields.io/badge/vuejs-%2335495e.svg?style=for-the-badge&logo=vuedotjs&logoColor=%234FC08D)
-- Python 3.11.X
-- Django 4.2.X
-- Vue 3.X
-
----
-
-## ERD
-![ERD](./images/ERD.png)
-
-## 컴포넌트 구조도
-![Component](./images/Component.png)
-
----
+뿐만 아니라, **재생 상태 관리** 및 **찜하기 기능**을 통해
+개인의 취향에 맞는 영화를 효율적으로 관리하고,
+사용자의 **영화 감상 여정을 보다 체계적이고 개인화된 방식으로 경험**할 수 있도록 설계하였습니다.
 
 
+## ✨ 주요 기능
 
----
-
-## 핵심 기능
 ### 1. 로그인/회원가입
  ![image](https://github.com/user-attachments/assets/8c4ff624-48a8-4e35-8046-e0ca2d40b54b)
  ![image](https://github.com/user-attachments/assets/35390834-4ae3-4662-872b-e9178211ecd4)
@@ -91,6 +83,33 @@
    ![localhost_5173_search](https://github.com/user-attachments/assets/f25e77ee-65d8-4616-9c5c-223f0448841e)
    - 제목으로 검색
    - 음성 인식으로 감정 분석 후 장르 기반으로 영화 추천 (화면 사진은 추후 업로드 예정)
+
+
+<br/>
+
+<div id="3"></div>
+
+<br/>
+
+<div id="4"></div>
+
+# 📚 기술 스택
+
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)![Django](https://img.shields.io/badge/django-%23092E20.svg?style=for-the-badge&logo=django&logoColor=white)![Vue.js](https://img.shields.io/badge/vuejs-%2335495e.svg?style=for-the-badge&logo=vuedotjs&logoColor=%234FC08D)
+- Python 3.11.X
+- Django 4.2.X
+- Vue 3.X
+
+---
+
+## ERD
+![ERD](./images/ERD.png)
+
+## 컴포넌트 구조도
+![Component](./images/Component.png)
+
+---
+
 
 
 
