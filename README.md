@@ -186,7 +186,7 @@
 #### 👩‍💻 최연지
 - (FE&BE) Login·Signup, Profile, Home, Search 기능 구현
 - 음성 인식 기반 검색 기능(Speech Recognition) 개발
-- 
+  
 <br>
 
 ## 소감
