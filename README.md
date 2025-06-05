@@ -161,6 +161,26 @@
 
 ---
 
+<br>
+## 팀원 소개
+
+<table>
+  <tbody>
+    <tr>
+      <td align="center">
+        <a href="#"><img src="./images/yj.png" width="100px;" alt=""/><br />
+        <sub><b>FullStack : 최연지<br>rokmc17047200@gmail.com</b></sub></a><br />
+      </td>
+      <td align="center">
+        <a href="#"><img src="./image/jw.png" width="100px;" alt=""/><br />
+        <sub><b>HardWare : 김민주<br>hong00zzzzzz@gmail.com</b></sub></a><br />
+      </td>
+    </tr>
+  </tbody>
+</table>
+</br>
+
+
 ## 소감
 
  **김민주** <br>
