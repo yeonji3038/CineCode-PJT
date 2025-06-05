@@ -95,7 +95,6 @@
 
 # 📚 기술 스택
 
-## 📚 기술 스택
 
 ### 💻 Languages  
 ![Python](https://img.shields.io/badge/Python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)  ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
