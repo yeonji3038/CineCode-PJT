@@ -95,10 +95,31 @@
 
 # 📚 기술 스택
 
-![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)![Django](https://img.shields.io/badge/django-%23092E20.svg?style=for-the-badge&logo=django&logoColor=white)![Vue.js](https://img.shields.io/badge/vuejs-%2335495e.svg?style=for-the-badge&logo=vuedotjs&logoColor=%234FC08D)
-- Python 3.11.X
-- Django 4.2.X
-- Vue 3.X
+## 📚 기술 스택
+
+### 💻 Languages  
+![Python](https://img.shields.io/badge/Python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)  ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+
+---
+
+### 🗄️ Database  
+![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
+
+---
+
+### 🌐 Version Control  
+![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
+
+---
+
+### 🧩 Frameworks  
+![Django](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white)  ![Vue.js](https://img.shields.io/badge/Vue.js-4FC08D?style=for-the-badge&logo=vuedotjs&logoColor=white)
+
+---
+
+### 🔌 API & External Services  
+![RESTful API](https://img.shields.io/badge/RESTful_API-FF6F00?style=for-the-badge&logo=api&logoColor=white)  ![Google Cloud Speech-to-Text](https://img.shields.io/badge/Speech_to_Text-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white)  ![Google Cloud Natural Language](https://img.shields.io/badge/Natural_Language_API-34A853?style=for-the-badge&logo=google&logoColor=white)
+
 
 ---
 
